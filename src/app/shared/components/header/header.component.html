@@ -42,27 +42,6 @@
           </ul>
         </li>
 
-        <li class="has-dropdown" 
-            (mouseenter)="onMouseEnter('graduation')" 
-            (mouseleave)="onMouseLeave()"
-            [class.active]="isDropdownOpen('graduation')">
-          <a routerLink="/graduation-form" routerLinkActive="active" (click)="toggleDropdown('graduation', $event)">
-            {{ getTranslation('nav.graduation') }}
-            <i class="fas fa-chevron-down dropdown-icon"></i>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a routerLink="/graduation-form" (click)="closeAllMenus()">{{ getTranslation('nav.gradForm') }}</a></li>
-            <li><a routerLink="/graduation-form/proposal" (click)="closeAllMenus()">{{ getTranslation('nav.submitProposal') }} (Grad)</a></li>
-            <li><a routerLink="/graduation-form/requirements-1" (click)="closeAllMenus()">{{ getTranslation('nav.gradReq1') }}</a></li>
-            <li><a routerLink="/graduation-form/requirements-2" (click)="closeAllMenus()">{{ getTranslation('nav.gradReq2') }}</a></li>
-          </ul>
-        </li>
-
-        <li><a routerLink="/events/calendar" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.buzzEvents') }}</a></li>
-        <li><a routerLink="/news/list" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.buzzNews') }}</a></li>
-        <li><a routerLink="/templates" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.templates') }}</a></li>
-
-        <li><a routerLink="/contact" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.contact') }}</a></li>
 
         <li *ngIf="currentUser?.role === 'Doctor' || currentUser?.role === 'Admin'">
           <a routerLink="/doctor" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.doctor') }}</a>
@@ -128,24 +107,6 @@
         </ul>
       </li>
 
-      <li class="mobile-has-dropdown" [class.expanded]="isDropdownOpen('graduation')">
-        <a (click)="toggleDropdown('graduation', $event)">
-          {{ getTranslation('nav.graduation') }}
-          <i class="fas fa-plus icon"></i>
-        </a>
-        <ul class="mobile-submenu" *ngIf="isDropdownOpen('graduation')">
-          <li><a routerLink="/graduation-form" (click)="closeAllMenus()">{{ getTranslation('nav.gradForm') }}</a></li>
-          <li><a routerLink="/graduation-form/proposal" (click)="closeAllMenus()">{{ getTranslation('nav.submitProposal') }} (Grad)</a></li>
-          <li><a routerLink="/graduation-form/requirements-1" (click)="closeAllMenus()">{{ getTranslation('nav.gradReq1') }}</a></li>
-          <li><a routerLink="/graduation-form/requirements-2" (click)="closeAllMenus()">{{ getTranslation('nav.gradReq2') }}</a></li>
-        </ul>
-      </li>
-
-      <li><a routerLink="/events/calendar" (click)="closeAllMenus()">{{ getTranslation('nav.buzzEvents') }}</a></li>
-      <li><a routerLink="/news/list" (click)="closeAllMenus()">{{ getTranslation('nav.buzzNews') }}</a></li>
-      <li><a routerLink="/templates" (click)="closeAllMenus()">{{ getTranslation('nav.templates') }}</a></li>
-
-      <li><a routerLink="/contact" (click)="closeAllMenus()">{{ getTranslation('nav.contact') }}</a></li>
 
       <li *ngIf="currentUser?.role === 'Doctor' || currentUser?.role === 'Admin'">
         <a routerLink="/doctor" (click)="closeAllMenus()">{{ getTranslation('nav.doctor') }}</a>
