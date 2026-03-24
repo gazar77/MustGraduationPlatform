@@ -42,6 +42,9 @@
           </ul>
         </li>
 
+        <li class="buzz-item"><a routerLink="/events/calendar" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.buzzEvents') }}</a></li>
+        <li class="buzz-item"><a routerLink="/news/list" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.buzzNews') }}</a></li>
+        <li><a routerLink="/templates" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.templates') }}</a></li>
 
         <li *ngIf="currentUser?.role === 'Doctor' || currentUser?.role === 'Admin'">
           <a routerLink="/doctor" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.doctor') }}</a>
@@ -107,6 +110,12 @@
         </ul>
       </li>
 
+        </ul>
+      </li>
+
+      <li><a routerLink="/events/calendar" (click)="closeAllMenus()">{{ getTranslation('nav.buzzEvents') }}</a></li>
+      <li><a routerLink="/news/list" (click)="closeAllMenus()">{{ getTranslation('nav.buzzNews') }}</a></li>
+      <li><a routerLink="/templates" (click)="closeAllMenus()">{{ getTranslation('nav.templates') }}</a></li>
 
       <li *ngIf="currentUser?.role === 'Doctor' || currentUser?.role === 'Admin'">
         <a routerLink="/doctor" (click)="closeAllMenus()">{{ getTranslation('nav.doctor') }}</a>
