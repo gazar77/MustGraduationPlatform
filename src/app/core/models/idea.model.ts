@@ -10,6 +10,8 @@ export interface Idea {
     supervisorName: string;
     createdAt: Date;
     status: 'Open' | 'Reserved' | 'Approved' | 'Closed';
+    isVisible: boolean;
+    order?: number;
 }
 
 export type ProjectCategory =

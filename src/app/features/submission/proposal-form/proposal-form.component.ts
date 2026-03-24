@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LanguageService } from '../../../core/services/language.service';
+import { ProposalService } from '../../../core/services/proposal.service';
 
 @Component({
   selector: 'app-proposal-form',
@@ -12,7 +14,7 @@ export class ProposalFormComponent implements OnInit {
   submissionStatus: 'open' | 'closing' | 'closed' = 'open';
   daysLeft = 0;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, public langService: LanguageService, private proposalService: ProposalService) {
     this.proposalForm = this.fb.group({
       projectName: ['', Validators.required],
       teamName: ['', Validators.required],
@@ -57,8 +59,23 @@ export class ProposalFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.proposalForm.valid && this.submissionStatus !== 'closed') {
-      console.log('Proposal Submitted:', this.proposalForm.value);
-      alert('تم تقديم المقترح بنجاح!');
+      const val = this.proposalForm.value;
+      this.proposalService.addProposal({
+        projectName: val.projectName,
+        teamName: val.teamName,
+        members: val.teamMembers ? val.teamMembers.split(',').map((x: string) => x.trim()) : [],
+        department: val.department,
+        proposedSupervisor: val.supervisor,
+        idea: val.idea,
+        goals: val.goals,
+        description: val.description,
+        tools: val.tools ? val.tools.split(',').map((x: string) => x.trim()) : [],
+        notes: val.notes,
+        attachment: val.attachment ? val.attachment.name : undefined
+      }).subscribe(() => {
+        alert(this.langService.translate('submission.proposal.successMsg'));
+        this.proposalForm.reset();
+      });
     }
   }
 }

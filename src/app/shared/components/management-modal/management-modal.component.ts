@@ -14,16 +14,24 @@ export class ManagementModalComponent {
   formData: any = {};
 
   // Form structure defined by the parent
-  @Input() fields: { name: string, label: string, type: 'text' | 'textarea' | 'select', options?: string[] }[] = [];
+  @Input() fields: { name: string, label: string, type: 'text' | 'textarea' | 'select' | 'date' | 'readonly', options?: string[], value?: any }[] = [];
+
+  ngOnChanges(): void {
+    if (this.isOpen && this.fields) {
+      this.fields.forEach(f => {
+        this.formData[f.name] = f.value || '';
+      });
+    } else if (!this.isOpen) {
+      this.formData = {};
+    }
+  }
 
   onClose() {
-    this.isOpen = false;
     this.close.emit();
   }
 
   onSave() {
     this.save.emit(this.formData);
-    this.isOpen = false;
     this.formData = {}; // Reset
   }
 }

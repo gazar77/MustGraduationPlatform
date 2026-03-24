@@ -1,12 +1,17 @@
-<div class="news-list-container">
-    <div class="section-header">
-        <div class="title-meta">
-            <h1>جدول المناقشات والتحديثات</h1>
-            <p>تابع آخر المواعيد والإعلانات الرسمية للقسم</p>
-        </div>
-        <button *ngIf="currentUser?.role === 'Admin'" (click)="onAddNews()" class="btn btn-primary add-news-btn">
-            <i class="fas fa-plus"></i>
-            إضافة إعلان جديد
+<div class="news-list-container" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
+    <app-hero-banner 
+        [title]="langService.translate('news.list.title')"
+        [breadcrumbs]="[
+            { label: langService.translate('nav.home'), url: '/dashboard' },
+            { label: langService.translate('nav.news') }
+        ]"
+        [compact]="true">
+    </app-hero-banner>
+
+    <div class="container mb-4 text-end" *ngIf="currentUser?.role === 'Admin'">
+        <button (click)="onAddNews()" class="btn btn-primary add-news-btn shadow-sm">
+            <i class="fas fa-plus me-2"></i>
+            {{ langService.translate('news.list.addNewsBtn') }}
         </button>
     </div>
 
@@ -15,11 +20,11 @@
         <div class="news-card" *ngFor="let item of newsItems">
             <div class="card-header">
                 <div class="date-badge">
-                    <span class="day">{{ item.date | date:'dd' }}</span>
-                    <span class="month">{{ item.date | date:'MMM' }}</span>
+                    <span class="day">{{ item.publishDate | date:'dd' }}</span>
+                    <span class="month">{{ item.publishDate | date:'MMM' }}</span>
                 </div>
                 <div class="category-tag" [ngClass]="item.category.toLowerCase()">
-                    {{ getCategoryArabic(item.category) }}
+                    {{ getCategoryTranslation(item.category) }}
                 </div>
             </div>
 
@@ -31,11 +36,11 @@
             <div class="card-footer">
                 <div class="author-info">
                     <i class="fas fa-user-edit"></i>
-                    <span>بواسطة: {{ item.author }}</span>
+                    <span>{{ langService.translate('news.list.authorPrefix') }} {{ item.author }}</span>
                 </div>
                 <button class="details-link">
-                    عرض التفاصيل
-                    <i class="fas fa-chevron-left"></i>
+                    {{ langService.translate('news.list.detailsBtn') }}
+                    <i class="fas" [ngClass]="(langService.currentLang$ | async) === 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'"></i>
                 </button>
             </div>
         </div>
@@ -44,7 +49,7 @@
     <!-- Empty State -->
     <div class="empty-state" *ngIf="newsItems.length === 0">
         <i class="fas fa-calendar-times"></i>
-        <h3>لا توجد إعلانات حالياً</h3>
-        <p>يرجى مراجعة الصفحة لاحقاً لمتابعة آخر التحديثات.</p>
+        <h3>{{ langService.translate('news.list.emptyTitle') }}</h3>
+        <p>{{ langService.translate('news.list.emptyText') }}</p>
     </div>
 </div>

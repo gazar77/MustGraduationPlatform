@@ -5,6 +5,7 @@ import { EventsNewsRoutingModule } from './events-news-routing.module';
 import { NewsListComponent } from './news-list/news-list.component';
 import { EventListComponent } from './event-list/event-list.component';
 import { EventDetailsComponent } from './event-details/event-details.component';
+import { HeroBannerComponent } from '../../shared/components/hero-banner/hero-banner.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { EventDetailsComponent } from './event-details/event-details.component';
   imports: [
     CommonModule,
     SharedModule,
-    EventsNewsRoutingModule
+    EventsNewsRoutingModule,
+    HeroBannerComponent
   ]
 })
 export class EventsNewsModule { }

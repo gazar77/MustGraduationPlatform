@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IdeaService } from '../../../core/services/idea.service';
 import { Router } from '@angular/router';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
     selector: 'app-idea-register',
@@ -18,7 +19,7 @@ export class IdeaRegisterComponent {
         leaderId: ''
     };
 
-    constructor(private ideaService: IdeaService, private router: Router) {}
+    constructor(private ideaService: IdeaService, private router: Router, public langService: LanguageService) {}
 
     onSubmit() {
         this.ideaService.addIdea({
@@ -29,11 +30,13 @@ export class IdeaRegisterComponent {
             difficulty: 'Medium',
             requiredSkills: [],
             maxTeamSize: this.formData.teamSize,
-            supervisorName: this.formData.leaderName, // using leader name as mock supervisor or similar
+            supervisorName: this.formData.leaderName,
             createdAt: new Date(),
-            status: 'Open'
+            status: 'Open',
+            isVisible: false,
+            order: 0
         }).subscribe(() => {
-            alert('تم تسجيل فكرة المشروع بنجاح!');
+            alert(this.langService.translate('ideas.register.successMsg'));
             this.router.navigate(['/ideas']);
         });
     }

@@ -1,24 +1,27 @@
-<div class="templates-page container">
-    <header class="page-header">
-        <h1>مكتبة القوالب والنماذج</h1>
-        <p>قم بتحميل الملفات الإرشادية والقوالب المطلوبة لمشروع تخرجك</p>
-    </header>
+<div class="templates-page container" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
+    <app-hero-banner 
+        [title]="langService.translate('templates.title')"
+        [breadcrumbs]="[
+            { label: langService.translate('nav.home'), url: '/dashboard' },
+            { label: langService.translate('nav.templates') }
+        ]"
+        [compact]="true">
+    </app-hero-banner>
 
     <div class="templates-grid">
         <div *ngFor="let template of templates" class="template-card card">
             <div class="template-icon">
-                <i class="fas" [ngClass]="{
-                    'fa-file-word': template.type === 'DOCX',
-                    'fa-file-powerpoint': template.type === 'PPTX',
-                    'fa-file-pdf': template.type === 'PDF'
-                }"></i>
+                <i class="fas fa-file-alt"></i>
             </div>
             <div class="template-info">
                 <h3>{{ template.title }}</h3>
                 <p>{{ template.description }}</p>
-                <span class="version">آخر تحديث: {{ template.version }}</span>
+                <div class="template-meta">
+                    <span class="size">{{ template.fileSize }}</span>
+                    <span class="update">{{ langService.translate('templates.lastUpdate') }} {{ template.lastUpdate }}</span>
+                </div>
             </div>
-            <a [href]="template.url" class="btn btn-secondary">تحميل ({{ template.type }})</a>
+            <a [href]="template.fileUrl" class="btn btn-secondary">{{ langService.translate('templates.downloadBtn') }}</a>
         </div>
     </div>
 </div>

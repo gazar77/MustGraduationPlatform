@@ -22,10 +22,13 @@ export class IdeaService {
       supervisorDoctorId: 101,
       supervisorName: 'د. محمد علي',
       createdAt: new Date(),
-      status: 'Open'
+      status: 'Open',
+      isVisible: true,
+      order: 1
     },
     {
       id: 2,
+      // ... same for others
       title: 'تطبيق مراقبة الصحة الشخصية',
       description: 'تطبيق موبايل يساعد المستخدمين على تتبع حالتهم الصحية والأنشطة الرياضية باستخدام أجهزة الاستشعار.',
       category: 'تطوير تطبيقات موبايل',
@@ -35,7 +38,9 @@ export class IdeaService {
       supervisorDoctorId: 102,
       supervisorName: 'د. سارة عادل',
       createdAt: new Date(),
-      status: 'Reserved'
+      status: 'Reserved',
+      isVisible: true,
+      order: 2
     },
     {
       id: 3,
@@ -48,7 +53,9 @@ export class IdeaService {
       supervisorDoctorId: 103,
       supervisorName: 'د. أحمد حسن',
       createdAt: new Date(),
-      status: 'Approved'
+      status: 'Approved',
+      isVisible: true,
+      order: 3
     },
     {
       id: 4,
@@ -61,26 +68,58 @@ export class IdeaService {
       supervisorDoctorId: 101,
       supervisorName: 'د. محمد علي',
       createdAt: new Date(),
-      status: 'Open'
+      status: 'Open',
+      isVisible: true,
+      order: 4
     }
   ];
 
   constructor(private http: HttpClient) { }
 
   getIdeas(): Observable<Idea[]> {
-    // TODO: Change to this.http.get<Idea[]>(this.apiUrl)
     return of(this.mockIdeas);
   }
 
+  getVisibleIdeas(): Observable<Idea[]> {
+    return of(this.mockIdeas.filter(i => i.isVisible).sort((a, b) => (a.order || 0) - (b.order || 0)));
+  }
+
   getIdeaById(id: number): Observable<Idea | undefined> {
-    // TODO: Change to this.http.get<Idea>(`${this.apiUrl}/${id}`)
     const idea = this.mockIdeas.find(i => i.id === id);
     return of(idea);
   }
 
   addIdea(idea: Idea): Observable<Idea> {
-    // TODO: Change to this.http.post<Idea>(this.apiUrl, idea)
-    this.mockIdeas.push(idea);
-    return of(idea);
+    const newId = Math.max(...this.mockIdeas.map(i => i.id || 0)) + 1;
+    const newIdea = { ...idea, id: newId, createdAt: new Date(), isVisible: true };
+    this.mockIdeas.push(newIdea);
+    return of(newIdea);
+  }
+
+  updateIdea(id: number, data: Partial<Idea>): Observable<Idea | undefined> {
+    const index = this.mockIdeas.findIndex(i => i.id === id);
+    if (index !== -1) {
+      this.mockIdeas[index] = { ...this.mockIdeas[index], ...data };
+      return of(this.mockIdeas[index]);
+    }
+    return of(undefined);
+  }
+
+  deleteIdea(id: number): Observable<boolean> {
+    const index = this.mockIdeas.findIndex(i => i.id === id);
+    if (index !== -1) {
+      this.mockIdeas.splice(index, 1);
+      return of(true);
+    }
+    return of(false);
+  }
+
+  toggleVisibility(id: number): Observable<Idea | undefined> {
+    const index = this.mockIdeas.findIndex(i => i.id === id);
+    if (index !== -1) {
+      this.mockIdeas[index].isVisible = !this.mockIdeas[index].isVisible;
+      return of(this.mockIdeas[index]);
+    }
+    return of(undefined);
   }
 }

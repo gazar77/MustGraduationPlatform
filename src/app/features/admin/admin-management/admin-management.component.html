@@ -4,6 +4,8 @@
         [items]="items" 
         [columns]="columns"
         (add)="onAdd()"
+        (edit)="onEdit($event)"
+        (toggleStatus)="onStatusToggle($event)"
         (delete)="onDelete($event)">
     </app-management-table>
 

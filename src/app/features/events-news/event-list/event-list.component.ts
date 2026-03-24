@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { EventService, EventItem } from '../../../core/services/event.service';
+import { Event } from '../../../core/models/event.model';
 import { AuthMockService } from '../../../core/services/auth-mock.service';
 import { User } from '../../../core/models/user.model';
+import { LanguageService } from '../../../core/services/language.service';
+import { EventService } from '../../../core/services/event.service';
 
 @Component({
   selector: 'app-event-list',
@@ -9,13 +11,17 @@ import { User } from '../../../core/models/user.model';
   styleUrl: './event-list.component.scss'
 })
 export class EventListComponent implements OnInit {
-  events: EventItem[] = [];
+  events: Event[] = [];
   currentUser: User | null = null;
 
-  constructor(private eventService: EventService, private authService: AuthMockService) { }
+  constructor(
+    private eventService: EventService, 
+    private authService: AuthMockService,
+    public langService: LanguageService
+  ) { }
 
   ngOnInit(): void {
-    this.eventService.getEvents().subscribe(events => {
+    this.eventService.getVisibleEvents().subscribe(events => {
       this.events = events;
     });
 
@@ -24,29 +30,28 @@ export class EventListComponent implements OnInit {
     });
   }
 
-  getCategoryLabel(category: string): string {
-    const labels: Record<string, string> = {
-      'academic': 'أكاديمي',
-      'social': 'اجتماعي',
-      'workshop': 'ورشة عمل',
-      'competition': 'مسابقات'
-    };
-    return labels[category] || category;
+  getCategoryTranslation(category: string): string {
+    return this.langService.translate(`events.list.category.${category}`) || category;
   }
 
   onAddEvent(): void {
-    const title = prompt('أدخل عنوان الفعالية الجديدة:');
-    const description = prompt('أدخل وصف الفعالية:');
+    const titlePrompt = this.langService.translate('events.list.prompts.newTitle');
+    const descPrompt = this.langService.translate('events.list.prompts.newDesc');
+    
+    const title = prompt(titlePrompt);
+    const description = prompt(descPrompt);
     if (title && description) {
       this.eventService.addEvent({
         id: 0,
         title,
         description,
         date: new Date().toISOString().split('T')[0],
-        time: '10:00 ص - 12:00 م',
-        location: 'الكلية',
+        time: '09:00 AM',
+        location: this.langService.translate('events.list.defaultLoc'),
         image: 'assets/must_discussion_1.png',
-        category: 'academic'
+        category: 'academic',
+        isVisible: true,
+        order: 0
       }).subscribe(() => {
         this.eventService.getEvents().subscribe(events => this.events = events);
       });

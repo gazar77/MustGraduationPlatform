@@ -1,58 +1,33 @@
-<div class="dashboard-page">
-    <!-- ========== HERO SLIDER ========== -->
-    <section class="hero-slider">
-        <div class="slider-container">
-            <div class="slides-wrapper" [style.transform]="'translateX(-' + (currentSlide * 100) + '%)'">
-                <div class="slide" *ngFor="let slide of slides; let i = index">
-                    <img [src]="slide.image" [alt]="slide.title">
-                    <div class="slide-overlay">
-                        <div class="slide-content">
-                            <h2>{{ slide.title }}</h2>
-                            <p>{{ slide.description }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Navigation Arrows -->
-            <button class="slider-arrow prev" (click)="prevSlide()" aria-label="Previous">
-                <i class="fas fa-chevron-right"></i>
-            </button>
-            <button class="slider-arrow next" (click)="nextSlide()" aria-label="Next">
-                <i class="fas fa-chevron-left"></i>
-            </button>
-
-            <!-- Dots -->
-            <div class="slider-dots">
-                <button *ngFor="let slide of slides; let i = index" class="dot" [class.active]="i === currentSlide"
-                    (click)="goToSlide(i)" [attr.aria-label]="'Go to slide ' + (i + 1)"></button>
-            </div>
-        </div>
-    </section>
+<div class="dashboard-page" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
+    <app-hero-banner [breadcrumbs]="[
+        { label: langService.translate('nav.home'), url: '/dashboard' },
+        { label: langService.translate('nav.ideas'), url: '/ideas' },
+        { label: langService.translate('nav.submissions'), url: '/submission/proposal' }
+    ]"></app-hero-banner>
 
     <!-- ========== STATS SECTION ========== -->
-    <section class="stats-section">
+    <section class="stats-section" *ngIf="stats$ | async as stats">
         <div class="container">
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-lightbulb"></i></div>
-                    <div class="stat-value">45</div>
-                    <div class="stat-label">أفكار المشاريع المتاحة</div>
+                    <div class="stat-value">{{ stats.totalIdeas }}</div>
+                    <div class="stat-label">{{ langService.translate('dashboard.stats.ideas') }}</div>
                 </div>
                 <div class="stat-card highlight-reserved">
                     <div class="stat-icon"><i class="fas fa-bookmark"></i></div>
-                    <div class="stat-value">12</div>
-                    <div class="stat-label">مشاريع محجوزة</div>
+                    <div class="stat-value">{{ stats.reservedIdeas }}</div>
+                    <div class="stat-label">{{ langService.translate('dashboard.stats.reserved') }}</div>
                 </div>
                 <div class="stat-card highlight-approved">
                     <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
-                    <div class="stat-value">28</div>
-                    <div class="stat-label">مشاريع معتمدة</div>
+                    <div class="stat-value">{{ stats.approvedIdeas }}</div>
+                    <div class="stat-label">{{ langService.translate('dashboard.stats.approved') }}</div>
                 </div>
                 <div class="stat-card highlight-doctors">
                     <div class="stat-icon"><i class="fas fa-user-tie"></i></div>
-                    <div class="stat-value">15</div>
-                    <div class="stat-label">أعضاء هيئة التدريس</div>
+                    <div class="stat-value">{{ stats.totalDoctors }}</div>
+                    <div class="stat-label">{{ langService.translate('dashboard.stats.doctors') }}</div>
                 </div>
             </div>
         </div>
@@ -61,61 +36,52 @@
     <!-- ========== CONTENT SECTIONS GRID ========== -->
     <section class="sections-overview">
         <div class="container">
-            <h2 class="section-title">خدمات البوابة</h2>
+            <h2 class="section-title">{{ langService.translate('dashboard.services') }}</h2>
             <div class="sections-grid">
 
                 <a routerLink="/ideas" class="section-card">
                     <div class="card-icon"><i class="fas fa-brain"></i></div>
-                    <h3>أفكار الدكاترة</h3>
-                    <p>الأفكار المقترحة من كل دكتور لمشاريع التخرج</p>
+                    <h3>{{ langService.translate('dashboard.serviceCards.ideas') }}</h3>
                 </a>
 
                 <a routerLink="/ideas/register" class="section-card">
                     <div class="card-icon"><i class="fas fa-pen-fancy"></i></div>
-                    <h3>تسجيل فكرة مشروع</h3>
-                    <p>سجل فكرة مشروعك للمراجعة والموافقة</p>
+                    <h3>{{ langService.translate('dashboard.serviceCards.register') }}</h3>
                 </a>
 
-                <a routerLink="/graduation-form/proposal" class="section-card">
+                <a routerLink="/submission/proposal" class="section-card">
                     <div class="card-icon"><i class="fas fa-file-upload"></i></div>
-                    <h3>تسليم الـ Proposal</h3>
-                    <p>رفع ملف المقترح البحثي للمشروع</p>
+                    <h3>{{ langService.translate('dashboard.serviceCards.submission') }}</h3>
                 </a>
 
-                <a routerLink="/graduation-form/requirements-1" class="section-card">
+                <a routerLink="/submission/project-registration-1" class="section-card">
                     <div class="card-icon"><i class="fas fa-clipboard-list"></i></div>
-                    <h3>متطلبات المشروع (١)</h3>
-                    <p>تسليم المتطلبات الأولى للمشروع</p>
+                    <h3>{{ langService.translate('dashboard.serviceCards.req1') }}</h3>
                 </a>
 
-                <a routerLink="/graduation-form/requirements-2" class="section-card">
+                <a routerLink="/submission/project-registration-2" class="section-card">
                     <div class="card-icon"><i class="fas fa-clipboard-check"></i></div>
-                    <h3>متطلبات المشروع (٢)</h3>
-                    <p>تسليم المتطلبات النهائية للمشروع</p>
+                    <h3>{{ langService.translate('dashboard.serviceCards.req2') }}</h3>
                 </a>
 
                 <a routerLink="/templates" class="section-card">
                     <div class="card-icon"><i class="fas fa-file-alt"></i></div>
-                    <h3>النماذج والوثائق</h3>
-                    <p>تحميل القوالب والنماذج المطلوبة</p>
+                    <h3>{{ langService.translate('dashboard.serviceCards.templates') }}</h3>
                 </a>
 
                 <a routerLink="/news/list" class="section-card">
                     <div class="card-icon"><i class="fas fa-newspaper"></i></div>
-                    <h3>الأخبار والإعلانات</h3>
-                    <p>آخر أخبار وإعلانات مشاريع التخرج</p>
+                    <h3>{{ langService.translate('dashboard.serviceCards.news') }}</h3>
                 </a>
 
                 <a routerLink="/events/calendar" class="section-card">
                     <div class="card-icon"><i class="fas fa-calendar-alt"></i></div>
-                    <h3>الفعاليات والأحداث</h3>
-                    <p>مواعيد المناقشات والفعاليات القادمة</p>
+                    <h3>{{ langService.translate('dashboard.serviceCards.events') }}</h3>
                 </a>
 
                 <a routerLink="/contact" class="section-card">
                     <div class="card-icon"><i class="fas fa-headset"></i></div>
-                    <h3>اتصل بنا</h3>
-                    <p>تواصل مع إدارة المشاريع</p>
+                    <h3>{{ langService.translate('dashboard.serviceCards.contact') }}</h3>
                 </a>
 
             </div>
@@ -127,27 +93,24 @@
         <div class="dashboard-content-grid">
             <div class="main-column">
                 <section class="card news-section">
-                    <h3><i class="fas fa-bullhorn"></i> آخر الأخبار والإعلانات</h3>
-                    <div class="news-list">
-                        <div class="news-item">
-                            <span class="date">2026/03/05</span>
-                            <h4>إعلان توزيع مشاريع التخرج</h4>
-                            <p>بدأت عملية توزيع لجان الإشراف على مشاريع التخرج للعام الجامعي الحالي...</p>
+                    <h3><i class="fas fa-bullhorn"></i> {{ langService.translate('dashboard.newsTitle') }}</h3>
+                    <div class="news-list" *ngIf="news$ | async as newsItems">
+                        <div class="news-item" *ngFor="let item of newsItems | slice:0:3">
+                            <span class="date">{{ item.publishDate | date:'yyyy/MM/dd' }}</span>
+                            <h4>{{ item.title }}</h4>
+                            <p>{{ item.content | slice:0:150 }}{{ item.content.length > 150 ? '...' : '' }}</p>
                         </div>
-                        <div class="news-item">
-                            <span class="date">2026/03/01</span>
-                            <h4>مواعيد تسليم المقترحات (Proposals)</h4>
-                            <p>نذكر جميع أبنائنا الطلاب بضرورة الالتزام بمواعيد تسليم مقترحات المشاريع في موعد أقصاه...
-                            </p>
+                        <div class="empty-state" *ngIf="newsItems.length === 0">
+                            <p>لا توجد أخبار حالياً.</p>
                         </div>
                     </div>
-                    <a routerLink="/news/list" class="btn-link">عرض جميع الأخبار ←</a>
+                    <a routerLink="/news/list" class="btn-link">{{ langService.translate('dashboard.viewAll') }} ←</a>
                 </section>
             </div>
 
             <div class="side-column">
                 <section class="card deadline-section">
-                    <h3><i class="fas fa-clock"></i> أقرب مواعيد التسليم</h3>
+                    <h3><i class="fas fa-clock"></i> {{ langService.translate('dashboard.deadlineTitle') }}</h3>
                     <ul class="deadline-list">
                         <li class="urgent">
                             <strong>تسليم الـ Proposal</strong>
@@ -161,13 +124,13 @@
                 </section>
 
                 <section class="card quick-links">
-                    <h3><i class="fas fa-link"></i> روابط سريعة</h3>
+                    <h3><i class="fas fa-link"></i> {{ langService.translate('dashboard.quickLinksTitle') }}</h3>
                     <nav>
-                        <a routerLink="/graduation-form/proposal" class="btn btn-primary w-full mb-1">
-                            <i class="fas fa-upload"></i> استمارة المشروع
+                        <a routerLink="/submission/proposal" class="btn btn-primary w-full mb-1">
+                            <i class="fas fa-upload"></i> {{ langService.translate('dashboard.forms.submitIdea') }}
                         </a>
                         <a routerLink="/templates" class="btn btn-secondary w-full">
-                            <i class="fas fa-download"></i> مكتبة القوالب
+                            <i class="fas fa-download"></i> {{ langService.translate('dashboard.forms.downloadTemplates') }}
                         </a>
                     </nav>
                 </section>

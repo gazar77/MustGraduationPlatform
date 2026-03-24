@@ -5,6 +5,7 @@ import { GraduationRoutingModule } from './graduation-routing.module';
 import { GraduationFormComponent } from './graduation-form/graduation-form.component';
 import { ProposalSubmissionComponent } from './proposal-submission/proposal-submission.component';
 import { GraduationRequirementsComponent } from './requirements/requirements.component';
+import { HeroBannerComponent } from '../../shared/components/hero-banner/hero-banner.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { GraduationRequirementsComponent } from './requirements/requirements.com
   imports: [
     CommonModule,
     SharedModule,
-    GraduationRoutingModule
+    GraduationRoutingModule,
+    HeroBannerComponent
   ]
 })
 export class GraduationModule { }

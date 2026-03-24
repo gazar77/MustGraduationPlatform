@@ -1,26 +1,32 @@
-<div class="registration-container">
+<div class="registration-container" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
     <div class="registration-card">
-        <header class="card-header">
-            <div class="title-meta">
-                <h1>{{ pageTitle }}</h1>
-                <p>{{ instructions }}</p>
+    <app-hero-banner 
+        [title]="langService.translate(titleKey)"
+        [breadcrumbs]="[
+            { label: langService.translate('nav.home'), url: '/dashboard' },
+            { label: langService.translate('nav.submissions'), url: '/submission/proposal' },
+            { label: langService.translate(titleKey) }
+        ]"
+        [compact]="true">
+    </app-hero-banner>
+
+    <div class="registration-header-meta container mb-4">
+        <div class="deadline-badge">
+            <i class="fas fa-clock"></i>
+            <div>
+                <span>{{ langService.translate('submission.registration.deadline') }}</span>
+                <strong>{{ deadline | date:'fullDate' }}</strong>
             </div>
-            <div class="deadline-badge">
-                <i class="fas fa-clock"></i>
-                <div>
-                    <span>آخر موعد للتقديم</span>
-                    <strong>{{ deadline | date:'fullDate' }}</strong>
-                </div>
-            </div>
-        </header>
+        </div>
+    </div>
 
         <section class="upload-section">
             <div class="upload-box" [class.has-file]="selectedFile">
                 <label for="reg-file" class="upload-label">
                     <i class="fas" [ngClass]="selectedFile ? 'fa-file-check' : 'fa-file-upload'"></i>
                     <div class="label-text">
-                        <span class="main-text">{{ selectedFile ? selectedFile.name : 'اسحب الملف هنا لرفعه' }}</span>
-                        <span class="sub-text">يدعم ملفات PDF, DOCX (بحد أقصى 10 ميجابايت)</span>
+                        <span class="main-text">{{ selectedFile ? selectedFile.name : langService.translate('submission.registration.dragFile') }}</span>
+                        <span class="sub-text">{{ langService.translate('submission.registration.supportedFiles') }}</span>
                     </div>
                     <input type="file" id="reg-file" (change)="onFileChange($event)" hidden>
                 </label>
@@ -31,15 +37,15 @@
         </section>
 
         <section class="notes-section">
-            <label>ملاحظات إضافية (اختياري)</label>
-            <textarea [(ngModel)]="notes" rows="4" placeholder="اكتب أي ملاحظات تود إرفاقها مع المستندات..."></textarea>
+            <label>{{ langService.translate('submission.registration.additionalNotes') }}</label>
+            <textarea [(ngModel)]="notes" rows="4" [placeholder]="langService.translate('submission.registration.notesPlaceholder')"></textarea>
         </section>
 
         <footer class="card-footer">
-            <button class="btn btn-outline" routerLink="/dashboard">إلغاء</button>
+            <button class="btn btn-outline" routerLink="/dashboard">{{ langService.translate('submission.registration.cancel') }}</button>
             <button class="btn btn-primary" [disabled]="!selectedFile" (click)="onSubmit()">
                 <i class="fas fa-paper-plane"></i>
-                إرسال المستندات
+                {{ langService.translate('submission.registration.submitDocs') }}
             </button>
         </footer>
     </div>
@@ -48,18 +54,18 @@
     <div class="tips-grid">
         <div class="tip-card">
             <i class="fas fa-shield-alt"></i>
-            <h4>تأكد من صحة البيانات</h4>
-            <p>راجع الملفات المرفقة جيداً قبل الإرسال.</p>
+            <h4>{{ langService.translate('submission.registration.tips.verifyTitle') }}</h4>
+            <p>{{ langService.translate('submission.registration.tips.verifyText') }}</p>
         </div>
         <div class="tip-card">
             <i class="fas fa-lock"></i>
-            <h4>خصوصية تامة</h4>
-            <p>يتم تشفير كافة الملفات المرفقة.</p>
+            <h4>{{ langService.translate('submission.registration.tips.privacyTitle') }}</h4>
+            <p>{{ langService.translate('submission.registration.tips.privacyText') }}</p>
         </div>
         <div class="tip-card">
             <i class="fas fa-headset"></i>
-            <h4>تحتاج مساعدة؟</h4>
-            <p>تواصل مع الدعم الفني للكلية.</p>
+            <h4>{{ langService.translate('submission.registration.tips.helpTitle') }}</h4>
+            <p>{{ langService.translate('submission.registration.tips.helpText') }}</p>
         </div>
     </div>
 </div>

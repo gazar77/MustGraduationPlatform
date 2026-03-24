@@ -1,13 +1,12 @@
-<div class="events-page">
-  <!-- Hero Section -->
-  <header class="events-hero">
-    <div class="container">
-      <div class="hero-content">
-        <h1>فعاليات مشاريع التخرج</h1>
-        <p>تابع أحدث المؤتمرة، ورش العمل، ومناقشات مشاريع التخرج في كلية الحاسبات والمعلومات.</p>
-      </div>
-    </div>
-  </header>
+<div class="events-page" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
+  <app-hero-banner 
+    [title]="langService.translate('events.list.title')"
+    [breadcrumbs]="[
+      { label: langService.translate('nav.home'), url: '/dashboard' },
+      { label: langService.translate('nav.events') }
+    ]"
+    [compact]="true">
+  </app-hero-banner>
 
   <!-- Events Grid Section -->
   <section class="events-section">
@@ -16,7 +15,7 @@
         <article class="event-card" *ngFor="let event of events">
           <div class="event-image">
             <img [src]="event.image" [alt]="event.title">
-            <span class="category-badge" [ngClass]="event.category">{{ getCategoryLabel(event.category) }}</span>
+            <span class="category-badge" [ngClass]="event.category">{{ getCategoryTranslation(event.category) }}</span>
           </div>
           <div class="event-content">
             <div class="event-meta">
@@ -27,7 +26,7 @@
             <p class="event-desc">{{ event.description }}</p>
             <div class="event-footer">
                <span class="location"><i class="fas fa-map-marker-alt"></i> {{ event.location }}</span>
-               <button class="btn btn-outline" [routerLink]="['/events/details', event.id]">التفاصيل</button>
+               <button class="btn btn-outline" [routerLink]="['/events/details', event.id]">{{ langService.translate('events.list.detailsBtn') }}</button>
             </div>
           </div>
         </article>

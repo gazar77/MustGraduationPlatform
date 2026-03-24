@@ -15,7 +15,11 @@ const routes: Routes = [
       { path: 'manage/news', component: AdminManagementComponent, data: { type: 'news' } },
       { path: 'manage/ideas', component: AdminManagementComponent, data: { type: 'ideas' } },
       { path: 'manage/events', component: AdminManagementComponent, data: { type: 'event' } },
-      { path: 'manage/templates', component: AdminManagementComponent, data: { type: 'template' } }
+      { path: 'manage/templates', component: AdminManagementComponent, data: { type: 'template' } },
+      { path: 'manage/proposals', component: AdminManagementComponent, data: { type: 'proposals' } },
+      { path: 'manage/contact', component: AdminManagementComponent, data: { type: 'contact' } },
+      { path: 'manage/project1', component: AdminManagementComponent, data: { type: 'project1' } },
+      { path: 'manage/project2', component: AdminManagementComponent, data: { type: 'project2' } }
     ]
   }
 ];

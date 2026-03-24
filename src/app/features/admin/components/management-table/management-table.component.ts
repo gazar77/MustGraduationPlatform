@@ -9,15 +9,15 @@ export class ManagementTableComponent {
   @Input() title: string = '';
   @Input() items: any[] = [];
   @Input() columns: { key: string, label: string }[] = [];
+  @Input() showStatus: boolean = true;
   
   @Output() delete = new EventEmitter<any>();
   @Output() edit = new EventEmitter<any>();
   @Output() add = new EventEmitter<void>();
+  @Output() toggleStatus = new EventEmitter<any>();
 
   onDelete(item: any) {
-    if (confirm('هل أنت متأكد من حذف هذا البند؟')) {
-      this.delete.emit(item);
-    }
+    this.delete.emit(item);
   }
 
   onEdit(item: any) {

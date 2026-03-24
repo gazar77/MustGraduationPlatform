@@ -1,10 +1,15 @@
-<div class="proposal-container">
-    <div class="page-header">
-        <div class="title-section">
-            <h1>تقديم مقترح مشروع التخرج</h1>
-            <p>يرجى ملء كافة البيانات المطلوبة بدقة لضمان مراجعة المقترح</p>
-        </div>
-        
+<div class="proposal-container" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
+    <app-hero-banner 
+        [title]="langService.translate('submission.proposal.title')"
+        [breadcrumbs]="[
+            { label: langService.translate('nav.home'), url: '/dashboard' },
+            { label: langService.translate('nav.submissions'), url: '/submission/proposal' },
+            { label: langService.translate('submission.proposal.title') }
+        ]"
+        [compact]="true">
+    </app-hero-banner>
+
+    <div class="deadline-row container mb-4">
         <div class="deadline-box" [ngClass]="submissionStatus">
             <div class="status-indicator">
                 <i class="fas" [ngClass]="{
@@ -13,15 +18,15 @@
                     'fa-times-circle': submissionStatus === 'closed'
                 }"></i>
                 <span class="status-text">
-                    {{ submissionStatus === 'open' ? 'متاح الآن' : 
-                       submissionStatus === 'closing' ? 'قارب على الإغلاق' : 'تم الإغلاق' }}
+                    {{ submissionStatus === 'open' ? langService.translate('submission.proposal.statusOpen') : 
+                       submissionStatus === 'closing' ? langService.translate('submission.proposal.statusClosing') : langService.translate('submission.proposal.statusClosed') }}
                 </span>
             </div>
             <div class="deadline-date">
-                آخر موعد: <strong>{{ deadlineDate | date:'fullDate' }}</strong>
+                {{ langService.translate('submission.proposal.deadlineDate') }} <strong>{{ deadlineDate | date:'fullDate' }}</strong>
             </div>
             <div class="timer" *ngIf="submissionStatus !== 'closed'">
-                متبقي <strong>{{ daysLeft }}</strong> أيام على الإغلاق
+                {{ langService.translate('submission.proposal.daysRemaining') }} <strong>{{ daysLeft }}</strong> {{ langService.translate('submission.proposal.days') }} {{ langService.translate('submission.proposal.closingIn') }}
             </div>
         </div>
     </div>
@@ -31,34 +36,34 @@
         <section class="form-section">
             <div class="section-title">
                 <i class="fas fa-info-circle"></i>
-                <h3>معلومات المشروع الأساسية</h3>
+                <h3>{{ langService.translate('submission.proposal.basicInfo') }}</h3>
             </div>
             <div class="form-grid">
                 <div class="form-group">
-                    <label>اسم المشروع</label>
-                    <input type="text" formControlName="projectName" placeholder="أدخل اسم المشروع المقترح">
+                    <label>{{ langService.translate('submission.proposal.projectName') }}</label>
+                    <input type="text" formControlName="projectName" [placeholder]="langService.translate('submission.proposal.projectNamePlaceholder')">
                 </div>
                 <div class="form-group">
-                    <label>اسم الفريق</label>
-                    <input type="text" formControlName="teamName" placeholder="مثال: فريق الابتكار">
+                    <label>{{ langService.translate('submission.proposal.teamName') }}</label>
+                    <input type="text" formControlName="teamName" [placeholder]="langService.translate('submission.proposal.teamNamePlaceholder')">
                 </div>
                 <div class="form-group full-width">
-                    <label>أسماء أعضاء الفريق</label>
-                    <textarea formControlName="teamMembers" rows="2" placeholder="اكتب أسماء الطلاب المشاركين مفصولة بفواصل"></textarea>
+                    <label>{{ langService.translate('submission.proposal.teamMembers') }}</label>
+                    <textarea formControlName="teamMembers" rows="2" [placeholder]="langService.translate('submission.proposal.teamMembersPlaceholder')"></textarea>
                 </div>
                 <div class="form-group">
-                    <label>القسم</label>
+                    <label>{{ langService.translate('submission.proposal.department') }}</label>
                     <select formControlName="department">
-                        <option value="">اختر القسم</option>
-                        <option value="CS">علوم الحاسب</option>
-                        <option value="IS">نظم المعلومات</option>
-                        <option value="AI">الذكاء الاصطناعي</option>
-                        <option value="IT">تكنولوجيا المعلومات</option>
+                        <option value="">{{ langService.translate('submission.proposal.selectDepartment') }}</option>
+                        <option value="CS">{{ langService.translate('submission.proposal.departments.CS') }}</option>
+                        <option value="IS">{{ langService.translate('submission.proposal.departments.IS') }}</option>
+                        <option value="AI">{{ langService.translate('submission.proposal.departments.AI') }}</option>
+                        <option value="IT">{{ langService.translate('submission.proposal.departments.IT') }}</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>المشرف المقترح</label>
-                    <input type="text" formControlName="supervisor" placeholder="اسم الدكتور المشرف">
+                    <label>{{ langService.translate('submission.proposal.proposedSupervisor') }}</label>
+                    <input type="text" formControlName="supervisor" [placeholder]="langService.translate('submission.proposal.supervisorPlaceholder')">
                 </div>
             </div>
         </section>
@@ -67,23 +72,23 @@
         <section class="form-section">
             <div class="section-title">
                 <i class="fas fa-code"></i>
-                <h3>التفاصيل التقنية والأهداف</h3>
+                <h3>{{ langService.translate('submission.proposal.technicalDetails') }}</h3>
             </div>
             <div class="form-group">
-                <label>فكرة المشروع</label>
-                <textarea formControlName="idea" rows="4" placeholder="اشرح فكرة المشروع بالتفصيل (50 حرف على الأقل)"></textarea>
+                <label>{{ langService.translate('submission.proposal.idea') }}</label>
+                <textarea formControlName="idea" rows="4" [placeholder]="langService.translate('submission.proposal.ideaPlaceholder')"></textarea>
             </div>
             <div class="form-group">
-                <label>أهداف المشروع</label>
-                <textarea formControlName="goals" rows="3" placeholder="ما الذي يهدف المشروع لتحقيقه؟"></textarea>
+                <label>{{ langService.translate('submission.proposal.goals') }}</label>
+                <textarea formControlName="goals" rows="3" [placeholder]="langService.translate('submission.proposal.goalsPlaceholder')"></textarea>
             </div>
             <div class="form-group">
-                <label>وصف مختصر</label>
-                <textarea formControlName="description" rows="2" placeholder="نبذة مختصرة للعرض"></textarea>
+                <label>{{ langService.translate('submission.proposal.description') }}</label>
+                <textarea formControlName="description" rows="2" [placeholder]="langService.translate('submission.proposal.descriptionPlaceholder')"></textarea>
             </div>
             <div class="form-group">
-                <label>الأدوات أو التقنيات المستخدمة</label>
-                <input type="text" formControlName="tools" placeholder="مثال: Angular, Python, TensorFlow">
+                <label>{{ langService.translate('submission.proposal.tools') }}</label>
+                <input type="text" formControlName="tools" [placeholder]="langService.translate('submission.proposal.toolsPlaceholder')">
             </div>
         </section>
 
@@ -91,32 +96,32 @@
         <section class="form-section">
             <div class="section-title">
                 <i class="fas fa-cloud-upload-alt"></i>
-                <h3>المرفقات والملاحظات</h3>
+                <h3>{{ langService.translate('submission.proposal.attachments') }}</h3>
             </div>
             <div class="upload-container" [class.has-file]="proposalForm.get('attachment')?.value">
                 <label for="proposal-file" class="upload-label">
                     <i class="fas fa-file-pdf"></i>
                     <div class="upload-text">
-                        <span class="main-text">رفع ملف البروبوزال (PDF)</span>
-                        <span class="sub-text">اسحب الملف هنا أو انقر للاختيار</span>
+                        <span class="main-text">{{ langService.translate('submission.proposal.uploadTitle') }}</span>
+                        <span class="sub-text">{{ langService.translate('submission.proposal.uploadSubtitle') }}</span>
                     </div>
                     <input type="file" id="proposal-file" (change)="onFileChange($event)" accept="application/pdf" hidden>
                 </label>
                 <div class="file-info" *ngIf="proposalForm.get('attachment')?.value">
                     <i class="fas fa-check"></i>
-                    <span>تم اختيار: {{ proposalForm.get('attachment')?.value.name }}</span>
+                    <span>{{ langService.translate('submission.proposal.fileSelected') }} {{ proposalForm.get('attachment')?.value.name }}</span>
                 </div>
             </div>
             <div class="form-group mt-4">
-                <label>ملاحظات إضافية</label>
-                <textarea formControlName="notes" rows="2" placeholder="أي ملاحظات تود إضافتها للجنة المراجعه"></textarea>
+                <label>{{ langService.translate('submission.proposal.additionalNotes') }}</label>
+                <textarea formControlName="notes" rows="2" [placeholder]="langService.translate('submission.proposal.notesPlaceholder')"></textarea>
             </div>
         </section>
 
         <div class="form-actions">
-            <button type="button" class="btn btn-outline">حفظ كمسودة</button>
+            <button type="button" class="btn btn-outline">{{ langService.translate('submission.proposal.saveDraft') }}</button>
             <button type="submit" class="btn btn-primary submit-btn" [disabled]="proposalForm.invalid || submissionStatus === 'closed'">
-                إرسال المقترح النهائي
+                {{ langService.translate('submission.proposal.submitFinal') }}
             </button>
         </div>
     </form>

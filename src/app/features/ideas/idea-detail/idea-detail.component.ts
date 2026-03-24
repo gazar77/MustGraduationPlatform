@@ -28,7 +28,9 @@ export class IdeaDetailComponent implements OnInit {
         supervisorDoctorId: 1,
         supervisorName: 'د. أحمد علي',
         requiredSkills: ['Angular', 'Node.js', 'Python', 'TensorFlow'],
-        createdAt: new Date()
+        createdAt: new Date(),
+        isVisible: true,
+        order: 0
       };
     }
   }

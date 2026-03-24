@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LanguageService } from '../../../core/services/language.service';
+import { ContactService } from '../../../core/services/contact.service';
 
 @Component({
     selector: 'app-contact-page',
@@ -12,7 +14,7 @@ export class ContactPageComponent {
     submitted = false;
     successMessage = '';
 
-    constructor(private fb: FormBuilder) {
+    constructor(private fb: FormBuilder, public langService: LanguageService, private contactService: ContactService) {
         this.contactForm = this.fb.group({
             name: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
@@ -24,11 +26,11 @@ export class ContactPageComponent {
     onSubmit() {
         this.submitted = true;
         if (this.contactForm.valid) {
-            setTimeout(() => {
-                this.successMessage = 'تم إرسال رسالتك بنجاح. سنتواصل معك قريباً.';
+            this.contactService.addMessage(this.contactForm.value).subscribe(() => {
+                this.successMessage = this.langService.translate('contact.successMsg');
                 this.contactForm.reset();
                 this.submitted = false;
-            }, 1000);
+            });
         }
     }
 }

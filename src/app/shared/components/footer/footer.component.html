@@ -1,89 +1,70 @@
-<footer class="main-footer no-print">
-    <!-- Footer Main Content -->
-    <div class="footer-main">
-        <div class="container">
-            <!-- Logo Section -->
-            <div class="footer-logo-section">
-                <img src="assets/must-logo.png" alt="MUST Logo" class="footer-logo">
-                <span class="footer-logo-text">MUST</span>
-            </div>
-
-            <!-- 4 Column Grid -->
-            <div class="footer-grid">
-                <!-- Column 1: Links -->
-                <div class="footer-column">
-                    <h3 class="footer-heading">روابط هامة</h3>
-                    <ul class="footer-links-list">
-                        <li><a routerLink="/dashboard">الرئيسية</a></li>
-                        <li><a routerLink="/ideas">أفكار المشاريع</a></li>
-                        <li><a routerLink="/templates">النماذج والوثائق</a></li>
-                        <li><a routerLink="/news/list">جدول المناقشات</a></li>
-                        <li><a routerLink="/events/calendar">فعاليات مشاريع التخرج</a></li>
-                        <li><a href="https://must.edu.eg/magazine" target="_blank">مجلة الكلية</a></li>
-                        <li><a routerLink="/contact">اتصل بنا</a></li>
-                    </ul>
-                </div>
-
-                <!-- Column 2: About -->
-                <div class="footer-column">
-                    <h3 class="footer-heading">عن الكلية</h3>
-                    <ul class="footer-links-list">
-                        <li><a href="https://www.must.edu.eg" target="_blank">عن جامعة MUST</a></li>
-                        <li><a href="https://www.must.edu.eg/history" target="_blank">تاريخ الجامعة</a></li>
-                        <li><a href="https://www.must.edu.eg/accreditation" target="_blank">الاعتماد والشراكات</a></li>
-                        <li><a href="https://www.must.edu.eg/contact" target="_blank">تواصل مع الجامعة</a></li>
-                    </ul>
-                </div>
-
-                <!-- Column 3: Graduation Projects -->
-                <div class="footer-column">
-                    <h3 class="footer-heading">مشاريع التخرج</h3>
-                    <ul class="footer-links-list">
-                        <li><a routerLink="/ideas/register">تسجيل فكرة مشروع</a></li>
-                        <li><a routerLink="/graduation-form">تسليم الـ Proposal</a></li>
-                        <li><a routerLink="/graduation-form/requirements-1">متطلبات المشروع (١)</a></li>
-                        <li><a routerLink="/graduation-form/requirements-2">متطلبات المشروع (٢)</a></li>
-                    </ul>
-                </div>
-
-                <!-- Column 4: Contact Info -->
-                <div class="footer-column">
-                    <h3 class="footer-heading">تواصل معنا</h3>
-                    <div class="contact-info">
-                        <div class="contact-item">
-                            <i class="fas fa-phone-alt"></i>
-                            <span>16878</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-envelope"></i>
-                            <a href="mailto:Info@Must.Edu.Eg">Info&#64;Must.Edu.Eg</a>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>Al Motamayez District – 6th of October, Egypt</span>
-                        </div>
-                    </div>
-
-                    <!-- Social Media Links -->
-                    <div class="footer-social">
-                        <a href="https://wa.me/201234567890" target="_blank" class="social-circle whatsapp"
-                            aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                        <a href="https://www.linkedin.com/school/must-university" target="_blank"
-                            class="social-circle linkedin" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="https://www.instagram.com/must_university" target="_blank"
-                            class="social-circle instagram" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="https://twitter.com/must_university" target="_blank" class="social-circle twitter"
-                            aria-label="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
+<footer class="must-main-footer" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
+  <!-- Top Centered Logo Section -->
+  <div class="footer-header">
+    <div class="footer-logo-wrap">
+      <img src="assets/1740307452_295_53683_logo.svg" alt="MUST Logo" class="round-logo" width="80" height="80">
     </div>
+  </div>
 
-    <!-- Copyright Bar -->
-    <div class="copyright-bar">
-        <div class="container">
-            <p>Copyright All Right Reserved &copy; MUST UNIVERSITY {{ currentYear }}</p>
+  <!-- Main Footer Content Grid -->
+  <div class="footer-main">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Links Column (Project Specific) -->
+        <div class="footer-col">
+          <h3 class="footer-title">{{ getTranslation('footer.links') }}</h3>
+          <ul class="footer-links">
+            <li><a routerLink="/dashboard">{{ getTranslation('nav.home') }}</a></li>
+            <li><a routerLink="/ideas">{{ getTranslation('nav.ideas') }}</a></li>
+            <li><a routerLink="/ideas/register">{{ getTranslation('nav.registration') }}</a></li>
+            <li><a routerLink="/submission/proposal">{{ getTranslation('nav.submission') }}</a></li>
+            <li><a routerLink="/templates">{{ getTranslation('nav.templates') }}</a></li>
+            <li><a routerLink="/contact">{{ getTranslation('nav.contact') }}</a></li>
+          </ul>
         </div>
+
+        <!-- About University Column -->
+        <div class="footer-col">
+          <h3 class="footer-title">{{ getTranslation('footer.about') }}</h3>
+          <ul class="footer-links">
+            <li><a href="https://must.edu.eg/the-university/" target="_blank">About MUST</a></li>
+            <li><a href="https://must.edu.eg/the-university/" target="_blank">History</a></li>
+            <li><a href="https://must.edu.eg/the-university/" target="_blank">Accreditation</a></li>
+            <li><a href="https://must.edu.eg/the-university/" target="_blank">Why MUST</a></li>
+            <li><a href="https://must.edu.eg/the-university/" target="_blank">Values & Principles</a></li>
+            <li><a routerLink="/contact">{{ getTranslation('nav.contact') }}</a></li>
+          </ul>
+        </div>
+
+        <!-- MUST BUZZ Column (News & Events) -->
+        <div class="footer-col">
+          <h3 class="footer-title">{{ getTranslation('footer.buzz') }}</h3>
+          <ul class="footer-links">
+            <li><a routerLink="/news/calendar">{{ getTranslation('nav.events') }}</a></li>
+            <li><a routerLink="/news/list">{{ getTranslation('nav.news') }}</a></li>
+            <li><a href="https://must.edu.eg/must-buzz/" target="_blank">Blog</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact Info Column -->
+        <div class="footer-col">
+          <h3 class="footer-title">{{ getTranslation('footer.contact') }}</h3>
+          <ul class="contact-data">
+            <li class="phone-number">16878</li>
+            <li class="email-address">Info&#64;Must.Edu.Eg</li>
+            <li><a href="https://chat.whatsapp.com/YOUR_GROUP_LINK" target="_blank" style="color: #25D366; text-decoration: none; font-weight: bold;">
+              <i class="fab fa-whatsapp"></i> Graduation Group
+            </a></li>
+          </ul>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <!-- White Copyright Bar -->
+  <div class="footer-copyright-bar">
+    <div class="container">
+      <p>{{ getTranslation('footer.copyright') }}</p>
+    </div>
+  </div>
 </footer>

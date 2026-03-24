@@ -1,0 +1,22 @@
+<div class="hero-banner" [class.compact]="compact" [style.backgroundImage]="compact ? 'none' : 'url(' + currentBgImage + ')'" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
+  <!-- Dark Overlay -->
+  <div class="overlay"></div>
+
+  <!-- Content -->
+  <div class="hero-content container">
+    <h1 class="hero-title">{{ title || langService.translate('dashboard.heroTitle') }}</h1>
+    
+    <div class="hero-breadcrumbs">
+      <ng-container *ngFor="let crumb of breadcrumbs; let last = last">
+        <a *ngIf="crumb.url" [routerLink]="crumb.url" class="crumb-link">{{ crumb.label }}</a>
+        <span *ngIf="!crumb.url" class="crumb-current" [class.active]="last">{{ crumb.label }}</span>
+        
+        <!-- Separator Arrow -->
+        <span *ngIf="!last" class="crumb-separator">
+          <i class="fas" [ngClass]="(langService.currentLang$ | async) === 'ar' ? 'fa-arrow-left' : 'fa-arrow-right'"></i>
+        </span>
+      </ng-container>
+    </div>
+  </div>
+
+</div>

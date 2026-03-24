@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { LanguageService } from '../../../core/services/language.service';
+import { ProjectSubmissionService } from '../../../core/services/project-submission.service';
 
 @Component({
   selector: 'app-project-registration',
@@ -7,23 +9,23 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./project-registration.component.scss']
 })
 export class ProjectRegistrationComponent implements OnInit {
-  pageTitle = '';
-  instructions = '';
+  titleKey = '';
+  instructionsKey = '';
   deadline = '2026-05-15';
   selectedFile: File | null = null;
   notes = '';
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute, public langService: LanguageService, private projectSubmissionService: ProjectSubmissionService) {}
 
   ngOnInit(): void {
     this.route.data.subscribe(data => {
       const type = data['type'];
       if (type === 'reg1') {
-        this.pageTitle = 'تسجيل مشروع 1';
-        this.instructions = 'يرجى رفع المستندات المطلوبة للمرحلة الأولى من تسجيل المشروع، تشمل كشف الدرجات وموافقة المشرف.';
+        this.titleKey = 'submission.registration.reg1Title';
+        this.instructionsKey = 'submission.registration.reg1Instructions';
       } else {
-        this.pageTitle = 'تسجيل مشروع 2';
-        this.instructions = 'يرجى رفع تقارير الإنجاز للمرحلة الثانية والمتطلبات النهائية للتسجيل.';
+        this.titleKey = 'submission.registration.reg2Title';
+        this.instructionsKey = 'submission.registration.reg2Instructions';
         this.deadline = '2026-06-20';
       }
     });
@@ -37,8 +39,19 @@ export class ProjectRegistrationComponent implements OnInit {
 
   onSubmit(): void {
     if (this.selectedFile) {
-      console.log('Submitting for:', this.pageTitle, this.selectedFile, this.notes);
-      alert('تم رفع المستندات بنجاح للمرحلة: ' + this.pageTitle);
+      this.route.data.subscribe(data => {
+        const type = data['type'] === 'reg1' ? 'project1' : 'project2';
+        this.projectSubmissionService.addSubmission({
+            type,
+            studentName: 'مستخدم مسجل',
+            fileName: this.selectedFile!.name,
+            notes: this.notes
+        }).subscribe(() => {
+            alert(this.langService.translate('submission.registration.successMsg') + this.langService.translate(this.titleKey));
+            this.selectedFile = null;
+            this.notes = '';
+        });
+      });
     }
   }
 }

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Idea } from '../../../core/models/idea.model';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-idea-card',
@@ -9,27 +10,16 @@ import { Idea } from '../../../core/models/idea.model';
 export class IdeaCardComponent implements OnInit {
   @Input() idea!: Idea;
 
-  constructor() { }
+  constructor(public langService: LanguageService) { }
 
   ngOnInit(): void {
   }
 
-  getStatusArabic(status: string): string {
-    const map: { [key: string]: string } = {
-      'Open': 'متاح',
-      'Reserved': 'محجوز فرئياً',
-      'Approved': 'معتمد',
-      'Closed': 'مغلق'
-    };
-    return map[status] || status;
+  getStatusTranslation(status: string): string {
+    return this.langService.translate(`ideas.status.${status}`) || status;
   }
 
-  getDifficultyArabic(difficulty: string): string {
-    const map: { [key: string]: string } = {
-      'Easy': 'سهل',
-      'Medium': 'متوسط',
-      'Hard': 'صعب'
-    };
-    return map[difficulty] || difficulty;
+  getDifficultyTranslation(difficulty: string): string {
+    return this.langService.translate(`ideas.difficulty.${difficulty}`) || difficulty;
   }
 }

@@ -15,6 +15,12 @@
                [(ngModel)]="formData[field.name]" 
                class="form-control" [placeholder]="'أدخل ' + field.label">
                
+        <input *ngIf="field.type === 'date'" 
+               type="date" 
+               [id]="field.name" 
+               [(ngModel)]="formData[field.name]" 
+               class="form-control">
+
         <textarea *ngIf="field.type === 'textarea'" 
                   [id]="field.name" 
                   [(ngModel)]="formData[field.name]" 
@@ -24,9 +30,15 @@
                 [id]="field.name" 
                 [(ngModel)]="formData[field.name]" 
                 class="form-select">
-          <option value="" disabled selected>اختر {{ field.label }}</option>
+          <option value="" disabled>اختر {{ field.label }}</option>
           <option *ngFor="let opt of field.options" [value]="opt">{{ opt }}</option>
         </select>
+        
+        <div *ngIf="field.type === 'readonly'" 
+             class="readonly-value p-2 border rounded bg-light text-muted" 
+             style="min-height: 38px;">
+          {{ formData[field.name] || 'غير متوفر' }}
+        </div>
       </div>
     </div>
     

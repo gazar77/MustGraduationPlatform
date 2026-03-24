@@ -1,6 +1,12 @@
 <div class="management-container card">
     <div class="table-header">
-        <h2>{{ title }}</h2>
+        <div class="header-left">
+            <h2>{{ title }}</h2>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="بحث باسم العنصر..." #searchInput (keyup)="0">
+            </div>
+        </div>
         <button class="btn btn-primary" (click)="onAdd()">
             <i class="fas fa-plus"></i> إضافة جديد
         </button>
@@ -11,16 +17,25 @@
             <thead>
                 <tr>
                     <th *ngFor="let col of columns">{{ col.label }}</th>
+                    <th *ngIf="showStatus">الحالة</th>
                     <th class="actions-col">الإجراءات</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let item of items">
+                <tr *ngFor="let item of items | filterByTitle:searchInput.value">
                     <td *ngFor="let col of columns">
                         <ng-container [ngSwitch]="col.key">
                             <span *ngSwitchCase="'date'">{{ item[col.key] | date:'shortDate' }}</span>
+                            <span *ngSwitchCase="'publishDate'">{{ item[col.key] | date:'shortDate' }}</span>
+                            <span *ngSwitchCase="'lastUpdate'">{{ item[col.key] | date:'shortDate' }}</span>
                             <span *ngSwitchDefault>{{ item[col.key] }}</span>
                         </ng-container>
+                    </td>
+                    <td *ngIf="showStatus">
+                        <label class="switch">
+                            <input type="checkbox" [checked]="item.isVisible !== false" (change)="toggleStatus.emit(item)">
+                            <span class="slider round"></span>
+                        </label>
                     </td>
                     <td class="actions-cell">
                         <button class="action-btn edit" (click)="onEdit(item)" title="تعديل">

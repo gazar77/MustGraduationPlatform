@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../shared/shared.module';
 import { TemplatesRoutingModule } from './templates-routing.module';
 import { TemplateListComponent } from './template-list/template-list.component';
+import { HeroBannerComponent } from '../../shared/components/hero-banner/hero-banner.component';
 
 @NgModule({
   declarations: [
@@ -11,7 +12,8 @@ import { TemplateListComponent } from './template-list/template-list.component';
   imports: [
     CommonModule,
     SharedModule,
-    TemplatesRoutingModule
+    TemplatesRoutingModule,
+    HeroBannerComponent
   ]
 })
 export class TemplatesModule { }

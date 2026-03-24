@@ -1,268 +1,119 @@
-// ============================================
-// MUST University Style Footer
-// ============================================
+$must-blue: #1d2c52;
+$must-green: #1FA56B;
+$text-white: #ffffff;
+$text-grey: #666666;
 
-$navy: #011835;
-$green: #1FA56B;
-$white: #ffffff;
-$light-text: rgba(255, 255, 255, 0.75);
+.must-main-footer {
+  background-color: var(--footer-bg);
+  color: #ffffff;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
 
-// ---- Floating Social Media ----
-.social-floating {
-    position: fixed;
-    left: 20px;
-    top: 50%;
-    transform: translateY(-50%);
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  .footer-header {
+    padding: 40px 0 20px;
     display: flex;
-    flex-direction: column;
-    gap: 8px;
-    z-index: 900;
+    justify-content: center;
 
-    .social-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: $white;
-        font-size: 1.1rem;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-
-        &:hover {
-            transform: scale(1.15);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        &.whatsapp {
-            background: #25D366;
-        }
-
-        &.linkedin {
-            background: #0077B5;
-        }
-
-        &.instagram {
-            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-        }
-
-        &.twitter {
-            background: #1DA1F2;
-        }
+    .footer-logo-wrap {
+      background: var(--primary-color);
+      border-radius: 50%;
+      padding: 10px;
+      width: 100px;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
-}
+  }
 
-// ---- Footer Main ----
-.main-footer {
-    margin-top: 0;
-}
+  .footer-main {
+    padding-bottom: 60px;
+    position: relative;
+  }
 
-.footer-main {
-    background: $navy;
-    padding: 3rem 0 2rem;
-}
-
-// ---- Logo Section ----
-.footer-logo-section {
-    text-align: center;
-    margin-bottom: 2.5rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid rgba($white, 0.1);
-
-    .footer-logo {
-        height: 80px;
-        width: auto;
-        margin-bottom: 0.75rem;
-        background: $white;
-        padding: 10px;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .footer-logo-text {
-        display: block;
-        color: $white;
-        font-weight: 700;
-        font-size: 1.2rem;
-        letter-spacing: 3px;
-    }
-}
-
-// ---- Grid Layout ----
-.footer-grid {
+  .footer-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2.5rem;
-}
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 40px;
 
-// ---- Column Styles ----
-.footer-column {
-    .footer-heading {
-        color: $green;
-        font-size: 1.1rem;
-        font-weight: 700;
-        margin: 0 0 1.2rem;
-        padding-bottom: 0.75rem;
-        border-bottom: 2px solid rgba($green, 0.3);
-        font-style: italic;
+    @media (max-width: 992px) {
+      grid-template-columns: 1fr 1fr;
     }
-}
 
-.footer-links-list {
+    @media (max-width: 576px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .footer-title {
+    color: var(--secondary-color);
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    text-transform: capitalize;
+  }
+
+  .footer-links {
     list-style: none;
     padding: 0;
     margin: 0;
 
     li {
-        margin-bottom: 0.6rem;
+      margin-bottom: 12px;
 
-        a {
-            color: $light-text;
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-            display: inline-block;
-
-            &:hover {
-                color: $white;
-                padding-right: 5px;
-            }
-        }
-    }
-}
-
-// ---- Contact Info ----
-.contact-info {
-    .contact-item {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.75rem;
-        margin-bottom: 0.8rem;
-        color: $light-text;
-        font-size: 0.9rem;
-
-        i {
-            color: $green;
-            margin-top: 3px;
-            min-width: 16px;
-        }
-
-        a {
-            color: $light-text;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.2s;
-
-            &:hover {
-                color: $white;
-            }
-        }
-    }
-}
-
-// ---- Footer Social Media ----
-.footer-social {
-    display: flex;
-    gap: 10px;
-    margin-top: 1.2rem;
-
-    .social-circle {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: $white;
-        font-size: 0.95rem;
+      a {
+        color: #ffffff;
         text-decoration: none;
-        border: 2px solid rgba($white, 0.2);
-        background: transparent;
-        transition: all 0.3s ease;
+        font-size: 15px;
+        transition: opacity 0.2s;
+        display: block;
 
         &:hover {
-            transform: translateY(-3px);
-
-            &.whatsapp {
-                background: #25D366;
-                border-color: #25D366;
-            }
-
-            &.linkedin {
-                background: #0077B5;
-                border-color: #0077B5;
-            }
-
-            &.instagram {
-                background: #E4405F;
-                border-color: #E4405F;
-            }
-
-            &.twitter {
-                background: #1DA1F2;
-                border-color: #1DA1F2;
-            }
+          opacity: 0.8;
+          text-decoration: underline;
         }
+      }
     }
-}
+  }
 
-// ---- Copyright Bar ----
-.copyright-bar {
-    background: darken($navy, 3%);
-    padding: 1rem 0;
+  .contact-data {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      margin-bottom: 18px;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+
+    .phone-number {
+      font-size: 18px;
+      font-weight: 800;
+    }
+  }
+
+  .footer-copyright-bar {
+    background-color: var(--bg-color);
+    padding: 15px 0;
     text-align: center;
-    border-top: 1px solid rgba($white, 0.08);
+    border-top: 1px solid var(--border-color);
 
     p {
-        margin: 0;
-        color: rgba($white, 0.5);
-        font-size: 0.85rem;
+      color: var(--text-color);
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
     }
-}
-
-// ============================================
-// RESPONSIVE
-// ============================================
-@media (max-width: 992px) {
-    .footer-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 2rem;
-    }
-}
-
-@media (max-width: 576px) {
-    .footer-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-        text-align: center;
-    }
-
-    .footer-links-list li a:hover {
-        padding-right: 0;
-    }
-
-    .contact-info .contact-item {
-        justify-content: center;
-    }
-
-    .footer-social {
-        justify-content: center;
-    }
-
-    .social-floating {
-        left: 10px;
-        gap: 6px;
-
-        .social-icon {
-            width: 34px;
-            height: 34px;
-            font-size: 0.9rem;
-        }
-    }
-
-    .footer-logo-section .footer-logo {
-        height: 60px;
-    }
+  }
 }

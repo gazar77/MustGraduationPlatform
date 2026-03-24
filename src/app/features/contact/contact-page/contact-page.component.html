@@ -1,27 +1,37 @@
 <div class="contact-page">
+    <app-hero-banner 
+        [title]="langService.translate('contact.title')"
+        [breadcrumbs]="[
+            { label: langService.translate('nav.home'), url: '/dashboard' },
+            { label: langService.translate('nav.contact') }
+        ]"
+        [compact]="true">
+    </app-hero-banner>
+
     <div class="container py-5">
         <div class="row g-4 align-items-stretch">
-
-            <!-- Sidebar with Contact Info -->
-            <div class="col-lg-4">
-                <div class="card contact-sidebar text-white shadow-sm h-100">
-                    <h2>اتصل بنا</h2>
-                    <p>نحن هنا للمساعدة. تواصل معنا لأي استفسار بخصوص مشاريع التخرج بالكلية وكن على تواصل دائم بجدول
-                        الفعاليات.</p>
+ 
+             <!-- Sidebar with Contact Info -->
+             <div class="col-lg-4">
+                 <div class="card contact-sidebar text-white shadow-sm h-100">
+                     <div class="sidebar-header mb-4">
+                        <i class="fas fa-headset fa-3x mb-3"></i>
+                        <p>{{ langService.translate('contact.subtitle') }}</p>
+                     </div>
 
                     <div class="info-list">
                         <div class="info-item">
                             <div class="icon-box"><i class="fas fa-map-marker-alt"></i></div>
                             <div class="text">
-                                <label>العنوان</label>
-                                <span>جامعة مصر للعلوم والتكنولوجيا، مدينة 6 أكتوبر، مصر</span>
+                                <label>{{ langService.translate('contact.addressLabel') }}</label>
+                                <span>{{ langService.translate('contact.addressValue') }}</span>
                             </div>
                         </div>
 
                         <div class="info-item">
                             <div class="icon-box"><i class="fas fa-phone-alt"></i></div>
                             <div class="text">
-                                <label>الهاتف (الخط الساخن)</label>
+                                <label>{{ langService.translate('contact.phoneLabel') }}</label>
                                 <span>16878</span>
                             </div>
                         </div>
@@ -29,19 +39,18 @@
                         <div class="info-item">
                             <div class="icon-box"><i class="fas fa-envelope"></i></div>
                             <div class="text">
-                                <label>البريد الإلكتروني للجامعة</label>
+                                <label>{{ langService.translate('contact.emailLabel') }}</label>
                                 <a href="mailto:Info@Must.Edu.Eg">Info&#64;Must.Edu.Eg</a>
                             </div>
                         </div>
                     </div>
 
                     <div class="social-links">
-                        <a href="https://web.whatsapp.com/" target="_blank" class="social-btn"><i
-                                class="fab fa-whatsapp"></i></a>
-                        <a href="https://eg.linkedin.com/school/misr-university-for-science-and-technology/"
-                            target="_blank" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="https://www.instagram.com/must_university/" target="_blank" class="social-btn"><i
-                                class="fab fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/Must.University" target="_blank" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/must_university/" target="_blank" class="social-btn"><i class="fab fa-instagram"></i></a>
+                        <a href="https://x.com/must_university" target="_blank" class="social-btn"><i class="fab fa-x-twitter"></i></a>
+                        <a href="https://eg.linkedin.com/school/misr-university-for-science-and-technology/" target="_blank" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://api.whatsapp.com/send?phone=201000000000" target="_blank" class="social-btn"><i class="fab fa-whatsapp"></i></a>
                     </div>
                 </div>
             </div>
@@ -49,7 +58,7 @@
             <!-- Contact Form -->
             <div class="col-lg-8">
                 <div class="card form-container shadow-sm h-100">
-                    <h3 class="mb-4 text-primary fw-bold">أرسل لنا رسالتك</h3>
+                    <h3 class="mb-4 text-primary fw-bold">{{ langService.translate('contact.formTitle') }}</h3>
 
                     <div class="alert alert-success" *ngIf="successMessage">
                         <i class="fas fa-check-circle me-2"></i> {{ successMessage }}
@@ -58,58 +67,55 @@
                     <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
                         <div class="row">
                             <div class="col-md-6 mb-4">
-                                <label class="form-label">الاسم الكامل</label>
+                                <label class="form-label">{{ langService.translate('contact.fullName') }}</label>
                                 <input type="text" formControlName="name" class="form-control bg-light"
-                                    placeholder="أدخل اسمك كاملاً"
+                                    [placeholder]="langService.translate('contact.namePlaceholder')"
                                     [class.is-invalid]="submitted && contactForm.get('name')?.errors">
                                 <div class="invalid-feedback"
-                                    *ngIf="submitted && contactForm.get('name')?.hasError('required')">يرجى إدخال الاسم
+                                    *ngIf="submitted && contactForm.get('name')?.hasError('required')">{{ langService.translate('contact.nameReq') }}
                                 </div>
                             </div>
 
                             <div class="col-md-6 mb-4">
-                                <label class="form-label">البريد الإلكتروني</label>
+                                <label class="form-label">{{ langService.translate('contact.email') }}</label>
                                 <input type="email" formControlName="email" class="form-control bg-light"
-                                    placeholder="example@must.edu.eg"
+                                    [placeholder]="langService.translate('contact.emailPlaceholder')"
                                     [class.is-invalid]="submitted && contactForm.get('email')?.errors">
                                 <div class="invalid-feedback"
-                                    *ngIf="submitted && contactForm.get('email')?.hasError('required')">يرجى إدخال
-                                    البريد الإلكتروني</div>
+                                    *ngIf="submitted && contactForm.get('email')?.hasError('required')">{{ langService.translate('contact.emailReq') }}</div>
                                 <div class="invalid-feedback"
-                                    *ngIf="submitted && contactForm.get('email')?.hasError('email')">بريد إلكتروني غير
-                                    صالح</div>
+                                    *ngIf="submitted && contactForm.get('email')?.hasError('email')">{{ langService.translate('contact.emailInv') }}</div>
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label">موضوع الرسالة</label>
+                            <label class="form-label">{{ langService.translate('contact.subject') }}</label>
                             <input type="text" formControlName="subject" class="form-control bg-light"
-                                placeholder="اكتب موضوع رسالتك هنا"
+                                [placeholder]="langService.translate('contact.subjectPlaceholder')"
                                 [class.is-invalid]="submitted && contactForm.get('subject')?.errors">
                             <div class="invalid-feedback"
-                                *ngIf="submitted && contactForm.get('subject')?.hasError('required')">يرجى إدخال الموضوع
+                                *ngIf="submitted && contactForm.get('subject')?.hasError('required')">{{ langService.translate('contact.subjectReq') }}
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label">نص الرسالة</label>
+                            <label class="form-label">{{ langService.translate('contact.messageText') }}</label>
                             <textarea formControlName="message" class="form-control bg-light" rows="6"
-                                placeholder="تفاصيل الرسالة أواستفسارك..."
+                                [placeholder]="langService.translate('contact.messagePlaceholder')"
                                 [class.is-invalid]="submitted && contactForm.get('message')?.errors"></textarea>
                             <div class="invalid-feedback"
-                                *ngIf="submitted && contactForm.get('message')?.hasError('required')">يرجى إدخال نص
-                                الرسالة</div>
+                                *ngIf="submitted && contactForm.get('message')?.hasError('required')">{{ langService.translate('contact.messageReq') }}</div>
                         </div>
 
                         <div class="text-end mt-2">
                             <button type="submit" class="btn btn-submit btn-lg px-5">
-                                <i class="fas fa-paper-plane me-2"></i> إرسال الرسالة
+                                <i class="fas fa-paper-plane me-2"></i> {{ langService.translate('contact.submitBtn') }}
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
+</div>
 
         </div>
     </div>
-</div>

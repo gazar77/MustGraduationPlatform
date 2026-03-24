@@ -1,9 +1,9 @@
-<div class="event-details-container" *ngIf="!loading && event">
+<div class="event-details-container" *ngIf="!loading && event" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
     <!-- Hero Section -->
     <section class="hero-section" [style.background-image]="'url(' + event.image + ')'">
         <div class="overlay"></div>
         <div class="hero-content">
-            <span class="category-badge">{{ getCategoryLabel(event.category) }}</span>
+            <span class="category-badge">{{ getCategoryTranslation(event.category) }}</span>
             <h1 class="event-title">{{ event.title }}</h1>
             <div class="quick-meta">
                 <span class="meta-item"><i class="fas fa-calendar-alt"></i> {{ event.date | date:'fullDate' }}</span>
@@ -17,22 +17,22 @@
         <div class="content-grid">
             <!-- Left: Description & Info -->
             <div class="details-card main-info">
-                <h3>وصف الفعالية</h3>
+                <h3>{{ langService.translate('events.details.descriptionTitle') }}</h3>
                 <p class="description">{{ event.description }}</p>
                 
                 <div class="organizer-info">
-                    <div class="label">الجهة المنظمة:</div>
-                    <div class="value">{{ event.organizer || 'كلية تكنولوجيا المعلومات' }}</div>
+                    <div class="label">{{ langService.translate('events.details.organizer') }}</div>
+                    <div class="value">{{ event.organizer || langService.translate('events.details.defaultOrganizer') }}</div>
                 </div>
 
                 <div class="action-bar">
                     <button class="btn btn-primary register-btn">
                         <i class="fas fa-user-plus"></i>
-                        تسجيل الحضور الآن
+                        {{ langService.translate('events.details.registerBtn') }}
                     </button>
                     <button class="btn btn-outline share-btn">
                         <i class="fas fa-share-alt"></i>
-                        مشاركة
+                        {{ langService.translate('events.details.shareBtn') }}
                     </button>
                 </div>
             </div>
@@ -40,29 +40,29 @@
             <!-- Right: Schedule & Location -->
             <aside class="side-info">
                 <div class="details-card info-card">
-                    <h3>موعد الفعالية</h3>
+                    <h3>{{ langService.translate('events.details.scheduleTitle') }}</h3>
                     <div class="info-item">
                         <i class="fas fa-clock"></i>
                         <div>
-                            <span>الوقت</span>
+                            <span>{{ langService.translate('events.details.timeLabel') }}</span>
                             <strong>{{ event.time }}</strong>
                         </div>
                     </div>
                     <div class="info-item">
                         <i class="fas fa-map-marked-alt"></i>
                         <div>
-                            <span>الموقع</span>
+                            <span>{{ langService.translate('events.details.locationLabel') }}</span>
                             <strong>{{ event.location }}</strong>
                         </div>
                     </div>
                 </div>
 
                 <div class="details-card notes-card">
-                    <h3>ملاحظات هامة</h3>
+                    <h3>{{ langService.translate('events.details.notesTitle') }}</h3>
                     <ul>
-                        <li>يرجى الحضور قبل الموعد بـ 15 دقيقة.</li>
-                        <li>إحضار كارنيه الجامعة شرط أساسي للدخول.</li>
-                        <li>الالتزام بالزي الرسمي لطلاب مشاريع التخرج.</li>
+                        <li>{{ langService.translate('events.details.note1') }}</li>
+                        <li>{{ langService.translate('events.details.note2') }}</li>
+                        <li>{{ langService.translate('events.details.note3') }}</li>
                     </ul>
                 </div>
             </aside>
@@ -76,6 +76,6 @@
 
 <div class="error-state" *ngIf="!loading && !event">
     <i class="fas fa-exclamation-triangle"></i>
-    <h2>عذراً، لم يتم العثور على الفعالية</h2>
-    <button routerLink="/events" class="btn btn-primary">العودة للفعاليات</button>
+    <h2>{{ langService.translate('events.details.errorTitle') }}</h2>
+    <button routerLink="/events" class="btn btn-primary">{{ langService.translate('events.details.backBtn') }}</button>
 </div>

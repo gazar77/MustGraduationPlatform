@@ -26,7 +26,17 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // If already logged in, redirect to dashboard
+    if (this.authService.currentUserValue) {
+      const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+      if (this.authService.currentUserValue.role === 'Admin') {
+        this.router.navigateByUrl('/admin');
+      } else {
+        this.router.navigateByUrl(returnUrl);
+      }
+    }
+  }
 
   get f() { return this.loginForm.controls; }
 

@@ -9,6 +9,7 @@ const routes: Routes = [
     path: 'auth',
     loadChildren: () => import('./features/auth/auth.module').then(m => m.AuthModule)
   },
+  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
   {
     path: '',
     component: UserLayoutComponent,
@@ -47,7 +48,7 @@ const routes: Routes = [
         loadChildren: () => import('./features/contact/contact.module').then(m => m.ContactModule)
       },
       {
-        path: '',
+        path: 'submission',
         loadChildren: () => import('./features/submission/submission.module').then(m => m.SubmissionModule)
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }

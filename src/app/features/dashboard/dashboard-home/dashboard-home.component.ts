@@ -1,4 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { LanguageService } from '../../../core/services/language.service';
+import { NewsService } from '../../../core/services/news.service';
+import { IdeaService } from '../../../core/services/idea.service';
+import { DashboardService } from '../../../core/services/dashboard.service';
+import { Observable } from 'rxjs';
+import { News } from '../../../core/models/news.model';
+import { Idea } from '../../../core/models/idea.model';
+import { DashboardStats } from '../../../core/models/dashboard-stats.model';
 
 interface SlideItem {
   image: string;
@@ -16,12 +24,24 @@ export class DashboardHomeComponent implements OnInit, OnDestroy {
   private slideInterval: any;
 
   slides: SlideItem[];
+  news$: Observable<News[]>;
+  ideas$: Observable<Idea[]>;
+  stats$: Observable<DashboardStats>;
 
-  constructor() {
+  constructor(
+    public langService: LanguageService,
+    private newsService: NewsService,
+    private ideaService: IdeaService,
+    private dashboardService: DashboardService
+  ) {
+    this.news$ = this.newsService.getVisibleNews();
+    this.ideas$ = this.ideaService.getVisibleIdeas();
+    this.stats$ = this.dashboardService.getStats();
+
     this.slides = [
       {
         image: 'assets/must_discussion_1.png',
-        title: 'بوابة مشاريع التخرج',
+        title: this.langService.translate('dashboard.heroTitle'),
         description: 'المنصة المتكاملة لإدارة ومتابعة مشاريع التخرج بكلية الحاسبات والمعلومات - جامعة مصر للعلوم والتكنولوجيا'
       },
       {

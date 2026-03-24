@@ -1,7 +1,7 @@
-<div class="idea-card card" [ngClass]="'status-' + idea.status.toLowerCase()">
+<div class="idea-card card" [ngClass]="'status-' + idea.status.toLowerCase()" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
     <div class="card-header">
         <span class="category-badge">{{ idea.category }}</span>
-        <span class="status-badge">{{ getStatusArabic(idea.status) }}</span>
+        <span class="status-badge">{{ getStatusTranslation(idea.status) }}</span>
     </div>
 
     <h3 class="idea-title">{{ idea.title }}</h3>
@@ -9,18 +9,18 @@
 
     <div class="idea-meta">
         <div class="meta-item">
-            <span class="label">المشرف:</span>
+            <span class="label">{{ langService.translate('ideas.card.supervisor') }}</span>
             <span class="value">{{ idea.supervisorName }}</span>
         </div>
         <div class="meta-item">
-            <span class="label">الصعوبة:</span>
+            <span class="label">{{ langService.translate('ideas.card.difficultyLabel') }}</span>
             <span class="value difficulty" [ngClass]="idea.difficulty.toLowerCase()">{{
-                getDifficultyArabic(idea.difficulty) }}</span>
+                getDifficultyTranslation(idea.difficulty) }}</span>
         </div>
     </div>
 
     <div class="card-footer">
-        <a [routerLink]="['/ideas', idea.id]" class="btn btn-primary">عرض التفاصيل</a>
-        <span class="team-size">فريق: {{ idea.maxTeamSize }} طلاب</span>
+        <a [routerLink]="['/ideas', idea.id]" class="btn btn-primary">{{ langService.translate('ideas.card.viewDetails') }}</a>
+        <span class="team-size">{{ langService.translate('ideas.card.team') }} {{ idea.maxTeamSize }} {{ langService.translate('ideas.card.students') }}</span>
     </div>
 </div>

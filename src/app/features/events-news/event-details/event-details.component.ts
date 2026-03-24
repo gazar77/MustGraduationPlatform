@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { EventService, EventItem } from '../../../core/services/event.service';
+import { EventService } from '../../../core/services/event.service';
+import { Event } from '../../../core/models/event.model';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-event-details',
@@ -8,12 +10,13 @@ import { EventService, EventItem } from '../../../core/services/event.service';
   styleUrls: ['./event-details.component.scss']
 })
 export class EventDetailsComponent implements OnInit {
-  event: EventItem | undefined;
+  event: Event | undefined;
   loading = true;
 
   constructor(
     private route: ActivatedRoute,
-    private eventService: EventService
+    private eventService: EventService,
+    public langService: LanguageService
   ) {}
 
   ngOnInit(): void {
@@ -29,13 +32,7 @@ export class EventDetailsComponent implements OnInit {
     });
   }
 
-  getCategoryLabel(category: string): string {
-    const labels: { [key: string]: string } = {
-      'academic': 'أكاديمي',
-      'social': 'اجتماعي',
-      'workshop': 'ورشة عمل',
-      'competition': 'مسابقة'
-    };
-    return labels[category] || category;
+  getCategoryTranslation(category: string): string {
+    return this.langService.translate(`events.list.category.${category}`) || category;
   }
 }

@@ -7,13 +7,16 @@ import { FooterComponent } from './components/footer/footer.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 import { ManagementModalComponent } from './components/management-modal/management-modal.component';
+import { HeroBannerComponent } from './components/hero-banner/hero-banner.component';
+import { FilterByTitlePipe } from './pipes/filter-by-title.pipe';
 
 @NgModule({
   declarations: [
     HeaderComponent,
     FooterComponent,
     SidebarComponent,
-    ManagementModalComponent
+    ManagementModalComponent,
+    FilterByTitlePipe
   ],
   imports: [
     CommonModule,
@@ -26,6 +29,7 @@ import { ManagementModalComponent } from './components/management-modal/manageme
     FooterComponent,
     SidebarComponent,
     ManagementModalComponent,
+    FilterByTitlePipe,
     CommonModule,
     RouterModule,
     ReactiveFormsModule,

@@ -12,7 +12,6 @@ import { Component } from '@angular/core';
   styles: [`
     .content-area {
       min-height: 80vh;
-      padding-top: 80px; /* Offset for fixed header */
     }
   `]
 })

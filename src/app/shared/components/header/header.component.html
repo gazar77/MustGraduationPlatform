@@ -1,60 +1,166 @@
-<header class="main-header no-print" [class.scrolled]="isScrolled">
-    <div class="header-top">
-        <div class="container header-top-content">
-            <div class="logo-section">
-                <img src="assets/must-logo.png" alt="MUST Logo" class="university-logo" routerLink="/dashboard">
-                <div class="titles">
-                    <h1>MISR UNIVERSITY</h1>
-                    <h2>FOR SCIENCE & TECHNOLOGY</h2>
-                </div>
-            </div>
+<header class="must-header no-print" [attr.dir]="currentLang === 'ar' ? 'rtl' : 'ltr'">
+  <div class="header-container">
+    
+    <!-- Left Logo Stacked -->
+    <a routerLink="/" class="logo-link">
+      <div class="logo-wrapper">
+        <img src="assets/1740307130_140_87669_group1000004290.svg" alt="University Logo" class="brand-logo" style="width: 140px; height: auto;">
+      </div>
+    </a>
 
-            <button class="hamburger" (click)="toggleMobileMenu()" [class.active]="isMobileMenuOpen"
-                aria-label="Toggle menu">
-                <span></span><span></span><span></span>
-            </button>
-        </div>
-    </div>
+    <!-- Center Navigation -->
+    <nav class="main-nav" [class.mobile-open]="isMobileMenuOpen" *ngIf="currentUser">
+      <ul class="nav-list">
+        <li><a routerLink="/dashboard" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.home') }}</a></li>
+        
+        <li class="has-dropdown" 
+            (mouseenter)="onMouseEnter('ideas')" 
+            (mouseleave)="onMouseLeave()"
+            [class.active]="isDropdownOpen('ideas')">
+          <a routerLink="/ideas" routerLinkActive="active" (click)="toggleDropdown('ideas', $event)">
+            {{ getTranslation('nav.ideas') }}
+            <i class="fas fa-chevron-down dropdown-icon"></i>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a routerLink="/ideas" (click)="closeAllMenus()">{{ getTranslation('nav.viewIdea') }}</a></li>
+            <li><a routerLink="/ideas/register" (click)="closeAllMenus()">{{ getTranslation('nav.registration') }}</a></li>
+          </ul>
+        </li>
 
-    <nav class="nav-bar" [class.mobile-open]="isMobileMenuOpen">
-        <div class="container nav-content">
-            <ul class="nav-list" *ngIf="currentUser">
-                <!-- Student View -->
-                <ng-container *ngIf="currentUser.role !== 'Admin'">
-                    <li><a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeMobileMenu()">الرئيسية</a></li>
-                    <li><a routerLink="/ideas" routerLinkActive="active" (click)="closeMobileMenu()">أفكار المشاريع</a></li>
-                    <li><a routerLink="/news/list" routerLinkActive="active" (click)="closeMobileMenu()">جدول المناقشات</a></li>
-                    <li><a routerLink="/events/calendar" routerLinkActive="active" (click)="closeMobileMenu()">فعاليات المشاريع</a></li>
-                    <li class="has-dropdown" [class.active]="isSubmissionActive">
-                        <a href="javascript:void(0)" class="dropbtn" (click)="toggleDropdown('submission')">
-                            المقترحات والتسجيل <i class="fas fa-chevron-down"></i>
-                        </a>
-                        <ul class="dropdown-menu" [class.show]="isDropdownOpen('submission')">
-                            <li><a routerLink="/proposal" (click)="closeMobileMenu()">البروبوزال</a></li>
-                            <li><a routerLink="/project-registration-1" (click)="closeMobileMenu()">تسجيل مشروع 1</a></li>
-                            <li><a routerLink="/project-registration-2" (click)="closeMobileMenu()">تسجيل مشروع 2</a></li>
-                        </ul>
-                    </li>
-                    <li><a routerLink="/templates" routerLinkActive="active" (click)="closeMobileMenu()">النماذج والوثائق</a></li>
-                    <li><a routerLink="/contact" routerLinkActive="active" (click)="closeMobileMenu()">اتصل بنا</a></li>
-                </ng-container>
+        <li class="has-dropdown" 
+            (mouseenter)="onMouseEnter('submissions')" 
+            (mouseleave)="onMouseLeave()"
+            [class.active]="isDropdownOpen('submissions')">
+          <a routerLink="/submission/proposal" routerLinkActive="active" (click)="toggleDropdown('submissions', $event)">
+            {{ getTranslation('nav.submissions') }}
+            <i class="fas fa-chevron-down dropdown-icon"></i>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a routerLink="/submission/proposal" (click)="closeAllMenus()">{{ getTranslation('nav.submitProposal') }}</a></li>
+            <li><a routerLink="/submission/project-registration-1" (click)="closeAllMenus()">{{ getTranslation('nav.submitReg1') }}</a></li>
+            <li><a routerLink="/submission/project-registration-2" (click)="closeAllMenus()">{{ getTranslation('nav.submitReg2') }}</a></li>
+          </ul>
+        </li>
 
-                <!-- Admin Management Links -->
-                <ng-container *ngIf="currentUser.role === 'Admin'">
-                    <li><a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeMobileMenu()">لوحة الإدارة</a></li>
-                    <li><a routerLink="/ideas" routerLinkActive="active" (click)="closeMobileMenu()">تصفح المشاريع</a></li>
-                    <li><a routerLink="/admin/manage/news" routerLinkActive="active" (click)="closeMobileMenu()">إدارة التحديثات</a></li>
-                    <li><a routerLink="/admin/manage/events" routerLinkActive="active" (click)="closeMobileMenu()">إدارة الفعاليات</a></li>
-                    <li><a routerLink="/admin/manage/templates" routerLinkActive="active" (click)="closeMobileMenu()">إدارة النماذج</a></li>
-                </ng-container>
+        <li class="has-dropdown" 
+            (mouseenter)="onMouseEnter('graduation')" 
+            (mouseleave)="onMouseLeave()"
+            [class.active]="isDropdownOpen('graduation')">
+          <a routerLink="/graduation-form" routerLinkActive="active" (click)="toggleDropdown('graduation', $event)">
+            {{ getTranslation('nav.graduation') }}
+            <i class="fas fa-chevron-down dropdown-icon"></i>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a routerLink="/graduation-form" (click)="closeAllMenus()">{{ getTranslation('nav.gradForm') }}</a></li>
+            <li><a routerLink="/graduation-form/proposal" (click)="closeAllMenus()">{{ getTranslation('nav.submitProposal') }} (Grad)</a></li>
+            <li><a routerLink="/graduation-form/requirements-1" (click)="closeAllMenus()">{{ getTranslation('nav.gradReq1') }}</a></li>
+            <li><a routerLink="/graduation-form/requirements-2" (click)="closeAllMenus()">{{ getTranslation('nav.gradReq2') }}</a></li>
+          </ul>
+        </li>
 
-                <li class="auth-btn"><a href="javascript:void(0)" (click)="logout()">تسجيل خروج</a></li>
-            </ul>
+        <li><a routerLink="/events/calendar" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.buzzEvents') }}</a></li>
+        <li><a routerLink="/news/list" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.buzzNews') }}</a></li>
+        <li><a routerLink="/templates" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.templates') }}</a></li>
 
-            <ul class="nav-list" *ngIf="!currentUser">
-                <li><a routerLink="/auth/login" routerLinkActive="active" (click)="closeMobileMenu()">تسجيل الدخول</a></li>
-                <li><a routerLink="/auth/register" routerLinkActive="active" (click)="closeMobileMenu()">إنشاء حساب</a></li>
-            </ul>
-        </div>
+        <li><a routerLink="/contact" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.contact') }}</a></li>
+
+        <li *ngIf="currentUser?.role === 'Doctor' || currentUser?.role === 'Admin'">
+          <a routerLink="/doctor" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.doctor') }}</a>
+        </li>
+        <li *ngIf="currentUser?.role === 'Admin'">
+          <a routerLink="/admin" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.admin') }}</a>
+        </li>
+      </ul>
     </nav>
+
+    <!-- Right Actions -->
+    <div class="header-actions">
+      <!-- Dark Mode Toggle -->
+      <button class="icon-btn theme-btn" (click)="toggleTheme()" aria-label="Toggle Theme" title="Toggle Dark/Light Mode">
+        <i class="fas" [ngClass]="isDarkTheme ? 'fa-sun' : 'fa-moon'"></i> 
+      </button>
+      
+      <!-- Language Toggle -->
+      <button class="icon-btn lang-btn" (click)="toggleLanguage()" aria-label="Language Toggle" title="تغيير اللغة">
+        <span class="lang-text">{{ currentLang === 'ar' ? 'En' : 'ع' }}</span>
+      </button>
+
+      <!-- Logout Button (Desktop) -->
+      <button class="icon-btn logout-btn" (click)="logout()" *ngIf="currentUser" [title]="getTranslation('nav.logout')">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+      
+      <!-- Hamburger Menu -->
+      <button class="hamburger-btn" aria-label="Menu" (click)="toggleMobileMenu()" [class.active]="isMobileMenuOpen" *ngIf="currentUser">
+        <span class="line full"></span>
+        <span class="line short"></span>
+        <span class="line full"></span>
+      </button>
+    </div>
+    
+  </div>
+
+  <!-- Mobile Menu Expansion -->
+  <div class="mobile-menu" [class.open]="isMobileMenuOpen" *ngIf="currentUser">
+    <ul class="mobile-nav-list">
+      <li><a routerLink="/dashboard" (click)="closeAllMenus()">{{ getTranslation('nav.home') }}</a></li>
+      
+      <li class="mobile-has-dropdown" [class.expanded]="isDropdownOpen('ideas')">
+        <a (click)="toggleDropdown('ideas', $event)">
+          {{ getTranslation('nav.ideas') }}
+          <i class="fas fa-plus icon"></i>
+        </a>
+        <ul class="mobile-submenu" *ngIf="isDropdownOpen('ideas')">
+          <li><a routerLink="/ideas" (click)="closeAllMenus()">{{ getTranslation('nav.viewIdea') }}</a></li>
+          <li><a routerLink="/ideas/register" (click)="closeAllMenus()">{{ getTranslation('nav.registration') }}</a></li>
+        </ul>
+      </li>
+
+      <li class="mobile-has-dropdown" [class.expanded]="isDropdownOpen('submissions')">
+        <a (click)="toggleDropdown('submissions', $event)">
+          {{ getTranslation('nav.submissions') }}
+          <i class="fas fa-plus icon"></i>
+        </a>
+        <ul class="mobile-submenu" *ngIf="isDropdownOpen('submissions')">
+          <li><a routerLink="/submission/proposal" (click)="closeAllMenus()">{{ getTranslation('nav.submitProposal') }}</a></li>
+          <li><a routerLink="/submission/project-registration-1" (click)="closeAllMenus()">{{ getTranslation('nav.submitReg1') }}</a></li>
+          <li><a routerLink="/submission/project-registration-2" (click)="closeAllMenus()">{{ getTranslation('nav.submitReg2') }}</a></li>
+        </ul>
+      </li>
+
+      <li class="mobile-has-dropdown" [class.expanded]="isDropdownOpen('graduation')">
+        <a (click)="toggleDropdown('graduation', $event)">
+          {{ getTranslation('nav.graduation') }}
+          <i class="fas fa-plus icon"></i>
+        </a>
+        <ul class="mobile-submenu" *ngIf="isDropdownOpen('graduation')">
+          <li><a routerLink="/graduation-form" (click)="closeAllMenus()">{{ getTranslation('nav.gradForm') }}</a></li>
+          <li><a routerLink="/graduation-form/proposal" (click)="closeAllMenus()">{{ getTranslation('nav.submitProposal') }} (Grad)</a></li>
+          <li><a routerLink="/graduation-form/requirements-1" (click)="closeAllMenus()">{{ getTranslation('nav.gradReq1') }}</a></li>
+          <li><a routerLink="/graduation-form/requirements-2" (click)="closeAllMenus()">{{ getTranslation('nav.gradReq2') }}</a></li>
+        </ul>
+      </li>
+
+      <li><a routerLink="/events/calendar" (click)="closeAllMenus()">{{ getTranslation('nav.buzzEvents') }}</a></li>
+      <li><a routerLink="/news/list" (click)="closeAllMenus()">{{ getTranslation('nav.buzzNews') }}</a></li>
+      <li><a routerLink="/templates" (click)="closeAllMenus()">{{ getTranslation('nav.templates') }}</a></li>
+
+      <li><a routerLink="/contact" (click)="closeAllMenus()">{{ getTranslation('nav.contact') }}</a></li>
+
+      <li *ngIf="currentUser?.role === 'Doctor' || currentUser?.role === 'Admin'">
+        <a routerLink="/doctor" (click)="closeAllMenus()">{{ getTranslation('nav.doctor') }}</a>
+      </li>
+      <li *ngIf="currentUser?.role === 'Admin'">
+        <a routerLink="/admin" (click)="closeMobileMenu()">{{ getTranslation('nav.admin') }}</a>
+      </li>
+
+      <!-- Mobile Logout -->
+      <li *ngIf="currentUser" class="mobile-logout">
+        <a (click)="logout()" class="logout-link">
+          <i class="fas fa-sign-out-alt"></i>
+          {{ getTranslation('nav.logout') }}
+        </a>
+      </li>
+    </ul>
+  </div>
 </header>

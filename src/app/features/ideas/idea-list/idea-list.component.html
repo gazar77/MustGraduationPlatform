@@ -1,23 +1,27 @@
-<div class="ideas-page container">
-    <header class="page-header">
-        <h1>تصفح أفكار مشاريع التخرج</h1>
-        <p>استعرض الأفكار المقترحة من قبل السادة أعضاء هيئة التدريس</p>
-    </header>
+<div class="ideas-page container" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
+    <app-hero-banner 
+        [title]="langService.translate('ideas.title')"
+        [breadcrumbs]="[
+            { label: langService.translate('nav.home'), url: '/dashboard' },
+            { label: langService.translate('nav.ideas') }
+        ]"
+        [compact]="true">
+    </app-hero-banner>
 
     <div class="filters-section card">
         <div class="search-box">
-            <input type="text" placeholder="بحث عن فكرة مشروع..." [(ngModel)]="searchQuery" (input)="filterIdeas()">
+            <input type="text" [placeholder]="langService.translate('ideas.searchPlaceholder')" [(ngModel)]="searchQuery" (input)="filterIdeas()">
         </div>
         <div class="filter-group">
             <select [(ngModel)]="selectedCategory" (change)="filterIdeas()">
-                <option value="">جميع الفئات</option>
+                <option value="">{{ langService.translate('ideas.filters.allCategories') }}</option>
                 <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
             </select>
             <select [(ngModel)]="selectedStatus" (change)="filterIdeas()">
-                <option value="">جميع الحالات</option>
-                <option value="Open">متاح</option>
-                <option value="Reserved">محجوز</option>
-                <option value="Approved">معتمد</option>
+                <option value="">{{ langService.translate('ideas.filters.allStatuses') }}</option>
+                <option value="Open">{{ langService.translate('ideas.filters.available') }}</option>
+                <option value="Reserved">{{ langService.translate('ideas.filters.reserved') }}</option>
+                <option value="Approved">{{ langService.translate('ideas.filters.approved') }}</option>
             </select>
         </div>
     </div>
@@ -27,6 +31,6 @@
     </div>
 
     <div *ngIf="filteredIdeas.length === 0" class="no-results">
-        <p>لا توجد نتائج تطابق بحثك.</p>
+        <p>{{ langService.translate('ideas.noResults') }}</p>
     </div>
 </div>

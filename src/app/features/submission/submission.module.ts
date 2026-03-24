@@ -4,6 +4,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { ProposalFormComponent } from './proposal-form/proposal-form.component';
 import { ProjectRegistrationComponent } from './project-registration/project-registration.component';
+import { SharedModule } from '../../shared/shared.module';
+import { HeroBannerComponent } from '../../shared/components/hero-banner/hero-banner.component';
 
 const routes: Routes = [
   { path: 'proposal', component: ProposalFormComponent },
@@ -20,7 +22,9 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    SharedModule,
+    HeroBannerComponent
   ]
 })
 export class SubmissionModule { }

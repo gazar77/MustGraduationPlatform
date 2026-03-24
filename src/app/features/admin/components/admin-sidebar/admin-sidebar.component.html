@@ -1,6 +1,6 @@
 <aside class="admin-sidebar" [class.collapsed]="isCollapsed">
   <div class="sidebar-header">
-    <img src="assets/must-logo.png" alt="Logo">
+    <img src="assets/1740307130_140_87669_group1000004290.svg" alt="Logo" style="width: 120px; height: auto; max-width: 100%;">
     <span *ngIf="!isCollapsed">لوحة التحكم</span>
   </div>
 
@@ -8,32 +8,52 @@
     <ul>
       <li>
         <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-          <i class="fas fa-th-large"></i> <span *ngIf="!isCollapsed">الرئيسية</span>
+          <span *ngIf="!isCollapsed">الرئيسية</span>
         </a>
       </li>
       <li>
         <a routerLink="/admin/manage/ideas" routerLinkActive="active">
-          <i class="fas fa-lightbulb"></i> <span *ngIf="!isCollapsed">إدارة المشاريع</span>
+          <span *ngIf="!isCollapsed">إدارة المشاريع</span>
         </a>
       </li>
       <li>
         <a routerLink="/admin/manage/news" routerLinkActive="active">
-          <i class="fas fa-newspaper"></i> <span *ngIf="!isCollapsed">إدارة التحديثات</span>
+          <span *ngIf="!isCollapsed">إدارة التحديثات</span>
         </a>
       </li>
       <li>
         <a routerLink="/admin/manage/events" routerLinkActive="active">
-          <i class="fas fa-calendar-alt"></i> <span *ngIf="!isCollapsed">إدارة الفعاليات</span>
+          <span *ngIf="!isCollapsed">إدارة الفعاليات</span>
         </a>
       </li>
       <li>
         <a routerLink="/admin/manage/templates" routerLinkActive="active">
-          <i class="fas fa-file-download"></i> <span *ngIf="!isCollapsed">إدارة النماذج</span>
+          <span *ngIf="!isCollapsed">إدارة النماذج</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/admin/manage/proposals" routerLinkActive="active">
+          <span *ngIf="!isCollapsed">إدارة المقترحات</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/admin/manage/project1" routerLinkActive="active">
+          <span *ngIf="!isCollapsed">تسليمات المشروع 1</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/admin/manage/project2" routerLinkActive="active">
+          <span *ngIf="!isCollapsed">تسليمات المشروع 2</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/admin/manage/contact" routerLinkActive="active">
+          <span *ngIf="!isCollapsed">رسائل التواصل</span>
         </a>
       </li>
       <li>
         <a routerLink="/admin/users" routerLinkActive="active">
-          <i class="fas fa-users"></i> <span *ngIf="!isCollapsed">المستخدمين</span>
+          <span *ngIf="!isCollapsed">المستخدمين</span>
         </a>
       </li>
     </ul>
