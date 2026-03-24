@@ -19,7 +19,7 @@ export class HeroBannerComponent implements OnInit {
   
   @Input() bgImages: string[] = [
     'assets/17214025351722283902.jpg',
-    'assets/202407291119561956.webp',
+    'assets/3-1.jpeg',
     'assets/your-background-image.jpg'
   ];
 
