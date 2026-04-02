@@ -40,6 +40,10 @@ $header-height: 105px;
       width: auto;
       cursor: pointer;
       transition: opacity 0.2s;
+
+      @media (max-width: 768px) {
+        height: 45px;
+      }
     }
     &:hover .logo-img {
       opacity: 0.8;
@@ -253,6 +257,9 @@ $header-height: 105px;
     align-items: center;
     gap: 15px; 
 
+    @media (max-width: 768px) {
+      gap: 8px;
+    }
     .icon-toggle {
       background: none;
       border: none;
@@ -282,6 +289,10 @@ $header-height: 105px;
       margin: 0 5px;
       font-size: 24px;
       font-weight: 300;
+
+      @media (max-width: 768px) {
+        display: none;
+      }
     }
 
     .mobile-toggle {
@@ -312,6 +323,11 @@ $header-height: 105px;
       gap: 8px;
       transition: all 0.2s ease;
 
+      span {
+        @media (max-width: 768px) {
+          display: none;
+        }
+      }
       i {
         font-size: 16px;
       }

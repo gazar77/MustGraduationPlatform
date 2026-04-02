@@ -99,7 +99,7 @@ $green-accent: #1FA56B;
   margin: 0 auto;
 
   @media (max-width: 992px) {
-    gap: 8px;
+    gap: 12px 8px;
     padding: 0 10px;
   }
 }
@@ -134,8 +134,8 @@ $green-accent: #1FA56B;
   }
 
   @media (max-width: 768px) {
-    padding: 8px 18px;
-    font-size: 14px;
+    padding: 6px 14px;
+    font-size: 13px;
   }
 }
 
