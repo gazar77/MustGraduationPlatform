@@ -23,8 +23,8 @@ $green-accent: #1FA56B;
     min-height: 350px;
   }
   @media (max-width: 576px) {
-    height: 35vh;
-    min-height: 280px;
+    height: 50vh;
+    min-height: 400px;
   }
 
   &.compact {
@@ -134,8 +134,8 @@ $green-accent: #1FA56B;
   }
 
   @media (max-width: 768px) {
-    padding: 6px 14px;
-    font-size: 13px;
+    padding: 5px 12px;
+    font-size: 12px;
   }
 }
 
