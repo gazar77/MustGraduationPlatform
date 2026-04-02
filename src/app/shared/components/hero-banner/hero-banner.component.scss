@@ -1,43 +1,45 @@
-$royal-blue: #1b2851;
+$royal-blue: #1f3769;
 $text-white: #ffffff;
 $green-accent: #1FA56B;
 
 .hero-banner {
   position: relative;
   width: 100%;
-  height: 60vh;
-  min-height: 550px;
-  max-height: 800px;
-  background-color: var(--primary-color); // Fallback
+  height: 75vh;
+  min-height: 650px;
+  max-height: 900px;
+  background-color: $royal-blue; // Solid fallback
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
+  transition: background-image 1.2s ease-in-out; // Smooth image transition
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
   @media (max-width: 992px) {
-    height: 50vh;
-    min-height: 400px;
+    height: 40vh;
+    min-height: 350px;
   }
   @media (max-width: 576px) {
-    height: 40vh;
-    min-height: 300px;
+    height: 35vh;
+    min-height: 280px;
   }
 
   &.compact {
-    height: 180px;
-    min-height: 180px;
-    max-height: 180px;
+    height: 220px;
+    min-height: 220px;
+    max-height: 220px;
     padding-top: 10px;
 
     .hero-content {
-      margin-top: 20px;
+      margin-top: 0;
     }
 
     .hero-title {
-      font-size: 28px;
-      margin-bottom: 10px;
+      font-size: 32px;
+      margin-bottom: 20px;
     }
 
     .hero-breadcrumbs {
@@ -52,8 +54,7 @@ $green-accent: #1FA56B;
   left: 0;
   width: 100%;
   height: 100%;
-  // Dark transparent overlay matching screenshot gradient
-  background: linear-gradient(rgba(27, 40, 81, 0.4), rgba(27, 40, 81, 0.85));
+  background: rgba(2, 37, 97, 0.45); // Lighter overlay for image visibility
   z-index: 1;
 }
 
@@ -63,19 +64,90 @@ $green-accent: #1FA56B;
   text-align: center;
   color: $text-white;
   padding: 0 20px;
-  margin-top: 60px; // shift slightly down as seen in screenshot
+  margin-top: 40px; 
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .hero-title {
-  font-size: 42px;
+  font-size: 46px;
   font-weight: 800;
-  margin: 0 0 20px;
-  letter-spacing: 0.5px;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  margin: 0 0 25px;
+  letter-spacing: -0.5px;
+  text-transform: capitalize;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
   
   @media (max-width: 768px) {
-    font-size: 32px;
+    font-size: 36px;
+    margin-bottom: 15px;
+  }
+}
+
+.quick-nav-container {
+  margin-bottom: 20px;
+  max-width: 90%;
+}
+
+.hero-quick-nav {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap; // Keep wrapping for now but better gap
+  gap: 12px;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  @media (max-width: 992px) {
+    gap: 8px;
+    padding: 0 10px;
+  }
+}
+
+.nav-pill {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50px;
+  padding: 12px 28px;
+  color: $text-white;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: $green-accent;
+    transform: translateY(-2px);
+    color: $text-white;
+    text-decoration: none;
+  }
+
+  &.active {
+    background: $green-accent;
+    border-color: $green-accent;
+    box-shadow: 0 4px 20px rgba(31, 165, 107, 0.4);
+  }
+
+  @media (max-width: 768px) {
+    padding: 8px 18px;
+    font-size: 14px;
+  }
+}
+
+.breadcrumb-container {
+  padding: 8px 20px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 30px;
+  opacity: 0.8;
+  
+  .hero-breadcrumbs {
+    gap: 10px;
+    font-size: 13px;
   }
 }
 
@@ -85,32 +157,40 @@ $green-accent: #1FA56B;
   justify-content: center;
   flex-wrap: wrap;
   gap: 12px;
-  font-size: 16px;
-  font-weight: 700;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  font-size: 15px;
+  font-weight: 500;
 
   .crumb-link {
-    color: $text-white;
+    color: rgba(255, 255, 255, 0.9);
     text-decoration: none;
-    transition: opacity 0.2s;
+    transition: all 0.2s;
 
     &:hover {
-      opacity: 0.8;
-      text-decoration: underline;
+      color: $green-accent;
+      text-decoration: none;
     }
   }
 
   .crumb-current {
     color: $text-white;
-    opacity: 0.95;
+    font-weight: 700;
   }
 
   .crumb-separator {
-    color: #4CAF50; // MUST green for arrows
-    font-size: 14px;
-    margin: 0 5px;
+    color: rgba(255, 255, 255, 0.5); 
+    font-size: 10px;
     display: flex;
     align-items: center;
+
+    i {
+      transition: transform 0.3s ease;
+    }
+  }
+
+  // Handle RTL direction for arrows
+  :host-context([dir="rtl"]) & {
+    .rtl-flip {
+      transform: scaleX(-1);
+    }
   }
 }
-

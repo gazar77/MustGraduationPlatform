@@ -1,133 +1,277 @@
-<header class="must-header no-print" [attr.dir]="currentLang === 'ar' ? 'rtl' : 'ltr'">
+<header class="must-header">
   <div class="header-container">
     
-    <!-- Left Logo Stacked -->
-    <a routerLink="/" class="logo-link">
-      <div class="logo-wrapper">
-        <img src="assets/1740307130_140_87669_group1000004290.svg" alt="University Logo" class="brand-logo" style="width: 140px; height: auto;">
-      </div>
+    <!-- Left Logo -->
+    <a routerLink="/dashboard" class="logo-link" title="الرئيسية">
+      <img src="assets/1740307130_140_87669_group1000004290.svg" alt="MUST Logo" class="logo-img">
     </a>
 
-    <!-- Center Navigation -->
-    <nav class="main-nav" [class.mobile-open]="isMobileMenuOpen" *ngIf="currentUser">
+    <!-- Desktop Navigation -->
+    <nav class="desktop-nav">
       <ul class="nav-list">
-        <li><a routerLink="/dashboard" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.home') }}</a></li>
-        
-        <li class="has-dropdown" 
-            (mouseenter)="onMouseEnter('ideas')" 
-            (mouseleave)="onMouseLeave()"
-            [class.active]="isDropdownOpen('ideas')">
-          <a routerLink="/ideas" routerLinkActive="active" (click)="toggleDropdown('ideas', $event)">
-            {{ getTranslation('nav.ideas') }}
-            <i class="fas fa-chevron-down dropdown-icon"></i>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a routerLink="/ideas" (click)="closeAllMenus()">{{ getTranslation('nav.viewIdea') }}</a></li>
-            <li><a routerLink="/ideas/register" (click)="closeAllMenus()">{{ getTranslation('nav.registration') }}</a></li>
-          </ul>
-        </li>
+        <li *ngFor="let item of menuItems" 
+            class="nav-item"
+            (mouseenter)="onMouseEnter(item)"
+            (mouseleave)="onMouseLeave()">
+            
+          <!-- Top Level Link (Internal or External) -->
+          <ng-container *ngIf="item.routerLink; else externalLink">
+            <a [routerLink]="item.routerLink" 
+               class="nav-link"
+               [routerLinkActive]="'active'"
+               (click)="closeMenus()">
+               <ng-container *ngIf="languageService.currentLang$ | async">
+                 {{ item.translationKey ? languageService.translate('nav.' + item.translationKey) : item.label }}
+               </ng-container>
+            </a>
+          </ng-container>
+          
+          <ng-template #externalLink>
+            <a [href]="item.externalUrl || 'javascript:void(0)'" 
+               [attr.target]="item.externalUrl ? '_blank' : null" 
+               [attr.rel]="item.externalUrl ? 'noopener noreferrer' : null"
+               class="nav-link"
+               [class.active]="activeDropdown === item">
+               <ng-container *ngIf="languageService.currentLang$ | async">
+                 {{ item.translationKey ? languageService.translate('nav.' + item.translationKey) : item.label }}
+               </ng-container>
+            </a>
+          </ng-template>
 
-        <li class="has-dropdown" 
-            (mouseenter)="onMouseEnter('submissions')" 
-            (mouseleave)="onMouseLeave()"
-            [class.active]="isDropdownOpen('submissions')">
-          <a routerLink="/submission/proposal" routerLinkActive="active" (click)="toggleDropdown('submissions', $event)">
-            {{ getTranslation('nav.submissions') }}
-            <i class="fas fa-chevron-down dropdown-icon"></i>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a routerLink="/submission/proposal" (click)="closeAllMenus()">{{ getTranslation('nav.submitProposal') }}</a></li>
-            <li><a routerLink="/submission/project-registration-1" (click)="closeAllMenus()">{{ getTranslation('nav.submitReg1') }}</a></li>
-            <li><a routerLink="/submission/project-registration-2" (click)="closeAllMenus()">{{ getTranslation('nav.submitReg2') }}</a></li>
-          </ul>
-        </li>
+          <!-- MEGA SPLIT DROPDOWN -->
+          <div class="mega-menu-overlay" *ngIf="item.hasMegaMenu" [class.show]="activeDropdown === item">
+            <div class="mega-menu-container">
+              
+              <!-- Left Panel -->
+              <div class="mega-left-panel">
+                <ul class="left-panel-list">
+                  <li *ngFor="let child of item.children" 
+                      class="left-panel-item"
+                      (mouseenter)="onLeftPanelHover(child)">
+                    <ng-container *ngIf="child.routerLink; else externalLeftLink">
+                      <a [routerLink]="child.routerLink" 
+                         class="left-panel-link"
+                         [routerLinkActive]="'active'"
+                         (click)="closeMenus()">
+                        {{ child.translationKey ? languageService.translate('nav.' + child.translationKey) : child.label }}
+                      </a>
+                    </ng-container>
+                    <ng-template #externalLeftLink>
+                      <a [href]="child.externalUrl || 'javascript:void(0)'" 
+                         [attr.target]="child.externalUrl ? '_blank' : null"
+                         [attr.rel]="child.externalUrl ? 'noopener noreferrer' : null"
+                         class="left-panel-link"
+                         [class.active]="activeLeftItem === child">
+                        {{ child.translationKey ? languageService.translate('nav.' + child.translationKey) : child.label }}
+                        <ng-container *ngIf="child.children && child.children.length > 0">
+                          <i class="fas icon-chevron" 
+                             [class.fa-chevron-right]="activeLeftItem === child" 
+                             [class.fa-chevron-down]="activeLeftItem !== child"></i>
+                        </ng-container>
+                      </a>
+                    </ng-template>
 
-        <li class="buzz-item"><a routerLink="/events/calendar" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.buzzEvents') }}</a></li>
-        <li class="buzz-item"><a routerLink="/news/list" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.buzzNews') }}</a></li>
-        <li><a routerLink="/templates" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.templates') }}</a></li>
+                    <!-- DYNAMIC RIGHT PANEL (Anchored Vertically to the Hovered Item) -->
+                    <div class="mega-right-panel" *ngIf="activeLeftItem === child && child.children && child.children.length > 0">
+                      <div class="right-content-wrapper">
+                        <ul class="right-panel-list">
+                          <li *ngFor="let subChild of child.children" class="right-panel-item">
+                              <ng-container *ngIf="subChild.routerLink; else externalRightLink">
+                                <a [routerLink]="subChild.routerLink" class="right-panel-link" (click)="closeMenus()">
+                                  {{ subChild.translationKey ? languageService.translate('nav.' + subChild.translationKey) : subChild.label }}
+                                </a>
+                              </ng-container>
+                              <ng-template #externalRightLink>
+                                <a [href]="subChild.externalUrl || 'javascript:void(0)'"
+                                   [attr.target]="subChild.externalUrl ? '_blank' : null"
+                                   [attr.rel]="subChild.externalUrl ? 'noopener noreferrer' : null"
+                                   class="right-panel-link">
+                                  {{ subChild.translationKey ? languageService.translate('nav.' + subChild.translationKey) : subChild.label }}
+                                </a>
+                              </ng-template>
+                            
+                            <!-- 4th Level Rendering (for Sectors like Environmental) -->
+                            <ul *ngIf="subChild.children && subChild.children.length > 0" class="deep-panel-list">
+                               <li *ngFor="let deepChild of subChild.children">
+                                  <a [href]="deepChild.externalUrl || 'javascript:void(0)'"
+                                     [attr.target]="deepChild.externalUrl ? '_blank' : null"
+                                     [attr.rel]="deepChild.externalUrl ? 'noopener noreferrer' : null"
+                                     class="deep-panel-link">
+                                    {{ deepChild.label }}
+                                  </a>
+                               </li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
 
-        <li *ngIf="currentUser?.role === 'Doctor' || currentUser?.role === 'Admin'">
-          <a routerLink="/doctor" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.doctor') }}</a>
-        </li>
-        <li *ngIf="currentUser?.role === 'Admin'">
-          <a routerLink="/admin" routerLinkActive="active" (click)="closeAllMenus()">{{ getTranslation('nav.admin') }}</a>
+                  </li>
+                </ul>
+              </div>
+              
+            </div>
+          </div>
+
+          <!-- SIMPLE VERTICAL DROPDOWN (For 1-level deep items like Academics, Centers) -->
+          <div class="simple-dropdown" *ngIf="!item.hasMegaMenu && item.children" [class.show]="activeDropdown === item">
+            <ul class="simple-dropdown-list">
+              <li *ngFor="let child of item.children">
+                  <ng-container *ngIf="child.routerLink; else externalSimpleLink">
+                    <a [routerLink]="child.routerLink" class="simple-dropdown-link" (click)="closeMenus()">
+                      {{ child.translationKey ? languageService.translate('nav.' + child.translationKey) : child.label }}
+                    </a>
+                  </ng-container>
+                  <ng-template #externalSimpleLink>
+                    <a [href]="child.externalUrl || 'javascript:void(0)'"
+                       [attr.target]="child.externalUrl ? '_blank' : null"
+                       [attr.rel]="child.externalUrl ? 'noopener noreferrer' : null"
+                       class="simple-dropdown-link">
+                      {{ child.translationKey ? languageService.translate('nav.' + child.translationKey) : child.label }}
+                    </a>
+                  </ng-template>
+              </li>
+            </ul>
+          </div>
+
         </li>
       </ul>
     </nav>
 
-    <!-- Right Actions -->
-    <div class="header-actions">
-      <!-- Dark Mode Toggle -->
-      <button class="icon-btn theme-btn" (click)="toggleTheme()" aria-label="Toggle Theme" title="Toggle Dark/Light Mode">
-        <i class="fas" [ngClass]="isDarkTheme ? 'fa-sun' : 'fa-moon'"></i> 
-      </button>
-      
-      <!-- Language Toggle -->
-      <button class="icon-btn lang-btn" (click)="toggleLanguage()" aria-label="Language Toggle" title="تغيير اللغة">
-        <span class="lang-text">{{ currentLang === 'ar' ? 'En' : 'ع' }}</span>
+    <!-- Right Controls (Theme, Language, Mobile Toggle) -->
+    <div class="header-controls">
+      <!-- Theme Toggle -->
+      <button class="icon-toggle" (click)="toggleTheme()" 
+              [title]="(themeService.isDarkTheme$ | async) ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+         <i class="fas" [class.fa-sun]="!(themeService.isDarkTheme$ | async)" [class.fa-moon]="(themeService.isDarkTheme$ | async)"></i>
       </button>
 
-      <!-- Logout Button (Desktop) -->
-      <button class="icon-btn logout-btn" (click)="logout()" *ngIf="currentUser" [title]="getTranslation('nav.logout')">
-        <i class="fas fa-sign-out-alt"></i>
+      <span class="control-divider">|</span>
+
+      <!-- Language Toggle -->
+      <button class="icon-toggle lang-toggle ms-2 me-2" (click)="toggleLanguage()">
+        {{ (languageService.currentLang$ | async) === 'en' ? 'ع' : 'EN' }}
       </button>
-      
-      <!-- Hamburger Menu -->
-      <button class="hamburger-btn" aria-label="Menu" (click)="toggleMobileMenu()" [class.active]="isMobileMenuOpen" *ngIf="currentUser">
-        <span class="line full"></span>
-        <span class="line short"></span>
-        <span class="line full"></span>
+
+      <!-- Auth Action Button -->
+      <!-- Logged In State: Show Logout (or Profile) -->
+      <button *ngIf="authService.currentUser$ | async as user; else loginButton" 
+              class="btn-auth logout-btn ms-2" 
+              (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>{{ (languageService.currentLang$ | async) === 'en' ? 'Logout' : 'خروج' }}</span>
+      </button>
+
+      <!-- Logged Out State: Show Login -->
+      <ng-template #loginButton>
+        <button class="btn-auth login-btn ms-2" routerLink="/auth/login">
+          <i class="fas fa-user-circle"></i>
+          <span>{{ (languageService.currentLang$ | async) === 'en' ? 'Login' : 'دخول' }}</span>
+        </button>
+      </ng-template>
+
+      <!-- Standard Hamburger for both Desktop and Mobile matching screenshot -->
+      <button class="mobile-toggle ms-2" (click)="toggleMobileMenu()" aria-label="Toggle menu">
+        <i class="fas" [class.fa-bars]="!isMobileMenuOpen" [class.fa-times]="isMobileMenuOpen"></i>
       </button>
     </div>
     
   </div>
+</header>
 
-  <!-- Mobile Menu Expansion -->
-  <div class="mobile-menu" [class.open]="isMobileMenuOpen" *ngIf="currentUser">
+<!-- Mobile Overlay Navigation (Strictly hidden on desktop via CSS) -->
+<div class="mobile-nav-overlay" [class.show]="isMobileMenuOpen">
+  <div class="mobile-nav-container">
     <ul class="mobile-nav-list">
-      <li><a routerLink="/dashboard" (click)="closeAllMenus()">{{ getTranslation('nav.home') }}</a></li>
-      
-      <li class="mobile-has-dropdown" [class.expanded]="isDropdownOpen('ideas')">
-        <a (click)="toggleDropdown('ideas', $event)">
-          {{ getTranslation('nav.ideas') }}
-          <i class="fas fa-plus icon"></i>
-        </a>
-        <ul class="mobile-submenu" *ngIf="isDropdownOpen('ideas')">
-          <li><a routerLink="/ideas" (click)="closeAllMenus()">{{ getTranslation('nav.viewIdea') }}</a></li>
-          <li><a routerLink="/ideas/register" (click)="closeAllMenus()">{{ getTranslation('nav.registration') }}</a></li>
-        </ul>
-      </li>
+      <li *ngFor="let item of menuItems" class="mobile-nav-item">
+        
+        <!-- Items without children (e.g. Admission, SDGs) -->
+        <ng-container *ngIf="!item.children">
+          <a *ngIf="item.routerLink"
+             [routerLink]="item.routerLink" 
+             class="mobile-nav-link" 
+             (click)="closeMenus()">
+            <ng-container *ngIf="languageService.currentLang$ | async">
+              {{ item.translationKey ? languageService.translate('nav.' + item.translationKey) : item.label }}
+            </ng-container>
+          </a>
+          <a *ngIf="!item.routerLink"
+             [href]="item.externalUrl || 'javascript:void(0)'" 
+             [attr.target]="item.externalUrl ? '_blank' : null"
+             [attr.rel]="item.externalUrl ? 'noopener noreferrer' : null"
+             class="mobile-nav-link" 
+             (click)="closeMenus()">
+            <ng-container *ngIf="languageService.currentLang$ | async">
+              {{ item.translationKey ? languageService.translate('nav.' + item.translationKey) : item.label }}
+            </ng-container>
+          </a>
+        </ng-container>
 
-      <li class="mobile-has-dropdown" [class.expanded]="isDropdownOpen('submissions')">
-        <a (click)="toggleDropdown('submissions', $event)">
-          {{ getTranslation('nav.submissions') }}
-          <i class="fas fa-plus icon"></i>
-        </a>
-        <ul class="mobile-submenu" *ngIf="isDropdownOpen('submissions')">
-          <li><a routerLink="/submission/proposal" (click)="closeAllMenus()">{{ getTranslation('nav.submitProposal') }}</a></li>
-          <li><a routerLink="/submission/project-registration-1" (click)="closeAllMenus()">{{ getTranslation('nav.submitReg1') }}</a></li>
-          <li><a routerLink="/submission/project-registration-2" (click)="closeAllMenus()">{{ getTranslation('nav.submitReg2') }}</a></li>
-        </ul>
-      </li>
+        <!-- Items with children -->
+        <ng-container *ngIf="item.children">
+          <a href="javascript:void(0)" 
+             class="mobile-nav-link" 
+             (click)="toggleMobileItem(item, $event)">
+            {{ item.translationKey ? languageService.translate('nav.' + item.translationKey) : item.label }}
+            <i class="fas" [class.fa-chevron-down]="mobileActiveItem !== item" [class.fa-chevron-up]="mobileActiveItem === item"></i>
+          </a>
+          
+          <div class="mobile-submenu" [class.show]="mobileActiveItem === item">
+            <ul class="mobile-submenu-list">
+              <li *ngFor="let child of item.children">
+                
+                <!-- No deep children -->
+                <ng-container *ngIf="!child.children || child.children.length === 0">
+                  <a *ngIf="child.routerLink" 
+                     [routerLink]="child.routerLink" 
+                     class="mobile-submenu-link" 
+                     (click)="closeMenus()">
+                    {{ child.translationKey ? languageService.translate('nav.' + child.translationKey) : child.label }}
+                  </a>
+                  <a *ngIf="!child.routerLink"
+                     [href]="child.externalUrl || 'javascript:void(0)'" 
+                     [attr.target]="child.externalUrl ? '_blank' : null"
+                     [attr.rel]="child.externalUrl ? 'noopener noreferrer' : null"
+                     class="mobile-submenu-link" 
+                     (click)="closeMenus()">
+                    {{ child.translationKey ? languageService.translate('nav.' + child.translationKey) : child.label }}
+                  </a>
+                </ng-container>
 
-      <li><a routerLink="/events/calendar" (click)="closeAllMenus()">{{ getTranslation('nav.buzzEvents') }}</a></li>
-      <li><a routerLink="/news/list" (click)="closeAllMenus()">{{ getTranslation('nav.buzzNews') }}</a></li>
-      <li><a routerLink="/templates" (click)="closeAllMenus()">{{ getTranslation('nav.templates') }}</a></li>
+                <!-- Deep nesting -->
+                <ng-container *ngIf="child.children && child.children.length > 0">
+                   <a href="javascript:void(0)" 
+                      class="mobile-submenu-link" 
+                      (click)="toggleMobileSubItem(child, $event)">
+                      {{ child.label }}
+                      <i class="fas" [class.fa-chevron-down]="mobileActiveSubItem !== child" [class.fa-chevron-up]="mobileActiveSubItem === child"></i>
+                   </a>
+                   <ul class="mobile-deep-list" [class.show]="mobileActiveSubItem === child">
+                      <li *ngFor="let sub of child.children">
+                         <a *ngIf="sub.routerLink"
+                            [routerLink]="sub.routerLink" 
+                            class="deep-link-item" 
+                            (click)="closeMenus()">
+                            {{ sub.translationKey ? languageService.translate('nav.' + sub.translationKey) : sub.label }}
+                         </a>
+                         <a *ngIf="!sub.routerLink"
+                            [href]="sub.externalUrl || 'javascript:void(0)'" 
+                            [attr.target]="sub.externalUrl ? '_blank' : null"
+                            [attr.rel]="sub.externalUrl ? 'noopener noreferrer' : null"
+                            class="deep-link-item" 
+                            (click)="closeMenus()">
+                            {{ sub.translationKey ? languageService.translate('nav.' + sub.translationKey) : sub.label }}
+                         </a>
+                      </li>
+                   </ul>
+                </ng-container>
 
-      <li *ngIf="currentUser?.role === 'Doctor' || currentUser?.role === 'Admin'">
-        <a routerLink="/doctor" (click)="closeAllMenus()">{{ getTranslation('nav.doctor') }}</a>
-      </li>
-      <li *ngIf="currentUser?.role === 'Admin'">
-        <a routerLink="/admin" (click)="closeMobileMenu()">{{ getTranslation('nav.admin') }}</a>
-      </li>
+              </li>
+            </ul>
+          </div>
+        </ng-container>
 
-      <!-- Mobile Logout -->
-      <li *ngIf="currentUser" class="mobile-logout">
-        <a (click)="logout()" class="logout-link">
-          <i class="fas fa-sign-out-alt"></i>
-          {{ getTranslation('nav.logout') }}
-        </a>
       </li>
     </ul>
   </div>
-</header>
+</div>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LanguageService } from '../../../core/services/language.service';
-import { ProposalService } from '../../../core/services/proposal.service';
+import { ProjectSubmissionService } from '../../../core/services/project-submission.service';
 
 @Component({
   selector: 'app-proposal-form',
@@ -13,20 +13,15 @@ export class ProposalFormComponent implements OnInit {
   deadlineDate = new Date('2026-04-30T23:59:59');
   submissionStatus: 'open' | 'closing' | 'closed' = 'open';
   daysLeft = 0;
+  selectedFile: File | null = null;
 
-  constructor(private fb: FormBuilder, public langService: LanguageService, private proposalService: ProposalService) {
+  constructor(private fb: FormBuilder, public langService: LanguageService, private projectSubmissionService: ProjectSubmissionService) {
     this.proposalForm = this.fb.group({
-      projectName: ['', Validators.required],
-      teamName: ['', Validators.required],
-      teamMembers: ['', Validators.required],
-      department: ['', Validators.required],
-      supervisor: ['', Validators.required],
-      idea: ['', [Validators.required, Validators.minLength(50)]],
-      goals: ['', Validators.required],
-      description: ['', Validators.required],
-      tools: ['', Validators.required],
-      notes: [''],
-      attachment: [null, Validators.required]
+      projectNumber: ['', Validators.required],
+      projectTitle: ['', Validators.required],
+      supervisorName: ['', Validators.required],
+      teamLeaderName: ['', Validators.required],
+      notes: ['']
     });
   }
 
@@ -50,32 +45,29 @@ export class ProposalFormComponent implements OnInit {
 
   onFileChange(event: any): void {
     if (event.target.files.length > 0) {
-      const file = event.target.files[0];
-      this.proposalForm.patchValue({
-        attachment: file
-      });
+      this.selectedFile = event.target.files[0];
     }
   }
 
   onSubmit(): void {
-    if (this.proposalForm.valid && this.submissionStatus !== 'closed') {
+    if (this.proposalForm.valid && this.selectedFile && this.submissionStatus !== 'closed') {
       const val = this.proposalForm.value;
-      this.proposalService.addProposal({
-        projectName: val.projectName,
-        teamName: val.teamName,
-        members: val.teamMembers ? val.teamMembers.split(',').map((x: string) => x.trim()) : [],
-        department: val.department,
-        proposedSupervisor: val.supervisor,
-        idea: val.idea,
-        goals: val.goals,
-        description: val.description,
-        tools: val.tools ? val.tools.split(',').map((x: string) => x.trim()) : [],
+      this.projectSubmissionService.addSubmission({
+        type: 'proposal',
+        studentName: val.teamLeaderName,
+        teamLeaderName: val.teamLeaderName,
+        projectNumber: val.projectNumber,
+        projectTitle: val.projectTitle,
+        supervisorName: val.supervisorName,
         notes: val.notes,
-        attachment: val.attachment ? val.attachment.name : undefined
+        fileName: this.selectedFile.name
       }).subscribe(() => {
-        alert(this.langService.translate('submission.proposal.successMsg'));
+        alert(this.langService.translate('submission.proposal.successMsg') || 'Submission Successful!');
         this.proposalForm.reset();
+        this.selectedFile = null;
       });
+    } else {
+        this.proposalForm.markAllAsTouched();
     }
   }
 }

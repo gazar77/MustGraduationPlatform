@@ -1,70 +1,69 @@
-<footer class="must-main-footer" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
-  <!-- Top Centered Logo Section -->
-  <div class="footer-header">
-    <div class="footer-logo-wrap">
-      <img src="assets/1740307452_295_53683_logo.svg" alt="MUST Logo" class="round-logo" width="80" height="80">
+<footer class="must-footer no-print" [attr.dir]="'ltr'">
+  <div class="footer-top">
+    <!-- Centered Logo -->
+    <div class="footer-logo-container">
+      <img src="assets/1740307130_140_87669_group1000004290.svg" alt="MUST Circular Logo" class="footer-logo">
     </div>
-  </div>
 
-  <!-- Main Footer Content Grid -->
-  <div class="footer-main">
-    <div class="container">
+    <div class="footer-container">
       <div class="footer-grid">
-        <!-- Links Column (Project Specific) -->
+        
+        <!-- Column 1: Links -->
         <div class="footer-col">
-          <h3 class="footer-title">{{ getTranslation('footer.links') }}</h3>
+          <h3 class="footer-title">{{ langService.translate('footer.links') }}</h3>
           <ul class="footer-links">
-            <li><a routerLink="/dashboard">{{ getTranslation('nav.home') }}</a></li>
-            <li><a routerLink="/ideas">{{ getTranslation('nav.ideas') }}</a></li>
-            <li><a routerLink="/ideas/register">{{ getTranslation('nav.registration') }}</a></li>
-            <li><a routerLink="/submission/proposal">{{ getTranslation('nav.submission') }}</a></li>
-            <li><a routerLink="/templates">{{ getTranslation('nav.templates') }}</a></li>
-            <li><a routerLink="/contact">{{ getTranslation('nav.contact') }}</a></li>
+            <li><a routerLink="/dashboard">{{ langService.translate('nav.home') }}</a></li>
+            <li><a href="https://must.edu.eg/the-university/" target="_blank">{{ langService.translate('nav.university') }}</a></li>
+            <li><a href="https://must.edu.eg/academics/" target="_blank">{{ langService.translate('nav.academics') }}</a></li>
+            <li><a href="https://must.edu.eg/must-life/" target="_blank">{{ langService.translate('nav.life') }}</a></li>
+            <li><a href="https://must.edu.eg/centers/" target="_blank">{{ langService.translate('footer.research') }}</a></li>
+            <li><a href="https://must.edu.eg/contact/" target="_blank">{{ langService.translate('footer.maps') }}</a></li>
+            <li><a href="https://must.edu.eg/contact/" target="_blank">{{ langService.translate('footer.faqs') }}</a></li>
           </ul>
         </div>
 
-        <!-- About University Column -->
+        <!-- Column 2: About University -->
         <div class="footer-col">
-          <h3 class="footer-title">{{ getTranslation('footer.about') }}</h3>
+          <h3 class="footer-title">{{ langService.translate('footer.about') }}</h3>
           <ul class="footer-links">
-            <li><a href="https://must.edu.eg/the-university/" target="_blank">About MUST</a></li>
-            <li><a href="https://must.edu.eg/the-university/" target="_blank">History</a></li>
-            <li><a href="https://must.edu.eg/the-university/" target="_blank">Accreditation</a></li>
-            <li><a href="https://must.edu.eg/the-university/" target="_blank">Why MUST</a></li>
-            <li><a href="https://must.edu.eg/the-university/" target="_blank">Values & Principles</a></li>
-            <li><a routerLink="/contact">{{ getTranslation('nav.contact') }}</a></li>
+            <li><a href="https://must.edu.eg/about-must/" target="_blank">{{ langService.translate('footer.about') }}</a></li>
+            <li><a href="https://must.edu.eg/history/" target="_blank">{{ langService.translate('footer.history') }}</a></li>
+            <li><a href="https://must.edu.eg/?page_id=1660" target="_blank">{{ langService.translate('footer.partnerships') }}</a></li>
+            <li><a href="https://must.edu.eg/about-must/vision-mission/" target="_blank">{{ langService.translate('footer.why') }}</a></li>
+            <li><a href="https://must.edu.eg/about-must/must-policies/" target="_blank">{{ langService.translate('footer.values') }}</a></li>
+            <li><a href="https://must.edu.eg/contact/" target="_blank">{{ langService.translate('nav.contact') }}</a></li>
+            <li><a href="https://must.edu.eg/policies/" target="_blank">{{ langService.translate('footer.privacy') }}</a></li>
           </ul>
         </div>
 
-        <!-- MUST BUZZ Column (News & Events) -->
+        <!-- Column 3: MUST BUZZ -->
         <div class="footer-col">
-          <h3 class="footer-title">{{ getTranslation('footer.buzz') }}</h3>
+          <h3 class="footer-title">{{ langService.translate('nav.buzz') }}</h3>
           <ul class="footer-links">
-            <li><a routerLink="/news/calendar">{{ getTranslation('nav.events') }}</a></li>
-            <li><a routerLink="/news/list">{{ getTranslation('nav.news') }}</a></li>
-            <li><a href="https://must.edu.eg/must-buzz/" target="_blank">Blog</a></li>
+            <li><a href="https://must.edu.eg/event/" target="_blank">{{ langService.translate('nav.buzzEvents') }}</a></li>
+            <li><a href="https://must.edu.eg/news/" target="_blank">{{ langService.translate('nav.buzzNews') }}</a></li>
+            <li><a href="https://must.edu.eg/blog/" target="_blank">{{ langService.translate('footer.blog') }}</a></li>
+            <li><a href="https://must.edu.eg/anouncement/" target="_blank">{{ langService.translate('nav.buzzAnnouncements') }}</a></li>
           </ul>
         </div>
 
-        <!-- Contact Info Column -->
+        <!-- Column 4: Contact Info -->
         <div class="footer-col">
-          <h3 class="footer-title">{{ getTranslation('footer.contact') }}</h3>
-          <ul class="contact-data">
-            <li class="phone-number">16878</li>
-            <li class="email-address">Info&#64;Must.Edu.Eg</li>
-            <li><a href="https://chat.whatsapp.com/BdekmLTYMbR9M9ibkl703w" target="_blank" style="color: #25D366; text-decoration: none; font-weight: bold;">
-              <i class="fab fa-whatsapp"></i> Graduation Group
-            </a></li>
+          <h3 class="footer-title">{{ langService.translate('footer.contact') }}</h3>
+          <ul class="contact-info">
+            <li class="contact-number">16878</li>
+            <li class="contact-email">Info&#64;Must.Edu.Eg</li>
+            <li class="contact-address">Al Motamayez District – 6th of October, Egypt</li>
           </ul>
         </div>
+
       </div>
     </div>
   </div>
 
-  <!-- White Copyright Bar -->
-  <div class="footer-copyright-bar">
-    <div class="container">
-      <p>{{ getTranslation('footer.copyright') }}</p>
+  <div class="footer-copyright">
+    <div class="footer-container">
+      <p>{{ langService.translate('footer.copyright') }}</p>
     </div>
   </div>
 </footer>

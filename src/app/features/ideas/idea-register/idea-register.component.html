@@ -1,52 +1,179 @@
-<div class="registration-container container py-5" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
+<div class="registration-container" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
+    
     <app-hero-banner 
-        [title]="langService.translate('ideas.register.title')"
+        title="Graduation Project Registration Form"
         [breadcrumbs]="[
-            { label: langService.translate('nav.home'), url: '/dashboard' },
-            { label: langService.translate('nav.ideas'), url: '/ideas' },
-            { label: langService.translate('nav.registration') }
+            { label: 'Home', url: '/dashboard' },
+            { label: 'Project Ideas', url: '/ideas' },
+            { label: 'Registration' }
         ]"
         [compact]="true">
     </app-hero-banner>
-        <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">{{ langService.translate('ideas.register.projectTitle') }}</label>
-                    <input type="text" class="form-control" name="title" [(ngModel)]="formData.title" required
-                        [placeholder]="langService.translate('ideas.register.projectTitlePlaceholder')">
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">{{ langService.translate('ideas.register.category') }}</label>
-                    <select class="form-select" name="category" [(ngModel)]="formData.category" required>
-                        <option value="">{{ langService.translate('ideas.register.selectCategory') }}</option>
-                        <option value="AI">{{ langService.translate('ideas.register.categories.AI') }}</option>
-                        <option value="Web">{{ langService.translate('ideas.register.categories.Web') }}</option>
-                        <option value="Mobile">{{ langService.translate('ideas.register.categories.Mobile') }}</option>
-                        <option value="Cyber">{{ langService.translate('ideas.register.categories.Cyber') }}</option>
-                    </select>
-                </div>
+
+    <div class="document-wrapper container py-5">
+        <div class="official-document">
+            <!-- Document Header -->
+            <div class="doc-header">
+                <h2>Misr University for Science & Technology</h2>
+                <h3>Faculty of Computers & Artificial Intelligence</h3>
+                <h4 class="doc-title">Project Registration Form</h4>
+                <div class="header-divider"></div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">{{ langService.translate('ideas.register.description') }}</label>
-                <textarea class="form-control" name="description" [(ngModel)]="formData.description" rows="4" required
-                    [placeholder]="langService.translate('ideas.register.descriptionPlaceholder')"></textarea>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">{{ langService.translate('ideas.register.leaderName') }}</label>
-                    <input type="text" class="form-control" name="leaderName" [(ngModel)]="formData.leaderName"
-                        required>
+            <!-- The Reactive Form -->
+            <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+                
+                <!-- Section 1: Academic Info -->
+                <div class="form-section">
+                    <h5 class="section-title">1. Academic Information</h5>
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <label class="form-label">Academic Year <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control official-input" formControlName="academicYear" placeholder="e.g. 2025/2026">
+                            <div class="error-msg" *ngIf="registrationForm.get('academicYear')?.invalid && registrationForm.get('academicYear')?.touched">Required</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Semester <span class="text-danger">*</span></label>
+                            <select class="form-select official-input" formControlName="semester">
+                                <option value="" disabled>Select</option>
+                                <option value="Fall">Fall</option>
+                                <option value="Spring">Spring</option>
+                            </select>
+                            <div class="error-msg" *ngIf="registrationForm.get('semester')?.invalid && registrationForm.get('semester')?.touched">Required</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Department <span class="text-danger">*</span></label>
+                            <select class="form-select official-input" formControlName="department">
+                                <option value="" disabled>Select</option>
+                                <option value="Information Systems">Information Systems</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Artificial Intelligence">Artificial Intelligence</option>
+                            </select>
+                            <div class="error-msg" *ngIf="registrationForm.get('department')?.invalid && registrationForm.get('department')?.touched">Required</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">{{ langService.translate('ideas.register.leaderId') }}</label>
-                    <input type="text" class="form-control" name="leaderId" [(ngModel)]="formData.leaderId" required>
-                </div>
-            </div>
 
-            <div class="text-center mt-4">
-                <button type="submit" class="btn btn-primary px-5" [disabled]="!registerForm.form.valid">{{ langService.translate('ideas.register.submitBtn') }}</button>
-            </div>
-        </form>
+                <!-- Section 2: Project Details -->
+                <div class="form-section">
+                    <h5 class="section-title">2. Project Details</h5>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Project Title (English) <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control official-input" formControlName="titleEn">
+                            <div class="error-msg" *ngIf="registrationForm.get('titleEn')?.invalid && registrationForm.get('titleEn')?.touched">Required</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-end w-100">عنوان المشروع (عربي) <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control official-input text-end" formControlName="titleAr" dir="rtl">
+                            <div class="error-msg text-end" *ngIf="registrationForm.get('titleAr')?.invalid && registrationForm.get('titleAr')?.touched">مطلوب</div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Project Domain / Category <span class="text-danger">*</span></label>
+                            <select class="form-select official-input" formControlName="category">
+                                <option value="" disabled>Select Category</option>
+                                <option value="AI">Artificial Intelligence</option>
+                                <option value="Web">Web Development</option>
+                                <option value="Mobile">Mobile Application</option>
+                                <option value="Cyber">Cybersecurity</option>
+                            </select>
+                            <div class="error-msg" *ngIf="registrationForm.get('category')?.invalid && registrationForm.get('category')?.touched">Required</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Supervisor Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control official-input" formControlName="supervisorName">
+                            <div class="error-msg" *ngIf="registrationForm.get('supervisorName')?.invalid && registrationForm.get('supervisorName')?.touched">Required</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Assistant Supervisor Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control official-input" formControlName="assistantSupervisorName">
+                            <div class="error-msg" *ngIf="registrationForm.get('assistantSupervisorName')?.invalid && registrationForm.get('assistantSupervisorName')?.touched">Required</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">External Org (Optional)</label>
+                            <input type="text" class="form-control official-input" formControlName="externalOrg">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Students -->
+                <div class="form-section">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="section-title mb-0">3. Project Team Students</h5>
+                        <button type="button" class="btn add-student-btn" (click)="addStudent()" [disabled]="students.length >= 7">
+                            <i class="fas fa-plus"></i> Add Student
+                        </button>
+                    </div>
+
+                    <div class="important-note">
+                        <i class="fas fa-info-circle"></i> The number of students in one project must not be less than 5 and not more than 7.
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table official-table">
+                            <thead>
+                                <tr>
+                                    <th width="5%">#</th>
+                                    <th width="40%">Student Name <span class="text-danger">*</span></th>
+                                    <th width="25%">University ID <span class="text-danger">*</span></th>
+                                    <th width="20%">Mobile Number <span class="text-danger">*</span></th>
+                                    <th width="10%">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="students">
+                                <tr *ngFor="let student of students.controls; let i=index" [formGroupName]="i">
+                                    <td class="text-center fw-bold align-middle">{{ i + 1 }}</td>
+                                    <td>
+                                        <input type="text" class="form-control official-input" formControlName="studentName">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control official-input" formControlName="universityId">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control official-input" formControlName="mobileNumber">
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <button type="button" class="btn btn-sm action-delete-btn" (click)="removeStudent(i)" [disabled]="students.length <= 5">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="error-msg text-center mt-2" *ngIf="students.hasError('minStudents') && registrationForm.touched">Minimum 5 students are required.</div>
+                        <div class="error-msg text-center mt-2" *ngIf="students.hasError('maxStudents') && registrationForm.touched">Maximum 7 students are allowed.</div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Signatures -->
+                <div class="form-section signature-section">
+                    <h5 class="section-title">4. Approvals and Signatures</h5>
+                    <div class="row align-items-end mt-5">
+                        <div class="col-md-3 text-center">
+                            <div class="signature-line"></div>
+                            <p class="signature-title">Project Supervisor</p>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="signature-line"></div>
+                            <p class="signature-title">Heads of Departments</p>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="signature-line"></div>
+                            <p class="signature-title">Vice Dean for ECS</p>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="signature-line"></div>
+                            <p class="signature-title">Dean of the Faculty</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="doc-actions text-center mt-5 no-print">
+                    <button type="button" class="btn btn-outline-secondary me-3 px-5 py-2" (click)="resetForm()">Reset</button>
+                    <button type="submit" class="btn submit-btn px-5 py-2" [disabled]="registrationForm.invalid">Submit Registration</button>
+                </div>
+            </form>
+        </div>
     </div>
+</div>

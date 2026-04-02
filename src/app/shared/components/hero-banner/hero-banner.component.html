@@ -1,22 +1,37 @@
-<div class="hero-banner" [class.compact]="compact" [style.backgroundImage]="compact ? 'none' : 'url(' + currentBgImage + ')'" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
-  <!-- Dark Overlay -->
+<div class="hero-banner" [class.compact]="compact" [style.backgroundImage]="compact ? 'none' : 'url(\'' + currentBgImage + '\')' " [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
+  <!-- Enhanced Dark Overlay -->
   <div class="overlay"></div>
 
-  <!-- Content -->
+  <!-- Hero Content Centered -->
   <div class="hero-content container">
     <h1 class="hero-title">{{ title || langService.translate('dashboard.heroTitle') }}</h1>
     
-    <div class="hero-breadcrumbs">
-      <ng-container *ngFor="let crumb of breadcrumbs; let last = last">
-        <a *ngIf="crumb.url" [routerLink]="crumb.url" class="crumb-link">{{ crumb.label }}</a>
-        <span *ngIf="!crumb.url" class="crumb-current" [class.active]="last">{{ crumb.label }}</span>
-        
-        <!-- Separator Arrow -->
-        <span *ngIf="!last" class="crumb-separator">
-          <i class="fas" [ngClass]="(langService.currentLang$ | async) === 'ar' ? 'fa-arrow-left' : 'fa-arrow-right'"></i>
-        </span>
-      </ng-container>
+    <!-- Quick Navigation (Core Project Parts) - Only shown on Dashboard (Full Mode) -->
+    <div class="quick-nav-container" *ngIf="!compact">
+      <nav class="hero-quick-nav">
+        <a *ngFor="let link of quickLinks" 
+           [routerLink]="link.url" 
+           routerLinkActive="active"
+           class="nav-pill">
+           {{ langService.translate('nav.' + link.labelKey) }}
+        </a>
+      </nav>
+    </div>
+
+    <!-- Original Breadcrumb (Optional/Secondary) -->
+    <div class="breadcrumb-container" *ngIf="breadcrumbs && breadcrumbs.length > 0">
+      <nav class="hero-breadcrumbs">
+        <ng-container *ngFor="let crumb of breadcrumbs; let last = last">
+          <a *ngIf="crumb.url" [routerLink]="crumb.url" class="crumb-link">{{ crumb.label }}</a>
+          <span *ngIf="!crumb.url" class="crumb-current" [class.active]="last">{{ crumb.label }}</span>
+          
+          <span *ngIf="!last" class="crumb-separator">
+            <i class="fas fa-chevron-right rtl-flip"></i>
+          </span>
+        </ng-container>
+      </nav>
     </div>
   </div>
 
 </div>
+

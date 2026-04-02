@@ -1,119 +1,134 @@
-$must-blue: #022561;
-$must-green: #1FA56B;
-$text-white: #ffffff;
-$text-grey: #666666;
+$must-navy: #022561;
+$must-green: #00b050;
+$white: #ffffff;
+$text-light: #ffffff;
+$copy-bg: #ffffff;
+$copy-text: #333333;
 
-.must-main-footer {
-  background-color: var(--footer-bg);
-  color: #ffffff;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease;
-
-  .container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 40px;
+.must-footer {
+  background-color: $must-navy;
+  color: $white;
+  font-family: 'Inter', -apple-system, sans-serif;
+  margin-top: 0;
+  
+  .footer-top {
+    padding: 60px 0 40px;
+    background-color: $must-navy; // Ensure consistent navy
   }
 
-  .footer-header {
-    padding: 40px 0 20px;
+  .footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  // Centered circular logo styling
+  .footer-logo-container {
     display: flex;
     justify-content: center;
-
-    .footer-logo-wrap {
-      background: var(--primary-color);
-      border-radius: 50%;
-      padding: 10px;
-      width: 100px;
+    margin-bottom: 50px;
+    
+    .footer-logo {
       height: 100px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      width: auto;
+      // The seal is usually circular, ensuring it looks crisp
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.2));
     }
   }
 
-  .footer-main {
-    padding-bottom: 60px;
-    position: relative;
-  }
-
+  // Grid styling for 4 columns
   .footer-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 40px;
-
-    @media (max-width: 992px) {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    @media (max-width: 576px) {
-      grid-template-columns: 1fr;
-    }
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 30px;
   }
 
-  .footer-title {
-    color: var(--secondary-color);
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 25px;
-    text-transform: capitalize;
-  }
+  .footer-col {
+    flex: 1;
+    min-width: 200px;
 
-  .footer-links {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    .footer-title {
+      color: $must-green;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 25px;
+      text-transform: capitalize;
+    }
 
-    li {
-      margin-bottom: 12px;
-
-      a {
-        color: #ffffff;
-        text-decoration: none;
-        font-size: 15px;
-        transition: opacity 0.2s;
-        display: block;
-
-        &:hover {
-          opacity: 0.8;
-          text-decoration: underline;
+    .footer-links {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      
+      li {
+        margin-bottom: 12px;
+        
+        a {
+          color: $text-light;
+          text-decoration: none;
+          font-size: 15px;
+          transition: color 0.2s ease;
+          display: block;
+          
+          &:hover {
+            color: $must-green;
+          }
         }
+      }
+    }
+
+    .contact-info {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      
+      li {
+        margin-bottom: 20px;
+        font-size: 15px;
+        font-weight: 600;
+        line-height: 1.4;
+        color: $white;
+      }
+
+      .contact-number {
+        font-size: 17px;
       }
     }
   }
 
-  .contact-data {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-
-    li {
-      margin-bottom: 18px;
-      font-size: 15px;
-      font-weight: 600;
-      line-height: 1.5;
-    }
-
-    .phone-number {
-      font-size: 18px;
-      font-weight: 800;
+  // Copyright bar styling (White background with centered text)
+  .footer-copyright {
+    background-color: $copy-bg;
+    padding: 15px 0;
+    text-align: center;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    
+    p {
+      margin: 0;
+      color: $copy-text;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
     }
   }
 
-  .footer-copyright-bar {
-    background-color: var(--bg-color);
-    padding: 15px 0;
-    text-align: center;
-    border-top: 1px solid var(--border-color);
+  // Responsive adjustments
+  @media (max-width: 991px) {
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
 
-    p {
-      color: var(--text-color);
-      margin: 0;
-      font-size: 14px;
-      font-weight: 600;
+  @media (max-width: 575px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+    
+    .footer-logo-container {
+      margin-bottom: 30px;
     }
   }
 }

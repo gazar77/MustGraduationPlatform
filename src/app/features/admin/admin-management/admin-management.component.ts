@@ -52,12 +52,13 @@ export class AdminManagementComponent implements OnInit {
       case 'proposals':
         this.title = 'إدارة مقترحات مشاريع التخرج';
         this.columns = [
-          { key: 'projectName', label: 'اسم المشروع' },
-          { key: 'teamName', label: 'اسم الفريق' },
-          { key: 'proposedSupervisor', label: 'المشرف المقترح' },
+          { key: 'projectNumber', label: 'رقم المشروع' },
+          { key: 'projectTitle', label: 'اسم المشروع' },
+          { key: 'teamLeaderName', label: 'اسم قائد الفريق' },
+          { key: 'supervisorName', label: 'المشرف المقترح' },
           { key: 'status', label: 'الحالة' }
         ];
-        this.proposalService.getProposals().subscribe(res => this.items = res);
+        this.projectSubmissionService.getSubmissions('proposal').subscribe(res => this.items = res);
         break;
       case 'contact':
         this.title = 'إدارة رسائل التواصل';
@@ -72,9 +73,10 @@ export class AdminManagementComponent implements OnInit {
       case 'project1':
         this.title = 'إدارة تسليمات المشروع 1';
         this.columns = [
-          { key: 'studentName', label: 'اسم الطالب' },
+          { key: 'projectNumber', label: 'رقم المشروع' },
+          { key: 'projectTitle', label: 'اسم المشروع' },
+          { key: 'teamLeaderName', label: 'قائد الفريق' },
           { key: 'fileName', label: 'اسم الملف' },
-          { key: 'submissionDate', label: 'التاريخ' },
           { key: 'status', label: 'الحالة' }
         ];
         this.projectSubmissionService.getSubmissions('project1').subscribe(res => this.items = res);
@@ -82,9 +84,10 @@ export class AdminManagementComponent implements OnInit {
       case 'project2':
         this.title = 'إدارة تسليمات المشروع 2';
         this.columns = [
-          { key: 'studentName', label: 'اسم الطالب' },
+          { key: 'projectNumber', label: 'رقم المشروع' },
+          { key: 'projectTitle', label: 'اسم المشروع' },
+          { key: 'teamLeaderName', label: 'قائد الفريق' },
           { key: 'fileName', label: 'اسم الملف' },
-          { key: 'submissionDate', label: 'التاريخ' },
           { key: 'status', label: 'الحالة' }
         ];
         this.projectSubmissionService.getSubmissions('project2').subscribe(res => this.items = res);
@@ -178,15 +181,11 @@ export class AdminManagementComponent implements OnInit {
     } else if (this.type === 'proposals') {
       this.modalConfig.title = 'تفاصيل وتحديث المقترح';
       this.modalConfig.fields = [
-        { name: 'projectName', label: 'اسم المشروع', type: 'readonly', value: item?.projectName },
-        { name: 'teamName', label: 'اسم الفريق', type: 'readonly', value: item?.teamName },
-        { name: 'members', label: 'أعضاء الفريق', type: 'readonly', value: item?.members?.join(', ') },
-        { name: 'department', label: 'القسم', type: 'readonly', value: item?.department },
-        { name: 'proposedSupervisor', label: 'المشرف المقترح', type: 'readonly', value: item?.proposedSupervisor },
-        { name: 'idea', label: 'الفكرة', type: 'readonly', value: item?.idea },
-        { name: 'goals', label: 'الأهداف', type: 'readonly', value: item?.goals },
-        { name: 'description', label: 'الوصف', type: 'readonly', value: item?.description },
-        { name: 'tools', label: 'أدوات التطوير', type: 'readonly', value: item?.tools?.join(', ') },
+        { name: 'projectNumber', label: 'رقم المشروع', type: 'readonly', value: item?.projectNumber },
+        { name: 'projectTitle', label: 'اسم المشروع', type: 'readonly', value: item?.projectTitle },
+        { name: 'teamLeaderName', label: 'اسم قائد الفريق', type: 'readonly', value: item?.teamLeaderName },
+        { name: 'supervisorName', label: 'المشرف المقترح', type: 'readonly', value: item?.supervisorName },
+        { name: 'fileName', label: 'الملف المرفق', type: 'readonly', value: item?.fileName },
         { name: 'notes', label: 'ملاحظات الإرسال', type: 'readonly', value: item?.notes },
         { name: 'status', label: 'الحالة', type: 'select', options: ['New', 'Pending', 'Reviewed', 'Accepted', 'Rejected'], value: item?.status || 'Pending' }
       ];
@@ -202,8 +201,10 @@ export class AdminManagementComponent implements OnInit {
     } else if (this.type === 'project1' || this.type === 'project2') {
       this.modalConfig.title = 'تفاصيل التسليم';
       this.modalConfig.fields = [
-        { name: 'studentName', label: 'اسم الطالب القائم بالتسليم', type: 'readonly', value: item?.studentName },
-        { name: 'email', label: 'بريد الطالب', type: 'readonly', value: item?.email },
+        { name: 'projectNumber', label: 'رقم المشروع', type: 'readonly', value: item?.projectNumber },
+        { name: 'projectTitle', label: 'اسم المشروع', type: 'readonly', value: item?.projectTitle },
+        { name: 'teamLeaderName', label: 'اسم قائد الفريق', type: 'readonly', value: item?.teamLeaderName },
+        { name: 'supervisorName', label: 'المشرف المتابع', type: 'readonly', value: item?.supervisorName },
         { name: 'fileName', label: 'الملف المرفق', type: 'readonly', value: item?.fileName },
         { name: 'notes', label: 'الملاحظات الإضافية', type: 'readonly', value: item?.notes },
         { name: 'status', label: 'تقييم التسليم', type: 'select', options: ['New', 'Pending', 'Reviewed', 'Accepted', 'Rejected'], value: item?.status || 'New' }
@@ -247,7 +248,7 @@ export class AdminManagementComponent implements OnInit {
       case 'event': obs = this.eventService.updateEvent(this.editingItem.id, data); break;
       case 'template': obs = this.templateService.updateTemplate(this.editingItem.id, data); break;
       case 'ideas': obs = this.ideaService.updateIdea(this.editingItem.id, data); break;
-      case 'proposals': obs = this.proposalService.updateProposalStatus(this.editingItem.id, data.status); break;
+      case 'proposals': obs = this.projectSubmissionService.updateStatus(this.editingItem.id, data.status); break;
       case 'contact': obs = this.contactService.updateMessageStatus(this.editingItem.id, data.status); break;
       case 'project1':
       case 'project2': obs = this.projectSubmissionService.updateStatus(this.editingItem.id, data.status); break;
@@ -268,7 +269,7 @@ export class AdminManagementComponent implements OnInit {
         case 'event': obs = this.eventService.deleteEvent(item.id); break;
         case 'template': obs = this.templateService.deleteTemplate(item.id); break;
         case 'ideas': obs = this.ideaService.deleteIdea(item.id); break;
-        case 'proposals': obs = this.proposalService.deleteProposal(item.id); break;
+        case 'proposals': obs = this.projectSubmissionService.deleteSubmission(item.id); break;
         case 'contact': obs = this.contactService.deleteMessage(item.id); break;
         case 'project1':
         case 'project2': obs = this.projectSubmissionService.deleteSubmission(item.id); break;

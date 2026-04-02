@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LanguageService } from '../../../core/services/language.service';
 import { ProjectSubmissionService } from '../../../core/services/project-submission.service';
@@ -13,11 +14,24 @@ export class ProjectRegistrationComponent implements OnInit {
   instructionsKey = '';
   deadline = '2026-05-15';
   selectedFile: File | null = null;
-  notes = '';
+  registrationForm!: FormGroup;
 
-  constructor(private route: ActivatedRoute, public langService: LanguageService, private projectSubmissionService: ProjectSubmissionService) {}
+  constructor(
+    private fb: FormBuilder,
+    private route: ActivatedRoute, 
+    public langService: LanguageService, 
+    private projectSubmissionService: ProjectSubmissionService
+  ) {}
 
   ngOnInit(): void {
+    this.registrationForm = this.fb.group({
+      projectNumber: ['', Validators.required],
+      projectTitle: ['', Validators.required],
+      supervisorName: ['', Validators.required],
+      teamLeaderName: ['', Validators.required],
+      notes: ['']
+    });
+
     this.route.data.subscribe(data => {
       const type = data['type'];
       if (type === 'reg1') {
@@ -38,20 +52,26 @@ export class ProjectRegistrationComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.selectedFile) {
+    if (this.registrationForm.valid && this.selectedFile) {
       this.route.data.subscribe(data => {
         const type = data['type'] === 'reg1' ? 'project1' : 'project2';
         this.projectSubmissionService.addSubmission({
             type,
-            studentName: 'مستخدم مسجل',
+            studentName: this.registrationForm.value.teamLeaderName,
+            teamLeaderName: this.registrationForm.value.teamLeaderName,
+            projectNumber: this.registrationForm.value.projectNumber,
+            projectTitle: this.registrationForm.value.projectTitle,
+            supervisorName: this.registrationForm.value.supervisorName,
             fileName: this.selectedFile!.name,
-            notes: this.notes
+            notes: this.registrationForm.value.notes
         }).subscribe(() => {
-            alert(this.langService.translate('submission.registration.successMsg') + this.langService.translate(this.titleKey));
+            alert(this.langService.translate('submission.registration.successMsg') + ' ' + this.langService.translate(this.titleKey));
             this.selectedFile = null;
-            this.notes = '';
+            this.registrationForm.reset();
         });
       });
+    } else {
+        this.registrationForm.markAllAsTouched();
     }
   }
 }

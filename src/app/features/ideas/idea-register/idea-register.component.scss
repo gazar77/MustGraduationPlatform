@@ -1,45 +1,252 @@
+$must-blue: #1f3769;
+$must-green: #1FA56B;
+$border-col: #d0d7de;
+$text-dark: #24292f;
+$bg-light: #f6f8fa;
+
 .registration-container {
-    max-width: 800px;
-    margin: 0 auto;
+  background-color: $bg-light;
+  min-height: 100vh;
+}
 
-    .card {
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        border: none;
-        background: #fff;
+.document-wrapper {
+  max-width: 1100px;
+  margin: -60px auto 40px; // Pull up slightly over the hero banner
+  position: relative;
+  z-index: 10;
+}
+
+.official-document {
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.03);
+  padding: 50px 60px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  color: $text-dark;
+
+  @media (max-width: 768px) {
+    padding: 30px 20px;
+  }
+}
+
+.doc-header {
+  text-align: center;
+  margin-bottom: 40px;
+
+  h2 {
+    font-size: 22px;
+    font-weight: 800;
+    color: $must-blue;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+  }
+
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 15px;
+  }
+
+  .doc-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: $must-green;
+    margin-top: 20px;
+    letter-spacing: 0.5px;
+  }
+
+  .header-divider {
+    height: 3px;
+    background: linear-gradient(90deg, transparent 0%, $must-blue 20%, $must-blue 80%, transparent 100%);
+    margin: 25px auto;
+    width: 60%;
+  }
+}
+
+// Section styling
+.form-section {
+  margin-bottom: 45px;
+
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: $must-blue;
+    border-bottom: 2px solid $must-blue;
+    padding-bottom: 8px;
+    margin-bottom: 25px;
+  }
+}
+
+.form-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.official-input {
+  border: 1px solid $border-col;
+  border-radius: 4px;
+  padding: 10px 15px;
+  font-size: 15px;
+  transition: all 0.2s;
+  background-color: #ffffff;
+
+  &:focus {
+    border-color: $must-green;
+    box-shadow: 0 0 0 3px rgba(31, 165, 107, 0.15);
+    outline: none;
+  }
+
+  &.ng-invalid.ng-touched {
+    border-color: #dc3545;
+  }
+}
+
+.error-msg {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+// Important Note
+.important-note {
+  background-color: rgba(31, 165, 107, 0.08);
+  border-left: 4px solid $must-green;
+  padding: 12px 20px;
+  border-radius: 4px;
+  color: #0b5736;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  i {
+    font-size: 18px;
+  }
+}
+
+// Table
+.official-table {
+  border: 1px solid $border-col;
+  border-radius: 4px;
+  overflow: hidden;
+
+  thead {
+    background-color: $bg-light;
+    
+    th {
+      font-weight: 600;
+      color: $text-dark;
+      font-size: 13.5px;
+      padding: 12px 15px;
+      border-bottom: 2px solid $border-col;
+      vertical-align: middle;
     }
+  }
 
-    h2 {
-        font-weight: 700;
-        color: #011835;
+  tbody {
+    td {
+      padding: 12px 10px;
+      vertical-align: middle;
+      border-bottom: 1px solid #e1e4e8;
     }
+  }
 
-    .form-label {
-        color: #444;
-        font-weight: 500;
-    }
+  .official-input {
+    padding: 6px 12px; // Slightly smaller for table
+  }
+}
 
-    .form-control,
-    .form-select {
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        padding: 0.75rem;
+// Buttons
+.add-student-btn {
+  background-color: transparent;
+  color: $must-green;
+  border: 1px dashed $must-green;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 6px 16px;
+  transition: all 0.2s;
 
-        &:focus {
-            border-color: #1FA56B;
-            box-shadow: 0 0 0 0.2rem rgba(31, 165, 107, 0.25);
-        }
-    }
+  &:hover:not([disabled]) {
+    background-color: rgba(31, 165, 107, 0.1);
+  }
 
-    .btn-primary {
-        background-color: #1FA56B;
-        border-color: #1FA56B;
-        padding: 0.75rem 2rem;
-        font-weight: 600;
+  &[disabled] {
+    opacity: 0.5;
+    border-color: #adb5bd;
+    color: #6c757d;
+  }
+}
 
-        &:hover {
-            background-color: #168a58;
-            border-color: #168a58;
-        }
-    }
+.action-delete-btn {
+  color: #dc3545;
+  background: transparent;
+  border: none;
+  font-size: 16px;
+
+  &:hover:not([disabled]) {
+    color: #bd2130;
+    transform: scale(1.1);
+  }
+
+  &[disabled] {
+    opacity: 0.3;
+  }
+}
+
+.submit-btn {
+  background-color: $must-blue;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  transition: background-color 0.2s, transform 0.1s;
+
+  &:hover:not([disabled]) {
+    background-color: #011b47;
+    transform: translateY(-2px);
+  }
+
+  &[disabled] {
+    background-color: #a0aec0;
+  }
+}
+
+// Signatures
+.signature-section {
+  margin-top: 60px;
+}
+
+.signature-line {
+  border-bottom: 1px solid #718096;
+  width: 80%;
+  margin: 0 auto 10px;
+}
+
+.signature-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .document-wrapper {
+    margin: 0;
+    padding: 0;
+  }
+  .official-document {
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
 }

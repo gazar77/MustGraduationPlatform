@@ -1,12 +1,5 @@
 <div class="templates-page container" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
-    <app-hero-banner 
-        [title]="langService.translate('templates.title')"
-        [breadcrumbs]="[
-            { label: langService.translate('nav.home'), url: '/dashboard' },
-            { label: langService.translate('nav.templates') }
-        ]"
-        [compact]="true">
-    </app-hero-banner>
+    <app-hero-banner [title]="langService.translate('templates.title')" [compact]="true"></app-hero-banner>
 
     <div class="templates-grid">
         <div *ngFor="let template of templates" class="template-card card">

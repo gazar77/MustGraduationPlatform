@@ -22,11 +22,19 @@ export class AuthMockService {
   }
 
   login(email: string, password: string): Observable<AuthResponse> {
-    // TODO: Connect to backend .NET API
-    // POST /api/auth/login
-
     // Simulate API call
-    const isAdmin = email === 'admin@must.edu.eg';
+    const isAdminEmail = email === 'admin@must.edu.eg';
+    const isCorrectPassword = password === 'admin123';
+
+    if (isAdminEmail && !isCorrectPassword) {
+      return throwError(() => new Error('Invalid credentials'));
+    }
+
+    const isAdmin = isAdminEmail && isCorrectPassword;
+    
+    // For mock purposes, if it's not admin, we just let them login as Student to test.
+    // In a real app we would check a database.
+
     return of({
       user: {
         id: isAdmin ? 999 : 1,
@@ -37,7 +45,7 @@ export class AuthMockService {
       } as User,
       token: 'fake-jwt-token-' + Math.random()
     }).pipe(
-      delay(1000),
+      delay(500),
       tap(res => {
         localStorage.setItem('must_user', JSON.stringify(res.user));
         localStorage.setItem('must_token', res.token);

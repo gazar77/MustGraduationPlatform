@@ -1,12 +1,5 @@
 <div class="events-page" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
-  <app-hero-banner 
-    [title]="langService.translate('events.list.title')"
-    [breadcrumbs]="[
-      { label: langService.translate('nav.home'), url: '/dashboard' },
-      { label: langService.translate('nav.events') }
-    ]"
-    [compact]="true">
-  </app-hero-banner>
+  <app-hero-banner [title]="langService.translate('events.list.title')" [compact]="true"></app-hero-banner>
 
   <!-- Events Grid Section -->
   <section class="events-section">

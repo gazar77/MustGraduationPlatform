@@ -1,9 +1,5 @@
 <div class="dashboard-page" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
-    <app-hero-banner [breadcrumbs]="[
-        { label: langService.translate('nav.home'), url: '/dashboard' },
-        { label: langService.translate('nav.ideas'), url: '/ideas' },
-        { label: langService.translate('nav.submissions'), url: '/submission/proposal' }
-    ]"></app-hero-banner>
+    <app-hero-banner></app-hero-banner>
 
     <!-- ========== STATS SECTION ========== -->
     <section class="stats-section" *ngIf="stats$ | async as stats">

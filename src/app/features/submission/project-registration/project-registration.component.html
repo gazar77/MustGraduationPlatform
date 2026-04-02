@@ -1,14 +1,6 @@
 <div class="registration-container" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
     <div class="registration-card">
-    <app-hero-banner 
-        [title]="langService.translate(titleKey)"
-        [breadcrumbs]="[
-            { label: langService.translate('nav.home'), url: '/dashboard' },
-            { label: langService.translate('nav.submissions'), url: '/submission/proposal' },
-            { label: langService.translate(titleKey) }
-        ]"
-        [compact]="true">
-    </app-hero-banner>
+    <app-hero-banner [title]="langService.translate(titleKey)" [compact]="true"></app-hero-banner>
 
     <div class="registration-header-meta container mb-4">
         <div class="deadline-badge">
@@ -20,7 +12,30 @@
         </div>
     </div>
 
-        <section class="upload-section">
+    <!-- START OF REACTIVE FORM -->
+    <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="form-container">
+        <section class="form-section">
+            <div class="row custom-form-row">
+                <div class="col-md-6 form-group">
+                    <label>رقم المشروع / Project Number <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" formControlName="projectNumber" placeholder="Ex: PRJ-001">
+                </div>
+                <div class="col-md-6 form-group">
+                    <label>عنوان المشروع / Project Title <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" formControlName="projectTitle" placeholder="Project Name">
+                </div>
+                <div class="col-md-6 form-group">
+                    <label>اسم المشرف / Supervisor Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" formControlName="supervisorName" placeholder="Dr. XYZ">
+                </div>
+                <div class="col-md-6 form-group">
+                    <label>اسم قائد الفريق / Team Leader <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" formControlName="teamLeaderName" placeholder="Student Name">
+                </div>
+            </div>
+        </section>
+
+        <section class="upload-section mt-4">
             <div class="upload-box" [class.has-file]="selectedFile">
                 <label for="reg-file" class="upload-label">
                     <i class="fas" [ngClass]="selectedFile ? 'fa-file-check' : 'fa-file-upload'"></i>
@@ -30,24 +45,25 @@
                     </div>
                     <input type="file" id="reg-file" (change)="onFileChange($event)" hidden>
                 </label>
-                <button *ngIf="selectedFile" class="btn-remove" (click)="selectedFile = null">
+                <button *ngIf="selectedFile" class="btn-remove" type="button" (click)="selectedFile = null">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
         </section>
 
-        <section class="notes-section">
+        <section class="notes-section mt-4">
             <label>{{ langService.translate('submission.registration.additionalNotes') }}</label>
-            <textarea [(ngModel)]="notes" rows="4" [placeholder]="langService.translate('submission.registration.notesPlaceholder')"></textarea>
+            <textarea formControlName="notes" class="form-control" rows="4" [placeholder]="langService.translate('submission.registration.notesPlaceholder')"></textarea>
         </section>
 
-        <footer class="card-footer">
-            <button class="btn btn-outline" routerLink="/dashboard">{{ langService.translate('submission.registration.cancel') }}</button>
-            <button class="btn btn-primary" [disabled]="!selectedFile" (click)="onSubmit()">
+        <footer class="card-footer mt-4">
+            <button type="button" class="btn btn-outline" routerLink="/dashboard">{{ langService.translate('submission.registration.cancel') }}</button>
+            <button type="submit" class="btn btn-primary" [disabled]="registrationForm.invalid || !selectedFile">
                 <i class="fas fa-paper-plane"></i>
                 {{ langService.translate('submission.registration.submitDocs') }}
             </button>
         </footer>
+    </form>
     </div>
 
     <!-- Helpful Tips -->

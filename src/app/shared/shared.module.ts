@@ -9,6 +9,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ManagementModalComponent } from './components/management-modal/management-modal.component';
 import { HeroBannerComponent } from './components/hero-banner/hero-banner.component';
 import { FilterByTitlePipe } from './pipes/filter-by-title.pipe';
+import { ComingSoonComponent } from './components/coming-soon/coming-soon.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { FilterByTitlePipe } from './pipes/filter-by-title.pipe';
     FooterComponent,
     SidebarComponent,
     ManagementModalComponent,
-    FilterByTitlePipe
+    FilterByTitlePipe,
+    ComingSoonComponent
   ],
   imports: [
     CommonModule,

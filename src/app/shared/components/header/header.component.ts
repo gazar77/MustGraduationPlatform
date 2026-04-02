@@ -1,113 +1,116 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AuthMockService } from '../../../core/services/auth-mock.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { LanguageService } from '../../../core/services/language.service';
-import { User } from '../../../core/models/user.model';
+import { MENU_ITEMS, MenuItem } from '../../../core/data/navigation.data';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnDestroy {
+  menuItems = MENU_ITEMS;
+  
+  // Desktop menu states
+  activeDropdown: MenuItem | null = null;
+  activeLeftItem: MenuItem | null = null;
+  hoverTimeout: any;
+
+  // Mobile menu states
   isMobileMenuOpen = false;
-  isScrolled = false;
-  currentUser: User | null = null;
-  currentLang: 'ar' | 'en' = 'en';
-  isDarkTheme = false;
-  activeDropdown: string | null = null;
+  mobileActiveItem: MenuItem | null = null;
+  mobileActiveSubItem: MenuItem | null = null;
+
+  private routerSub: Subscription;
 
   constructor(
-    public router: Router, 
-    private authService: AuthMockService,
+    private router: Router,
+    public authService: AuthMockService,
     public themeService: ThemeService,
-    public langService: LanguageService
+    public languageService: LanguageService
   ) {
-    this.router.events.pipe(
+    // Close menus on navigation
+    this.routerSub = this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
-      this.closeAllMenus();
+      this.closeMenus();
     });
   }
 
-  ngOnInit() {
-    this.authService.currentUser$.subscribe(user => {
-      this.currentUser = user;
-    });
-
-    this.langService.currentLang$.subscribe(lang => {
-      this.currentLang = lang;
-    });
-
-    this.themeService.isDarkTheme$.subscribe(isDark => {
-      this.isDarkTheme = isDark;
-    });
+  ngOnDestroy(): void {
+    if (this.routerSub) this.routerSub.unsubscribe();
+    clearTimeout(this.hoverTimeout);
   }
 
-  logout() {
-    this.authService.logout();
-    this.closeAllMenus();
-    this.router.navigate(['/auth/login']);
-  }
-
-  toggleTheme() {
-    this.themeService.toggleTheme();
-  }
-
-  toggleLanguage() {
-    this.langService.toggleLanguage();
-  }
-
-  getTranslation(key: string): string {
-    return this.langService.translate(key);
-  }
-
-  @HostListener('window:scroll')
-  onWindowScroll() {
-    this.isScrolled = window.scrollY > 10;
-  }
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
-    const target = event.target as HTMLElement;
-    if (!target.closest('.has-dropdown')) {
-      this.activeDropdown = null;
+  // --- Desktop Hover Logic ---
+  onMouseEnter(item: MenuItem): void {
+    if (window.innerWidth > 991) {
+      clearTimeout(this.hoverTimeout);
+      
+      // If we are opening a menu from scratch (meaning no other menu is currently open),
+      // we clear the activeLeftItem so the right panel starts COMPLETELY empty as requested.
+      // If we are quickly switching between menus, we leave it alone to prevent the closing menu from flickering gracefully.
+      if (!this.activeDropdown) {
+        this.activeLeftItem = null;
+      }
+      
+      this.activeDropdown = item;
     }
   }
 
-  toggleDropdown(dropdownName: string, event: Event) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.activeDropdown = this.activeDropdown === dropdownName ? null : dropdownName;
-  }
-
-  onMouseEnter(dropdownName: string) {
-    if (window.innerWidth >= 992) {
-      this.activeDropdown = dropdownName;
+  onMouseLeave(): void {
+    if (window.innerWidth > 991) {
+      this.hoverTimeout = setTimeout(() => {
+        this.activeDropdown = null;
+        this.activeLeftItem = null;
+      }, 150); // slight delay to prevent flicker when moving between nav items
     }
   }
 
-  onMouseLeave() {
-    // Disabled auto-hide as per user request to keep lists visible until a page is clicked
-    // this.activeDropdown = null;
+  onLeftPanelHover(child: MenuItem): void {
+    if (window.innerWidth > 991) {
+      this.activeLeftItem = child;
+    }
   }
 
-  isDropdownOpen(dropdownName: string): boolean {
-    return this.activeDropdown === dropdownName;
-  }
-
-  toggleMobileMenu() {
+  // --- Mobile Menu Logic ---
+  toggleMobileMenu(): void {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
   }
 
-  closeMobileMenu() {
-    this.isMobileMenuOpen = false;
+  toggleMobileItem(item: MenuItem, event: Event): void {
+    event.preventDefault();
+    this.mobileActiveItem = this.mobileActiveItem === item ? null : item;
+    this.mobileActiveSubItem = null;
   }
 
-  closeAllMenus() {
+  toggleMobileSubItem(subItem: MenuItem, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.mobileActiveSubItem = this.mobileActiveSubItem === subItem ? null : subItem;
+  }
+
+  closeMenus(): void {
     this.isMobileMenuOpen = false;
     this.activeDropdown = null;
+    this.activeLeftItem = null;
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+    this.closeMenus();
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
+  }
+
+  toggleLanguage(): void {
+    this.languageService.toggleLanguage();
   }
 }

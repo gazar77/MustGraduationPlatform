@@ -16,7 +16,7 @@
         gap: 30px;
         flex: 1;
 
-        h2 { margin: 0; color: #022561; font-size: 1.4rem; white-space: nowrap; }
+        h2 { margin: 0; color: #1f3769; font-size: 1.4rem; white-space: nowrap; }
 
         .search-box {
             position: relative;
@@ -30,7 +30,7 @@
                 background: #f9f9f9;
                 outline: none;
                 transition: 0.3s;
-                &:focus { border-color: #022561; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+                &:focus { border-color: #1f3769; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
             }
         }
     }

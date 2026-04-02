@@ -10,8 +10,12 @@ export class ProjectSubmissionService {
     {
       id: 1,
       type: 'project1',
-      studentName: 'أحمد محمود',
-      email: 'ahmed@must.edu.eg',
+      projectNumber: 'PRJ-2026-CS-01',
+      projectTitle: 'Smart University Portal',
+      supervisorName: 'Dr. Ahmed Ali',
+      teamLeaderName: 'Omar Khaled',
+      studentName: 'عمر خالد',
+      email: 'omar@must.edu.eg',
       fileName: 'Requirements_Document.pdf',
       notes: 'Please find attached the initial requirements for our project.',
       status: 'Reviewed',
@@ -21,7 +25,7 @@ export class ProjectSubmissionService {
 
   constructor() { }
 
-  getSubmissions(type?: 'project1' | 'project2'): Observable<ProjectSubmission[]> {
+  getSubmissions(type?: 'proposal' | 'project1' | 'project2'): Observable<ProjectSubmission[]> {
     if (type) {
       return of(this.mockSubmissions.filter(s => s.type === type));
     }

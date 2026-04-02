@@ -1,13 +1,5 @@
 <div class="proposal-container" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
-    <app-hero-banner 
-        [title]="langService.translate('submission.proposal.title')"
-        [breadcrumbs]="[
-            { label: langService.translate('nav.home'), url: '/dashboard' },
-            { label: langService.translate('nav.submissions'), url: '/submission/proposal' },
-            { label: langService.translate('submission.proposal.title') }
-        ]"
-        [compact]="true">
-    </app-hero-banner>
+    <app-hero-banner [title]="langService.translate('submission.proposal.title')" [compact]="true"></app-hero-banner>
 
     <div class="deadline-row container mb-4">
         <div class="deadline-box" [ngClass]="submissionStatus">
@@ -32,85 +24,46 @@
     </div>
 
     <form [formGroup]="proposalForm" (ngSubmit)="onSubmit()" class="proposal-form">
-        <!-- Basic Info -->
+        <!-- Simplified Standard Fields -->
         <section class="form-section">
-            <div class="section-title">
-                <i class="fas fa-info-circle"></i>
-                <h3>{{ langService.translate('submission.proposal.basicInfo') }}</h3>
-            </div>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>{{ langService.translate('submission.proposal.projectName') }}</label>
-                    <input type="text" formControlName="projectName" [placeholder]="langService.translate('submission.proposal.projectNamePlaceholder')">
+            <div class="row custom-form-row">
+                <div class="col-md-6 form-group">
+                    <label>رقم المشروع / Project Number <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" formControlName="projectNumber" placeholder="Ex: PRJ-001">
                 </div>
-                <div class="form-group">
-                    <label>{{ langService.translate('submission.proposal.teamName') }}</label>
-                    <input type="text" formControlName="teamName" [placeholder]="langService.translate('submission.proposal.teamNamePlaceholder')">
+                <div class="col-md-6 form-group">
+                    <label>عنوان المشروع / Project Title <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" formControlName="projectTitle" placeholder="Project Name">
                 </div>
-                <div class="form-group full-width">
-                    <label>{{ langService.translate('submission.proposal.teamMembers') }}</label>
-                    <textarea formControlName="teamMembers" rows="2" [placeholder]="langService.translate('submission.proposal.teamMembersPlaceholder')"></textarea>
+                <div class="col-md-6 form-group">
+                    <label>اسم المشرف / Supervisor Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" formControlName="supervisorName" placeholder="Dr. XYZ">
                 </div>
-                <div class="form-group">
-                    <label>{{ langService.translate('submission.proposal.department') }}</label>
-                    <select formControlName="department">
-                        <option value="">{{ langService.translate('submission.proposal.selectDepartment') }}</option>
-                        <option value="CS">{{ langService.translate('submission.proposal.departments.CS') }}</option>
-                        <option value="IS">{{ langService.translate('submission.proposal.departments.IS') }}</option>
-                        <option value="AI">{{ langService.translate('submission.proposal.departments.AI') }}</option>
-                        <option value="IT">{{ langService.translate('submission.proposal.departments.IT') }}</option>
-                    </select>
+                <div class="col-md-6 form-group">
+                    <label>اسم قائد الفريق / Team Leader <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" formControlName="teamLeaderName" placeholder="Student Name">
                 </div>
-                <div class="form-group">
-                    <label>{{ langService.translate('submission.proposal.proposedSupervisor') }}</label>
-                    <input type="text" formControlName="supervisor" [placeholder]="langService.translate('submission.proposal.supervisorPlaceholder')">
-                </div>
-            </div>
-        </section>
-
-        <!-- Technical Details -->
-        <section class="form-section">
-            <div class="section-title">
-                <i class="fas fa-code"></i>
-                <h3>{{ langService.translate('submission.proposal.technicalDetails') }}</h3>
-            </div>
-            <div class="form-group">
-                <label>{{ langService.translate('submission.proposal.idea') }}</label>
-                <textarea formControlName="idea" rows="4" [placeholder]="langService.translate('submission.proposal.ideaPlaceholder')"></textarea>
-            </div>
-            <div class="form-group">
-                <label>{{ langService.translate('submission.proposal.goals') }}</label>
-                <textarea formControlName="goals" rows="3" [placeholder]="langService.translate('submission.proposal.goalsPlaceholder')"></textarea>
-            </div>
-            <div class="form-group">
-                <label>{{ langService.translate('submission.proposal.description') }}</label>
-                <textarea formControlName="description" rows="2" [placeholder]="langService.translate('submission.proposal.descriptionPlaceholder')"></textarea>
-            </div>
-            <div class="form-group">
-                <label>{{ langService.translate('submission.proposal.tools') }}</label>
-                <input type="text" formControlName="tools" [placeholder]="langService.translate('submission.proposal.toolsPlaceholder')">
             </div>
         </section>
 
         <!-- Attachments -->
-        <section class="form-section">
+        <section class="form-section mt-4">
             <div class="section-title">
                 <i class="fas fa-cloud-upload-alt"></i>
                 <h3>{{ langService.translate('submission.proposal.attachments') }}</h3>
             </div>
-            <div class="upload-container" [class.has-file]="proposalForm.get('attachment')?.value">
+            <div class="upload-container" [class.has-file]="selectedFile">
                 <label for="proposal-file" class="upload-label">
                     <i class="fas fa-file-pdf"></i>
                     <div class="upload-text">
-                        <span class="main-text">{{ langService.translate('submission.proposal.uploadTitle') }}</span>
+                        <span class="main-text">{{ selectedFile ? selectedFile.name : langService.translate('submission.proposal.uploadTitle') }}</span>
                         <span class="sub-text">{{ langService.translate('submission.proposal.uploadSubtitle') }}</span>
                     </div>
                     <input type="file" id="proposal-file" (change)="onFileChange($event)" accept="application/pdf" hidden>
                 </label>
-                <div class="file-info" *ngIf="proposalForm.get('attachment')?.value">
-                    <i class="fas fa-check"></i>
-                    <span>{{ langService.translate('submission.proposal.fileSelected') }} {{ proposalForm.get('attachment')?.value.name }}</span>
-                </div>
+                <button *ngIf="selectedFile" class="btn-remove" type="button" (click)="selectedFile = null" style="background: none; border: none; color: #dc3545; position: absolute; right: 20px; top: 15px; cursor: pointer;">
+                    <i class="fas fa-times fa-lg"></i>
+                </button>
             </div>
             <div class="form-group mt-4">
                 <label>{{ langService.translate('submission.proposal.additionalNotes') }}</label>
@@ -120,7 +73,7 @@
 
         <div class="form-actions">
             <button type="button" class="btn btn-outline">{{ langService.translate('submission.proposal.saveDraft') }}</button>
-            <button type="submit" class="btn btn-primary submit-btn" [disabled]="proposalForm.invalid || submissionStatus === 'closed'">
+            <button type="submit" class="btn btn-primary submit-btn" [disabled]="proposalForm.invalid || !selectedFile || submissionStatus === 'closed'">
                 {{ langService.translate('submission.proposal.submitFinal') }}
             </button>
         </div>
