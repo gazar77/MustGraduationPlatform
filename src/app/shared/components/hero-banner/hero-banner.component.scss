@@ -23,8 +23,9 @@ $green-accent: #1FA56B;
     min-height: 350px;
   }
   @media (max-width: 576px) {
-    height: 50vh;
-    min-height: 400px;
+    height: 60vh;
+    min-height: 450px;
+    padding-top: 110px; // Account for fixed header
   }
 
   &.compact {
