@@ -1,79 +1,82 @@
-# Frontend integration (Angular) — MUST Graduation Platform API
+# Frontend integration — status (Angular ↔ .NET API)
 
-This document is for the Angular team. The backend is implemented under `backend/` and exposes versioned REST endpoints under `/api/v1`. Authentication uses **JWT in an HttpOnly cookie** named `access_token` (not `localStorage`).
+This file tracks **what is already wired**, **what is still missing or wrong**, and **backend expectations**. It is updated from a full pass over `src/` against `backend/` (no frontend code was changed in this edit).
 
-## Base URL
+**API base:** `environment.apiUrl` (e.g. `https://…/api/v1`). Backend uses JWT in HttpOnly cookie `access_token`.
 
-- Development: configure your Angular `environment.apiUrl` to match the API (e.g. `https://localhost:7003`).
-- Production: set to your deployed API origin (HTTPS).
+---
 
-**All authenticated requests** must use `credentials: 'include'` (Angular `HttpClient` with `withCredentials: true`).
+## Already done (implemented in the Angular app)
 
-## CORS
+| Area | Notes |
+|------|--------|
+| **Base URL** | `src/environments/environment.ts` and `environment.prod.ts` expose `apiUrl` (currently pointed at a hosted API). |
+| **Cookies on every request** | `AuthInterceptor` sets `withCredentials: true` on all `HttpClient` calls (`app.module.ts`). |
+| **Core REST services** | These call `environment.apiUrl` + resource path: `idea`, `news`, `event`, `template`, `proposal`, `project-submissions`, `contact`, `dashboard` (GET `stats` / `activities`), `site-settings`. |
+| **Auth service (HTTP)** | `auth.service.ts`: `admin/login`, `student/send-code`, `student/login`, `register`, `logout`, `getDepartments`. No `must_user` / `must_token` in `localStorage` for auth. |
+| **Login UX** | Multi-step: identify → admin password **or** student OTP + password (`login.component.ts`). |
+| **Register** | OTP + `getDepartments()` for department list (`register.component.ts`). |
+| **Proposal deadline** | `proposal-form` uses `SiteSettingsService.getSetting('proposalDeadline')` (`site-settings.service.ts`). |
+| **Header logout** | Navigates to `/auth/login` (fixed from old `/login`). |
+| **Admin CMS shell** | `admin-management` uses the same services over HTTP (not in-memory mocks). |
+| **Theme / language** | Still use `localStorage` (`theme`, `lang`) — intentional; unrelated to JWT. |
 
-The API allows origins listed in `Cors:AllowedOrigins` in `appsettings.json`. Add your production Angular URL there on the server.
+---
 
-## Auth flows
+## Still to do or fix (frontend work)
 
-1. **Identify** — `POST /api/v1/auth/identify` body `{ "email": "user@must.edu.eg" }`  
-   Response: `{ "exists": true|false, "userType": "Admin" | "Student" | null }` when `exists` is true.
+### Critical — auth / session
 
-2. **Admin (staff)** — `POST /api/v1/auth/admin/login` body `{ "email", "password" }`  
-   Sets `access_token` cookie on success.
+1. **`POST /auth/identify` body**  
+   Backend expects `{ "email": "…@must.edu.eg" }` (`IdentifyRequestDto`).  
+   **`auth.service.ts` currently posts `{}`**, and **`login.component.ts` does not pass the email into `identify()`**. The identify step cannot work correctly until `identify` accepts `email` and sends `{ email }`.
 
-3. **Student — send code** — `POST /api/v1/auth/student/send-code` body `{ "email" }`  
-   Sends a 6-digit code by email (for login if the user exists, or for registration if the email is not yet registered).  
-   Returns `204` on success.
+2. **No “current user” endpoint on backend**  
+   `auth.service.ts` calls **`GET /auth/profile`** in `fetchCurrentUser()`. The API **does not define** `/api/v1/auth/profile`. After login, the user object may never load unless you add a backend endpoint (e.g. `GET /api/v1/auth/me`) **or** change the client to build `User` from the login response (`AuthSuccessDto.user`) and drop `fetchCurrentUser` / profile.  
+   Startup `checkAuthentication()` also calls the broken `identify()` with no email — refresh / F5 will not restore session correctly.
 
-4. **Student — login** — `POST /api/v1/auth/student/login` body `{ "email", "code", "password" }`  
-   Sets `access_token` cookie.
+3. **`User` model vs API**  
+   `user.model.ts` uses `id: number` and optional `department` codes. Backend `UserDto` uses **`id: Guid`**, `role`, `departmentCode` (string). Align types and mapping after profile/me is sorted out.
 
-5. **Student — register** — `POST /api/v1/auth/register` body `{ "email", "password", "fullName", "departmentId", "activationCode" }`  
-   Call `send-code` first for a **new** email that does not exist yet.
+### Roles and guards
 
-6. **Logout** — `POST /api/v1/auth/logout` (clears cookie). Safe to call without auth.
+4. **`app-routing.module.ts`** still lists **`Doctor`** on `/doctor`. Backend JWT only has **`Admin`** and **`Student`**. Either map **`Admin` → Doctor + Admin` in the guard**, or change route `data.roles` to match API roles only.
 
-### Email rules
+### Admin vs public API routes
 
-Only addresses matching `*@must.edu.eg` are accepted.
+5. **List endpoints for CMS**  
+   Public GETs return **filtered** lists (e.g. visible-only). Backend exposes **manage** routes for admins, e.g. `GET /api/v1/news/manage`, `GET /api/v1/ideas/manage`, …  
+   **`news.service.ts` / `idea.service.ts` / …** currently use the **anonymous** list URLs. For admin screens, call the **`/manage`** URLs when the user is `Admin` (or add service methods `getAllForManage()`).
 
-### Roles and route guards
+### Optional / feature gaps
 
-The API issues JWT role claims `Admin` or `Student`. The Angular app currently uses `Doctor` and `Admin` in route data (`app-routing.module.ts`). Align with the backend by either:
+6. **`DashboardService.addActivity()`**  
+   Posts to `…/dashboard/activities`. The API only supports **GET** `stats` and `activities` — **no POST**. Remove or replace with a future admin API.
 
-- Treating `Admin` as staff for both `/admin` and `/doctor`, or  
-- Mapping backend `Admin` to both `Doctor` and `Admin` in the guard.
+7. **Site setting values**  
+   Stored as JSON strings (e.g. quoted ISO date). If `new Date(res.value)` misbehaves, **`JSON.parse(res.value)`** may be required depending on exact stored format.
 
-## Replace mock services
+8. **Graduation printable form**  
+   `graduation-form.component.ts` still uses **hardcoded `projectInfo`**. Needs an API when the backend exposes team/project data.
 
-Point these services at the API instead of in-memory arrays:
+9. **Mega menu & i18n**  
+   `navigation.data.ts` and large inline dictionaries in `language.service.ts` remain **static**. Moving menu/copy to CMS is optional and can be phased.
 
-- `auth-mock.service.ts` → real HTTP auth flow  
-- `idea.service.ts` → `/api/v1/ideas` (see Swagger for manage routes)  
-- `news.service.ts`, `event.service.ts`, `template.service.ts`  
-- `proposal.service.ts`, `project-submission.service.ts`  
-- `contact.service.ts`, `dashboard.service.ts`  
+10. **File uploads**  
+    If submissions/templates require real files, ensure **multipart** endpoints and storage match backend (not verified here).
 
-Remove `localStorage` keys `must_user` and `must_token` for authentication.
+---
 
-## Other UI fixes
+## Backend reference (no frontend changes)
 
-- **Header logout** (`header.component.ts`) navigates to `/login`; the app route is `/auth/login` — update the path.  
-- **Departments** — load from `GET /api/v1/departments` instead of hardcoded `<option>` values in register.  
-- **Graduation form** — load `projectInfo` from a future API when available.  
-- **Proposal deadline / academic year** — read from `GET /api/v1/site-settings/{key}` (e.g. `proposalDeadline`, `academicYearLabel`).  
-- **Theme / language** (`localStorage`) can remain; they are unrelated to JWT.
+- **Swagger:** `/swagger` on the API (dev).  
+- **Health:** `GET /health`, `/health/live`, `/health/ready`.  
+- **CORS:** `Cors:AllowedOrigins` must include the Angular origin; credentials required for cookies.  
+- **Publish:** `backend/publish-for-monsterasp.bat` / `.ps1`.  
+- **SQL seed:** `backend/sql/seed-online-database.sql`.
 
-## Swagger
+---
 
-Open `/swagger` in Development on the API to inspect all endpoints and schemas.
+## Summary
 
-## Health checks (verify backend before integration)
-
-Public endpoints (no cookie):
-
-- `GET /health` — JSON summary of all checks (app + database)
-- `GET /health/live` — liveness (`self`)
-- `GET /health/ready` — readiness (SQL Server connection via EF Core)
-
-Use these to confirm the API and database are healthy before changing the Angular app.
+Most of the **data layer** is on HTTP with **cookies** and a **multi-step login/register** flow. Remaining work is concentrated in **auth (identify payload, session/user after login, missing profile/me)**, **admin vs public API paths**, **role names (Doctor)**, and **non-API features** (graduation form data, optional CMS for menu/strings).
