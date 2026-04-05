@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthMockService } from '../../../core/services/auth-mock.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { User } from '../../../core/models/user.model';
 import { LanguageService } from '../../../core/services/language.service';
 import { TemplateService } from '../../../core/services/template.service';
@@ -15,8 +15,8 @@ export class TemplateListComponent implements OnInit {
   currentUser: User | null = null;
 
   constructor(
+    private authService: AuthService,
     private templateService: TemplateService, 
-    private authService: AuthMockService,
     public langService: LanguageService
   ) { }
 

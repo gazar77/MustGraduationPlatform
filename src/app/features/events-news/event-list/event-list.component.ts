@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Event } from '../../../core/models/event.model';
-import { AuthMockService } from '../../../core/services/auth-mock.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { User } from '../../../core/models/user.model';
 import { LanguageService } from '../../../core/services/language.service';
 import { EventService } from '../../../core/services/event.service';
@@ -16,7 +16,7 @@ export class EventListComponent implements OnInit {
 
   constructor(
     private eventService: EventService, 
-    private authService: AuthMockService,
+    private authService: AuthService,
     public langService: LanguageService
   ) { }
 

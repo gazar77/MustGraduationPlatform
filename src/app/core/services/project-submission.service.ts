@@ -1,63 +1,33 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of, catchError } from 'rxjs';
 import { ProjectSubmission } from '../models/project-submission.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectSubmissionService {
-  private mockSubmissions: ProjectSubmission[] = [
-    {
-      id: 1,
-      type: 'project1',
-      projectNumber: 'PRJ-2026-CS-01',
-      projectTitle: 'Smart University Portal',
-      supervisorName: 'Dr. Ahmed Ali',
-      teamLeaderName: 'Omar Khaled',
-      studentName: 'عمر خالد',
-      email: 'omar@must.edu.eg',
-      fileName: 'Requirements_Document.pdf',
-      notes: 'Please find attached the initial requirements for our project.',
-      status: 'Reviewed',
-      submissionDate: new Date(Date.now() - 1000 * 60 * 60 * 48)
-    }
-  ];
+  private apiUrl = environment.apiUrl + '/project-submissions';
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   getSubmissions(type?: 'proposal' | 'project1' | 'project2'): Observable<ProjectSubmission[]> {
-    if (type) {
-      return of(this.mockSubmissions.filter(s => s.type === type));
-    }
-    return of(this.mockSubmissions);
+    const url = type ? `${this.apiUrl}?type=${type}` : this.apiUrl;
+    return this.http.get<ProjectSubmission[]>(url).pipe(
+      catchError(() => of([]))
+    );
   }
 
   addSubmission(submission: Omit<ProjectSubmission, 'id' | 'status' | 'submissionDate'>): Observable<ProjectSubmission> {
-    const newSubmission: ProjectSubmission = {
-      ...submission,
-      id: Date.now(),
-      status: 'Pending',
-      submissionDate: new Date()
-    };
-    this.mockSubmissions.push(newSubmission);
-    return of(newSubmission);
+    return this.http.post<ProjectSubmission>(this.apiUrl, submission);
   }
 
-  updateStatus(id: number, status: ProjectSubmission['status']): Observable<ProjectSubmission | undefined> {
-    const sub = this.mockSubmissions.find(m => m.id === id);
-    if (sub) {
-      sub.status = status;
-      return of(sub);
-    }
-    return of(undefined);
+  updateStatus(id: number, status: ProjectSubmission['status']): Observable<ProjectSubmission> {
+    return this.http.patch<ProjectSubmission>(`${this.apiUrl}/${id}/status`, { status });
   }
 
-  deleteSubmission(id: number): Observable<boolean> {
-    const index = this.mockSubmissions.findIndex(m => m.id === id);
-    if (index !== -1) {
-      this.mockSubmissions.splice(index, 1);
-      return of(true);
-    }
-    return of(false);
+  deleteSubmission(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }

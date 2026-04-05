@@ -235,7 +235,11 @@ export class AdminManagementComponent implements OnInit {
     }
 
     obs?.subscribe(() => {
-      this.dashboardService.addActivity({ type: this.getActivityType(), description: `تم إضافة ${this.getTranslatedType()} جديد: ${data.title || data.teamName}`, user: 'أدمن النظام' });
+      this.dashboardService.addActivity({ 
+        type: this.getActivityType(), 
+        description: `تم إضافة ${this.getTranslatedType()} جديد: ${data.title || data.teamName}`, 
+        user: 'أدمن النظام' 
+      }).subscribe();
       this.initView();
       this.modalConfig.isOpen = false;
     });
@@ -255,7 +259,11 @@ export class AdminManagementComponent implements OnInit {
     }
 
     obs?.subscribe(() => {
-      this.dashboardService.addActivity({ type: this.getActivityType(), description: `تم تحديث ${this.getTranslatedType()}: ${data.title || data.teamName}`, user: 'أدمن النظام' });
+      this.dashboardService.addActivity({ 
+        type: this.getActivityType(), 
+        description: `تم تحديث ${this.getTranslatedType()}: ${data.title || data.teamName}`, 
+        user: 'أدمن النظام' 
+      }).subscribe();
       this.initView();
       this.modalConfig.isOpen = false;
     });
@@ -276,7 +284,11 @@ export class AdminManagementComponent implements OnInit {
       }
 
       obs?.subscribe(() => {
-        this.dashboardService.addActivity({ type: this.getActivityType(), description: `تم حذف ${this.getTranslatedType()}: ${item.title || item.teamName}`, user: 'أدمن النظام' });
+        this.dashboardService.addActivity({ 
+          type: this.getActivityType(), 
+          description: `تم حذف ${this.getTranslatedType()}: ${item.title || item.teamName}`, 
+          user: 'أدمن النظام' 
+        }).subscribe();
         this.initView();
       });
     }

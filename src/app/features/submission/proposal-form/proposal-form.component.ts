@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LanguageService } from '../../../core/services/language.service';
 import { ProjectSubmissionService } from '../../../core/services/project-submission.service';
+import { SiteSettingsService } from '../../../core/services/site-settings.service';
 
 @Component({
   selector: 'app-proposal-form',
@@ -15,7 +16,12 @@ export class ProposalFormComponent implements OnInit {
   daysLeft = 0;
   selectedFile: File | null = null;
 
-  constructor(private fb: FormBuilder, public langService: LanguageService, private projectSubmissionService: ProjectSubmissionService) {
+  constructor(
+    private fb: FormBuilder, 
+    public langService: LanguageService, 
+    private projectSubmissionService: ProjectSubmissionService,
+    private siteSettingsService: SiteSettingsService
+  ) {
     this.proposalForm = this.fb.group({
       projectNumber: ['', Validators.required],
       projectTitle: ['', Validators.required],
@@ -26,7 +32,10 @@ export class ProposalFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.calculateDeadline();
+    this.siteSettingsService.getSetting('proposalDeadline').subscribe(res => {
+      this.deadlineDate = new Date(res.value);
+      this.calculateDeadline();
+    });
   }
 
   calculateDeadline(): void {

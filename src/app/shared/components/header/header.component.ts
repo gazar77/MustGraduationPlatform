@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { AuthMockService } from '../../../core/services/auth-mock.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { LanguageService } from '../../../core/services/language.service';
 import { MENU_ITEMS, MenuItem } from '../../../core/data/navigation.data';
@@ -29,7 +29,7 @@ export class HeaderComponent implements OnDestroy {
 
   constructor(
     private router: Router,
-    public authService: AuthMockService,
+    public authService: AuthService,
     public themeService: ThemeService,
     public languageService: LanguageService
   ) {
@@ -101,9 +101,10 @@ export class HeaderComponent implements OnDestroy {
   }
 
   logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-    this.closeMenus();
+    this.authService.logout().subscribe(() => {
+      this.router.navigate(['/auth/login']);
+      this.closeMenus();
+    });
   }
 
   toggleTheme(): void {

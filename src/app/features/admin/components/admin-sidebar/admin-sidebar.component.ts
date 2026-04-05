@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthMockService } from '../../../../core/services/auth-mock.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 export class AdminSidebarComponent {
   isCollapsed = false;
 
-  constructor(private authService: AuthMockService, private router: Router) {}
+  constructor(public authService: AuthService, private router: Router) {}
 
   toggleSidebar() {
     this.isCollapsed = !this.isCollapsed;

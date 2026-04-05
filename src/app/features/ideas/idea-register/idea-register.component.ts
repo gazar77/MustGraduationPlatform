@@ -3,6 +3,7 @@ import { IdeaService } from '../../../core/services/idea.service';
 import { Router } from '@angular/router';
 import { LanguageService } from '../../../core/services/language.service';
 import { FormBuilder, FormGroup, FormArray, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { SiteSettingsService } from '../../../core/services/site-settings.service';
 
 @Component({
     selector: 'app-idea-register',
@@ -17,15 +18,23 @@ export class IdeaRegisterComponent implements OnInit {
         private fb: FormBuilder,
         private ideaService: IdeaService, 
         private router: Router, 
-        public langService: LanguageService
+        public langService: LanguageService,
+        private siteSettingsService: SiteSettingsService
     ) {}
 
     ngOnInit(): void {
         this.initForm();
+        this.loadSettings();
         // Initialize with minimum 5 students
         for(let i = 0; i < 5; i++) {
             this.addStudent();
         }
+    }
+
+    loadSettings(): void {
+        this.siteSettingsService.getSetting('academicYearLabel').subscribe(res => {
+            this.registrationForm.get('academicYear')?.setValue(res.value);
+        });
     }
 
     initForm(): void {

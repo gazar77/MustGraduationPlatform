@@ -1,55 +1,30 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { ContactMessage } from '../models/contact-message.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ContactService {
-  private mockMessages: ContactMessage[] = [
-    {
-      id: 1,
-      name: 'علي حسن',
-      email: 'ali.hassan@must.edu.eg',
-      subject: 'استفسار عن موعد التخرج',
-      message: 'متى سيتم إعلان موعد حفل التخرج؟',
-      status: 'New',
-      submissionDate: new Date(Date.now() - 1000 * 60 * 60 * 24)
-    }
-  ];
+  private apiUrl = environment.apiUrl + '/contact';
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   getMessages(): Observable<ContactMessage[]> {
-    return of(this.mockMessages);
+    return this.http.get<ContactMessage[]>(this.apiUrl);
   }
 
   addMessage(message: Omit<ContactMessage, 'id' | 'status' | 'submissionDate'>): Observable<ContactMessage> {
-    const newMessage: ContactMessage = {
-      ...message,
-      id: Date.now(),
-      status: 'New',
-      submissionDate: new Date()
-    };
-    this.mockMessages.push(newMessage);
-    return of(newMessage);
+    return this.http.post<ContactMessage>(this.apiUrl, message);
   }
 
-  updateMessageStatus(id: number, status: ContactMessage['status']): Observable<ContactMessage | undefined> {
-    const message = this.mockMessages.find(m => m.id === id);
-    if (message) {
-      message.status = status;
-      return of(message);
-    }
-    return of(undefined);
+  updateMessageStatus(id: number, status: ContactMessage['status']): Observable<ContactMessage> {
+    return this.http.patch<ContactMessage>(`${this.apiUrl}/${id}/status`, { status });
   }
 
-  deleteMessage(id: number): Observable<boolean> {
-    const index = this.mockMessages.findIndex(m => m.id === id);
-    if (index !== -1) {
-      this.mockMessages.splice(index, 1);
-      return of(true);
-    }
-    return of(false);
+  deleteMessage(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }

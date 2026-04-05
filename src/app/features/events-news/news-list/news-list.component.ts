@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { News } from '../../../core/models/news.model';
-import { AuthMockService } from '../../../core/services/auth-mock.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { User } from '../../../core/models/user.model';
 import { LanguageService } from '../../../core/services/language.service';
 import { NewsService } from '../../../core/services/news.service';
@@ -16,7 +16,7 @@ export class NewsListComponent implements OnInit {
 
   constructor(
     private newsService: NewsService, 
-    private authService: AuthMockService,
+    private authService: AuthService,
     public langService: LanguageService
   ) { }
 

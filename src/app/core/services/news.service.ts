@@ -1,80 +1,46 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-
+import { HttpClient } from '@angular/common/http';
+import { Observable, map, of, catchError } from 'rxjs';
 import { News } from '../models/news.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NewsService {
-  private mockNews: News[] = [
-    {
-      id: 1,
-      title: 'إعلان توزيع مشاريع التخرج',
-      content: 'نحيطكم علماً بأنه قد تم توزيع لجان الإشراف على مشاريع التخرج للعام الجامعي الحالي...',
-      author: 'إدارة الكلية',
-      publishDate: new Date('2026-03-05'),
-      category: 'Announcement',
-      isVisible: true,
-      order: 1
-    },
-    {
-      id: 2,
-      title: 'ورشة عمل حول كتابة المقترح (Proposal)',
-      content: 'ستقام ورشة عمل يوم الأثنين القادم بقاعة المؤتمرات بالكلية لتدريب الطلاب على كيفية صياغة مقترح المشروع...',
-      author: 'وحدة ضمان الجودة',
-      publishDate: new Date('2026-03-08'),
-      category: 'Event',
-      isVisible: true,
-      order: 2
-    }
-  ];
+  private apiUrl = environment.apiUrl + '/news';
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   getNews(): Observable<News[]> {
-    return of(this.mockNews);
+    return this.http.get<News[]>(this.apiUrl).pipe(
+      catchError(() => of([]))
+    );
   }
 
   getVisibleNews(): Observable<News[]> {
-    return of(this.mockNews.filter(n => n.isVisible).sort((a, b) => (a.order || 0) - (b.order || 0)));
+    return this.getNews().pipe(
+      map(news => news.filter(n => n.isVisible).sort((a, b) => (a.order || 0) - (b.order || 0)))
+    );
   }
 
-  getNewsById(id: number): Observable<News | undefined> {
-    return of(this.mockNews.find(n => n.id === id));
+  getNewsById(id: number): Observable<News> {
+    return this.http.get<News>(`${this.apiUrl}/${id}`);
   }
 
   addNews(news: News): Observable<News> {
-    const newId = Math.max(...this.mockNews.map(n => n.id || 0)) + 1;
-    const newItem = { ...news, id: newId, publishDate: new Date(), isVisible: true };
-    this.mockNews.unshift(newItem);
-    return of(newItem);
+    return this.http.post<News>(this.apiUrl, news);
   }
 
-  updateNews(id: number, data: Partial<News>): Observable<News | undefined> {
-    const index = this.mockNews.findIndex(n => n.id === id);
-    if (index !== -1) {
-      this.mockNews[index] = { ...this.mockNews[index], ...data };
-      return of(this.mockNews[index]);
-    }
-    return of(undefined);
+  updateNews(id: number, data: Partial<News>): Observable<News> {
+    return this.http.put<News>(`${this.apiUrl}/${id}`, data);
   }
 
-  deleteNews(id: number): Observable<boolean> {
-    const index = this.mockNews.findIndex(n => n.id === id);
-    if (index !== -1) {
-      this.mockNews.splice(index, 1);
-      return of(true);
-    }
-    return of(false);
+  deleteNews(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
-  toggleVisibility(id: number): Observable<News | undefined> {
-    const index = this.mockNews.findIndex(n => n.id === id);
-    if (index !== -1) {
-      this.mockNews[index].isVisible = !this.mockNews[index].isVisible;
-      return of(this.mockNews[index]);
-    }
-    return of(undefined);
+  toggleVisibility(id: number): Observable<News> {
+    return this.http.patch<News>(`${this.apiUrl}/${id}/toggle-visibility`, {});
   }
 }

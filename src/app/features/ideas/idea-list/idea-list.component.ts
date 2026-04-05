@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { IdeaService } from '../../../core/services/idea.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { Idea, ProjectCategory } from '../../../core/models/idea.model';
-import { AuthMockService } from '../../../core/services/auth-mock.service';
 import { User } from '../../../core/models/user.model';
 import { LanguageService } from '../../../core/services/language.service';
 
@@ -33,7 +33,7 @@ export class IdeaListComponent implements OnInit {
 
   constructor(
     private ideaService: IdeaService, 
-    private authService: AuthMockService,
+    private authService: AuthService,
     public langService: LanguageService
   ) { }
 

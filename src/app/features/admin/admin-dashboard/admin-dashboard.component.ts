@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthMockService } from '../../../core/services/auth-mock.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { DashboardService } from '../../../core/services/dashboard.service';
 import { User } from '../../../core/models/user.model';
 import { DashboardStats, Activity } from '../../../core/models/dashboard-stats.model';
@@ -17,7 +17,7 @@ export class AdminDashboardComponent implements OnInit {
   activities$: Observable<Activity[]>;
 
   constructor(
-    private authService: AuthMockService,
+    private authService: AuthService,
     private dashboardService: DashboardService
   ) {
     this.stats$ = this.dashboardService.getStats();

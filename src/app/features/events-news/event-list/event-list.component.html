@@ -23,6 +23,11 @@
             </div>
           </div>
         </article>
+    <div *ngIf="events.length === 0" class="no-results container py-5 text-center">
+      <i class="fas fa-calendar-times mb-3" style="font-size: 3rem; color: #ccc;"></i>
+      <h3>{{ langService.translate('events.list.noEvents') || 'لا توجد فعاليات حالياً' }}</h3>
+      <p>{{ langService.translate('events.list.checkLater') || 'برجاء مراجعة الصفحة لاحقاً أو إضافة فعاليات من لوحة التحكم.' }}</p>
+    </div>
       </div>
     </div>
   </section>
