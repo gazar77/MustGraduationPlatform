@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { SiteSettingsService } from '../../../core/services/site-settings.service';
 
 interface SettingRow {
@@ -38,11 +39,23 @@ export class AdminSettingsComponent implements OnInit {
         }));
         this.loading = false;
       },
-      error: () => {
-        this.error = 'تعذر تحميل الإعدادات (يجب أن تكون مسجلاً كمدير).';
+      error: (err: unknown) => {
+        this.error = this.settingsLoadErrorMessage(err);
         this.loading = false;
       }
     });
+  }
+
+  private settingsLoadErrorMessage(err: unknown): string {
+    if (err instanceof HttpErrorResponse) {
+      if (err.status === 404) {
+        return 'تعذر تحميل الإعدادات: المسار غير موجود على الخادم (404). تأكد من نشر نسخة API الحديثة.';
+      }
+      if (err.status === 401 || err.status === 403) {
+        return 'تعذر تحميل الإعدادات (يجب أن تكون مسجلاً كمدير).';
+      }
+    }
+    return 'تعذر تحميل الإعدادات. تحقق من الاتصال أو حاول لاحقاً.';
   }
 
   save(row: SettingRow): void {

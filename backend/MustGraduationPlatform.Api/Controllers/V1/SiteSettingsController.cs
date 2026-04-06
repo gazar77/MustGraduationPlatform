@@ -6,7 +6,7 @@ using MustGraduationPlatform.Application.Dtos;
 namespace MustGraduationPlatform.Api.Controllers.V1;
 
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/v1/site-settings")]
 public class SiteSettingsController : ControllerBase
 {
     private readonly ISiteSettingsService _settings;

@@ -7,7 +7,7 @@ using MustGraduationPlatform.Api.Models;
 namespace MustGraduationPlatform.Api.Controllers.V1;
 
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/v1/project-submissions")]
 [Authorize]
 public class ProjectSubmissionsController : ControllerBase
 {

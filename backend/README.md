@@ -61,7 +61,10 @@ These values are defined in `MustGraduationPlatform.Infrastructure/Persistence/D
 
 - **JWT** — `Jwt` section: `SigningKey` must be long enough for HS256 (use a strong secret in production via environment variables).
 - **SMTP** — `Smtp` section for student OTP emails. If `Host` is empty, emails are logged to the console instead (development).
-- **CORS** — `Cors:AllowedOrigins` must include your Angular SPA origin.
+- **Student activation OTP (SQL)** — There is no `UserOtp` table. Codes from `POST /api/v1/auth/student/send-code` are stored as a **hash** in **`StudentLoginOtps`** (existing student user) or **`RegistrationOtps`** (email not registered yet). Query those tables when debugging “no OTP row”; a successful API response (**204**) implies `SaveChanges` ran before email send.
+- **CORS** — `Cors:AllowedOrigins` must list **every** SPA origin you use (production and each Vercel preview URL). Credentials mode cannot use `*`. On the host, set `Cors__AllowedOrigins__0`, `__1`, … or override the array in config.
+- **API auth** — Identity registers cookie auth; the app is configured so unauthenticated requests to `[Authorize]` endpoints return **401/403** instead of redirecting to `/Account/Login` (that MVC route does not exist on this API and previously caused **302 → 404** in browsers). JWT Bearer (including `access_token` cookie) is the default challenge scheme.
+- **Cross-origin SPA (e.g. Angular on Vercel, API on MonsterASP)** — In production, `access_token` is set with **SameSite=None** and **Secure** so the browser includes it on cross-origin XHR/fetch when the Angular app uses `withCredentials: true`. **HTTPS is required** on the API host. If login succeeds but `/api/v1/auth/me` returns **401**, check DevTools: the request to the API should show a `Cookie` header with `access_token`, and **Application → Cookies** for the API host should list `access_token` after login.
 - **File uploads (local disk)** — `POST /api/v1/project-submissions/with-file` saves files under **`wwwroot/uploads`** on the API host. `UseStaticFiles()` serves them at **`/uploads/...`**. The stored `fileUrl` is a path like `/uploads/...`; when the Angular app runs on another origin (e.g. Vercel), build the browser URL as **API public origin** + `fileUrl` (same host as the API, without `/api/v1`). Ensure the deploy folder includes **`wwwroot`** so uploads persist next to the app.
 
 ## MonsterASP.net deployment
@@ -80,6 +83,12 @@ These values are defined in `MustGraduationPlatform.Infrastructure/Persistence/D
 9. After deployment, run **`dotnet ef database update`** against the hosted database (from a machine that can reach the server), or run migrations as part of your pipeline.
 
 Use HTTPS in production so `Secure` cookies work for authentication.
+
+### After deploy: verify auth and routes
+
+1. **Network:** Log in, then open a protected `GET` (e.g. `/api/v1/auth/me`). Confirm **Request Headers** include `Cookie: access_token=...` (or that the response is not 401 if your role allows the route).
+2. **401 only on some routes:** Compare your user’s role with `[Authorize(Roles = …)]` on those controllers; missing role differs from “no cookie” 401.
+3. **404 on `/api/v1/project-submissions` or `/site-settings`:** These routes are registered as **kebab-case** paths to match the Angular app. If you still see **404**, redeploy the latest API build, confirm the site maps `/api/v1` to this app (no wrong virtual directory), and that the SPA base URL is exactly `…/api/v1` (no double segment). Older Identity misconfiguration could surface as **302 → 404**; current code should return **401** when not logged in.
 
 ## Solution layout
 

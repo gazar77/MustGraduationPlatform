@@ -232,13 +232,7 @@ public class AuthService : IAuthService
         var response = _http.HttpContext?.Response;
         if (response is null) return Task.CompletedTask;
 
-        response.Cookies.Delete(AccessTokenCookieName, new CookieOptions
-        {
-            Path = "/",
-            HttpOnly = true,
-            Secure = !_env.IsDevelopment(),
-            SameSite = SameSiteMode.Lax
-        });
+        response.Cookies.Delete(AccessTokenCookieName, AccessTokenCookieOptions(expiresMinutes: null));
 
         return Task.CompletedTask;
     }
@@ -249,14 +243,23 @@ public class AuthService : IAuthService
                        ?? throw new InvalidOperationException("No HTTP context.");
 
         var token = _jwt.CreateAccessToken(user);
-        response.Cookies.Append(AccessTokenCookieName, token, new CookieOptions
+        response.Cookies.Append(AccessTokenCookieName, token, AccessTokenCookieOptions(_jwtOptions.ExpiresMinutes));
+    }
+
+    // Production: SameSite=None + Secure so cross-origin SPA (e.g. Vercel) sends access_token with withCredentials.
+    private CookieOptions AccessTokenCookieOptions(double? expiresMinutes)
+    {
+        var isProd = !_env.IsDevelopment();
+        var options = new CookieOptions
         {
             HttpOnly = true,
-            Secure = !_env.IsDevelopment(),
-            SameSite = SameSiteMode.Lax,
             Path = "/",
-            MaxAge = TimeSpan.FromMinutes(_jwtOptions.ExpiresMinutes)
-        });
+            SameSite = isProd ? SameSiteMode.None : SameSiteMode.Lax,
+            Secure = isProd,
+        };
+        if (expiresMinutes.HasValue)
+            options.MaxAge = TimeSpan.FromMinutes(expiresMinutes.Value);
+        return options;
     }
 
     private static UserDto MapUser(ApplicationUser u) =>
