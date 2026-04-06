@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -68,24 +69,24 @@ export class LoginComponent implements OnInit {
           }
           this.loading = false;
         },
-        error: () => {
-          this.error = 'حدث خطأ أثناء التحقق من الحساب';
+        error: (err) => {
+          this.error = this.httpErrorMessage(err, 'حدث خطأ أثناء التحقق من الحساب');
           this.loading = false;
         }
       });
     } else if (this.step === 'AdminLogin') {
       this.authService.adminLogin(this.f['email'].value, this.f['password'].value).subscribe({
         next: () => this.router.navigateByUrl('/admin'),
-        error: () => {
-          this.error = 'كلمة المرور غير صحيحة';
+        error: (err) => {
+          this.error = this.httpErrorMessage(err, 'كلمة المرور غير صحيحة أو رفض الخادم الطلب.');
           this.loading = false;
         }
       });
     } else if (this.step === 'StudentLogin') {
       this.authService.studentLogin(this.f['email'].value, this.f['code'].value, this.f['password'].value).subscribe({
         next: () => this.router.navigateByUrl('/dashboard'),
-        error: () => {
-          this.error = 'الكود أو كلمة المرور غير صحيحة';
+        error: (err) => {
+          this.error = this.httpErrorMessage(err, 'الكود أو كلمة المرور غير صحيحة.');
           this.loading = false;
         }
       });
@@ -100,10 +101,23 @@ export class LoginComponent implements OnInit {
         this.f['code'].updateValueAndValidity();
         this.loading = false;
       },
-      error: () => {
-        this.error = 'فشل إرسال كود التحقق';
+      error: (err) => {
+        this.error = this.httpErrorMessage(err, 'فشل إرسال كود التحقق');
         this.loading = false;
       }
     });
+  }
+
+  /** Prefer clear message when API is unreachable (status 0 / connection reset). */
+  private httpErrorMessage(err: unknown, fallback: string): string {
+    if (err instanceof HttpErrorResponse) {
+      if (err.status === 0) {
+        return 'تعذر الاتصال بالخادم. تحقق من الإنترنت أو أن واجهة الـ API تعمل (ERR_CONNECTION_RESET / الخادم متوقف).';
+      }
+      if (err.status >= 500) {
+        return 'الخادم غير متاح مؤقتاً. حاول لاحقاً.';
+      }
+    }
+    return fallback;
   }
 }

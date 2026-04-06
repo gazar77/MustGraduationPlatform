@@ -25,10 +25,9 @@ export class AuthService {
     return this.fetchCurrentUser();
   }
 
+  /** Do not swallow HTTP/network errors — callers must show server-unreachable vs not-registered. */
   identify(email: string): Observable<{ exists: boolean; userType: string | null }> {
-    return this.http.post<{ exists: boolean; userType: string | null }>(`${this.apiUrl}/identify`, { email }).pipe(
-      catchError(() => of({ exists: false, userType: null }))
-    );
+    return this.http.post<{ exists: boolean; userType: string | null }>(`${this.apiUrl}/identify`, { email });
   }
 
   adminLogin(email: string, password: string): Observable<any> {
