@@ -14,3 +14,5 @@ public record ActivityDto(
     string Description,
     DateTime Timestamp,
     string User);
+
+public record ActivityCreateDto(string Type, string Description, string User);

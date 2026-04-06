@@ -1,9 +1,9 @@
 export interface User {
-    id: number;
+    id: string;
     name: string;
     email: string;
-    role: 'Student' | 'Doctor' | 'Admin';
-    department?: 'CS' | 'IS' | 'AI';
+    role: 'Student' | 'Admin';
+    departmentCode?: string | null;
 }
 
 export interface AuthResponse {

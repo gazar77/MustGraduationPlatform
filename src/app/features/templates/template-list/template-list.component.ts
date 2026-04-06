@@ -4,6 +4,7 @@ import { User } from '../../../core/models/user.model';
 import { LanguageService } from '../../../core/services/language.service';
 import { TemplateService } from '../../../core/services/template.service';
 import { Template } from '../../../core/models/template.model';
+import { fileUrlToAbsolute } from '../../../core/utils/api-url.util';
 
 @Component({
   selector: 'app-template-list',
@@ -20,6 +21,10 @@ export class TemplateListComponent implements OnInit {
     public langService: LanguageService
   ) { }
 
+  absFileUrl(url: string): string {
+    return fileUrlToAbsolute(url);
+  }
+
   ngOnInit(): void {
     this.templateService.getVisibleTemplates().subscribe(templates => {
       this.templates = templates;
@@ -33,22 +38,30 @@ export class TemplateListComponent implements OnInit {
   onAddTemplate(): void {
     const titlePrompt = this.langService.translate('templates.prompts.newTitle');
     const descPrompt = this.langService.translate('templates.prompts.newDesc');
-    
+
     const title = prompt(titlePrompt);
     const description = prompt(descPrompt);
-    if (title && description) {
-      this.templateService.addTemplate({
-        id: 0,
-        title,
-        description,
-        lastUpdate: new Date().toLocaleDateString('en-GB'),
-        fileSize: '1.2 MB',
-        fileUrl: '#',
-        isVisible: true,
-        order: 0
-      }).subscribe(() => {
-        this.templateService.getTemplates().subscribe(templates => this.templates = templates);
-      });
-    }
+    if (!title || !description) return;
+
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.pdf,.doc,.docx,.zip,.rar,.7z,.png,.jpg,.jpeg,.ppt,.pptx';
+    input.onchange = () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      this.templateService
+        .addTemplateWithFile(file, {
+          title,
+          description,
+          isVisible: true,
+          displayOrder: 0
+        })
+        .subscribe(() => {
+          this.templateService.getVisibleTemplates().subscribe((templates) => {
+            this.templates = templates;
+          });
+        });
+    };
+    input.click();
   }
 }

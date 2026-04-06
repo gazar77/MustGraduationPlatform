@@ -1,0 +1,36 @@
+<div class="admin-settings">
+  <h2 class="mb-4">إعدادات الموقع</h2>
+
+  <p *ngIf="message" class="alert alert-info py-2">{{ message }}</p>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <div *ngIf="!loading && !error" class="table-responsive">
+    <table class="table table-bordered align-middle">
+      <thead class="table-light">
+        <tr>
+          <th style="width: 220px">المفتاح</th>
+          <th>القيمة</th>
+          <th style="width: 120px"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of rows">
+          <td><code>{{ row.key }}</code></td>
+          <td>
+            <textarea class="form-control" rows="3" [(ngModel)]="row.editValue"></textarea>
+          </td>
+          <td>
+            <button type="button" class="btn btn-primary btn-sm" (click)="save(row)" [disabled]="row.saving">
+              {{ row.saving ? '...' : 'حفظ' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

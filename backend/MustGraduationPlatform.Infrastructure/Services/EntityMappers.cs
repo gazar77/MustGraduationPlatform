@@ -82,6 +82,7 @@ internal static class EntityMappers
         e.SupervisorName,
         e.TeamLeaderName,
         e.FileName,
+        e.FileStoragePath,
         e.Notes,
         e.Status,
         e.SubmissionDate);

@@ -10,6 +10,7 @@ public record ProjectSubmissionDto(
     string? SupervisorName,
     string? TeamLeaderName,
     string FileName,
+    string? FileUrl,
     string Notes,
     string Status,
     DateTime SubmissionDate);

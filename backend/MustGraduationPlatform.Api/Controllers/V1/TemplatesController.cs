@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MustGraduationPlatform.Application.Abstractions;
 using MustGraduationPlatform.Application.Dtos;
+using MustGraduationPlatform.Api.Models;
 
 namespace MustGraduationPlatform.Api.Controllers.V1;
 
@@ -14,6 +15,26 @@ public class TemplatesController : ControllerBase
     public TemplatesController(ITemplateService templates)
     {
         _templates = templates;
+    }
+
+    [HttpPost("with-file")]
+    [Authorize(Roles = "Admin")]
+    [Consumes("multipart/form-data")]
+    [RequestFormLimits(MultipartBodyLengthLimit = 26_214_400)]
+    public async Task<ActionResult<TemplateDto>> CreateWithFile([FromForm] TemplateFormModel model, CancellationToken ct)
+    {
+        if (model.File is null || model.File.Length == 0)
+            return BadRequest(new { message = "File is required." });
+
+        var dto = new TemplateCreateUpdateDto(
+            model.Title,
+            model.Description ?? "",
+            "",
+            "",
+            model.IsVisible,
+            model.DisplayOrder);
+        await using var stream = model.File.OpenReadStream();
+        return Ok(await _templates.CreateWithFileAsync(dto, stream, model.File.Length, model.File.FileName, model.File.ContentType, ct));
     }
 
     [HttpGet]

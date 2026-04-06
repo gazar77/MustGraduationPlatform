@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { IdeaService } from '../../../core/services/idea.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
 import { LanguageService } from '../../../core/services/language.service';
 import { FormBuilder, FormGroup, FormArray, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
@@ -16,8 +17,9 @@ export class IdeaRegisterComponent implements OnInit {
 
     constructor(
         private fb: FormBuilder,
-        private ideaService: IdeaService, 
-        private router: Router, 
+        private ideaService: IdeaService,
+        private authService: AuthService,
+        private router: Router,
         public langService: LanguageService,
         private siteSettingsService: SiteSettingsService
     ) {}
@@ -33,7 +35,7 @@ export class IdeaRegisterComponent implements OnInit {
 
     loadSettings(): void {
         this.siteSettingsService.getSetting('academicYearLabel').subscribe(res => {
-            this.registrationForm.get('academicYear')?.setValue(res.value);
+            this.registrationForm.get('academicYear')?.setValue(this.siteSettingsService.parseStoredValue(res.value));
         });
     }
 
@@ -95,21 +97,19 @@ export class IdeaRegisterComponent implements OnInit {
         }
 
         const formValue = this.registrationForm.value;
+        const user = this.authService.currentUserValue;
+        if (!user || (user.role !== 'Student' && user.role !== 'Admin')) {
+            alert('يجب تسجيل الدخول كطالب لإرسال طلب تسجيل فكرة.');
+            this.router.navigate(['/auth/login'], { queryParams: { returnUrl: '/ideas/register' } });
+            return;
+        }
 
-        // Submit matching the expected structure of the IdeaService
-        this.ideaService.addIdea({
-            id: 0,
+        this.ideaService.submitStudentIdea({
             title: formValue.titleEn + ' - ' + formValue.titleAr,
             description: `Year: ${formValue.academicYear}, Term: ${formValue.semester}, Dept: ${formValue.department}`,
             category: formValue.category,
-            difficulty: 'Medium',
-            requiredSkills: [],
             maxTeamSize: this.students.length,
-            supervisorName: formValue.supervisorName,
-            createdAt: new Date(),
-            status: 'Open',
-            isVisible: false,
-            order: 0
+            supervisorName: formValue.supervisorName
         }).subscribe(() => {
             alert('Form submitted successfully!');
             this.router.navigate(['/ideas']);

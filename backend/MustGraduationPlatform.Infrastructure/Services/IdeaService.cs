@@ -33,6 +33,16 @@ public class IdeaService : IIdeaService
         return list.Select(EntityMappers.ToDto).ToList();
     }
 
+    public async Task<IReadOnlyList<IdeaDto>> GetForSupervisorAsync(string supervisorName, CancellationToken ct = default)
+    {
+        var name = supervisorName.Trim();
+        var list = await _db.Ideas
+            .Where(i => i.SupervisorName == name)
+            .OrderBy(i => i.DisplayOrder)
+            .ToListAsync(ct);
+        return list.Select(EntityMappers.ToDto).ToList();
+    }
+
     public async Task<IdeaDto?> GetByIdAsync(int id, CancellationToken ct = default)
     {
         var e = await _db.Ideas.FindAsync(new object[] { id }, ct);
@@ -59,6 +69,23 @@ public class IdeaService : IIdeaService
         _db.Ideas.Add(e);
         await _db.SaveChangesAsync(ct);
         return EntityMappers.ToDto(e);
+    }
+
+    public async Task<IdeaDto> CreateStudentSubmissionAsync(IdeaStudentSubmitDto dto, CancellationToken ct = default)
+    {
+        var create = new IdeaCreateUpdateDto(
+            Title: dto.Title,
+            Description: dto.Description,
+            Category: dto.Category,
+            Difficulty: "Medium",
+            RequiredSkills: Array.Empty<string>(),
+            MaxTeamSize: dto.MaxTeamSize,
+            SupervisorDoctorId: null,
+            SupervisorName: dto.SupervisorName,
+            Status: "Open",
+            IsVisible: false,
+            DisplayOrder: 0);
+        return await CreateAsync(create, ct);
     }
 
     public async Task<IdeaDto?> UpdateAsync(int id, IdeaCreateUpdateDto dto, CancellationToken ct = default)

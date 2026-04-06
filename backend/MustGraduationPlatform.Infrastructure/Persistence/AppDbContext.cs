@@ -24,6 +24,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     public DbSet<DashboardActivity> DashboardActivities => Set<DashboardActivity>();
     public DbSet<StudentLoginOtp> StudentLoginOtps => Set<StudentLoginOtp>();
     public DbSet<RegistrationOtp> RegistrationOtps => Set<RegistrationOtp>();
+    public DbSet<GraduationRequirementFile> GraduationRequirementFiles => Set<GraduationRequirementFile>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -59,6 +60,11 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
         builder.Entity<RegistrationOtp>(e =>
         {
             e.HasIndex(x => x.NormalizedEmail);
+        });
+
+        builder.Entity<GraduationRequirementFile>(e =>
+        {
+            e.HasIndex(x => new { x.UserId, x.RequirementKey }).IsUnique();
         });
     }
 }

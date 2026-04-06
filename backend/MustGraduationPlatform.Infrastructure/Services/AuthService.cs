@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Http;
@@ -90,8 +91,8 @@ public class AuthService : IAuthService
         var normalized = MustEmailRules.Normalize(request.Email);
         var user = await _userManager.FindByEmailAsync(normalized);
 
-        if (user is not null && user.UserRole == UserRole.Admin)
-            throw new AppException("AUTH_OTP_NOT_ALLOWED", "Activation codes are not used for administrator accounts.");
+        if (user is not null && user.UserRole != UserRole.Student)
+            throw new AppException("AUTH_OTP_NOT_ALLOWED", "Activation codes are only for student accounts.");
 
         var code = GenerateNumericCode(6);
         var hash = HashCode(code);
@@ -99,9 +100,6 @@ public class AuthService : IAuthService
 
         if (user is not null)
         {
-            if (user.UserRole != UserRole.Student)
-                throw new AppException("AUTH_OTP_NOT_ALLOWED", "Invalid account type.");
-
             await _db.StudentLoginOtps
                 .Where(x => x.UserId == user.Id && !x.Consumed)
                 .ExecuteDeleteAsync(ct);
@@ -217,6 +215,16 @@ public class AuthService : IAuthService
         var full = await _db.Users.Include(u => u.Department).FirstAsync(u => u.Id == user.Id, ct);
         AppendAuthCookie(full);
         return new AuthSuccessDto(MapUser(full));
+    }
+
+    public async Task<UserDto?> GetCurrentUserAsync(ClaimsPrincipal principal, CancellationToken ct = default)
+    {
+        var idStr = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(idStr) || !Guid.TryParse(idStr, out var id))
+            return null;
+
+        var user = await _db.Users.Include(u => u.Department).FirstOrDefaultAsync(u => u.Id == id, ct);
+        return user is null ? null : MapUser(user);
     }
 
     public Task LogoutAsync(CancellationToken ct = default)

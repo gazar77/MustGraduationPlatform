@@ -13,39 +13,30 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    this.checkAuthentication();
+    this.refreshSession().subscribe();
   }
 
   public get currentUserValue(): User | null {
     return this.currentUserSubject.value;
   }
 
-  private checkAuthentication(): void {
-    // The backend uses HttpOnly cookies, so we can't check the token directly.
-    // Instead, we call an "identify" or "me" endpoint on startup.
-    this.identify().subscribe();
+  /** Restore user from HttpOnly cookie via GET /auth/me */
+  refreshSession(): Observable<User | null> {
+    return this.fetchCurrentUser();
   }
 
-  identify(): Observable<{ exists: boolean; userType: string | null }> {
-    return this.http.post<{ exists: boolean; userType: string | null }>(`${this.apiUrl}/identify`, {}).pipe(
-      tap(res => {
-        if (!res.exists) {
-          this.currentUserSubject.next(null);
-        }
-      }),
-      catchError(() => {
-        this.currentUserSubject.next(null);
-        return of({ exists: false, userType: null });
-      })
+  identify(email: string): Observable<{ exists: boolean; userType: string | null }> {
+    return this.http.post<{ exists: boolean; userType: string | null }>(`${this.apiUrl}/identify`, { email }).pipe(
+      catchError(() => of({ exists: false, userType: null }))
     );
   }
 
   adminLogin(email: string, password: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/admin/login`, { email, password }).pipe(
       tap(res => {
-        // Backend sets HttpOnly cookie access_token. 
-        // We might need to fetch the user profile if the login response doesn't include it.
-        this.fetchCurrentUser().subscribe();
+        if (res?.user) {
+          this.currentUserSubject.next(this.mapUser(res.user));
+        }
       })
     );
   }
@@ -56,7 +47,11 @@ export class AuthService {
 
   studentLogin(email: string, code: string, password?: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/student/login`, { email, code, password }).pipe(
-      tap(() => this.fetchCurrentUser().subscribe())
+      tap(res => {
+        if (res?.user) {
+          this.currentUserSubject.next(this.mapUser(res.user));
+        }
+      })
     );
   }
 
@@ -77,13 +72,24 @@ export class AuthService {
   }
 
   private fetchCurrentUser(): Observable<User | null> {
-    // Assuming there's a profile or me endpoint. If not, we use identity.
-    return this.http.get<User>(`${this.apiUrl}/profile`).pipe(
+    return this.http.get<any>(`${this.apiUrl}/me`).pipe(
+      map(dto => this.mapUser(dto)),
       tap(user => this.currentUserSubject.next(user)),
       catchError(() => {
         this.currentUserSubject.next(null);
         return of(null);
       })
     );
+  }
+
+  private mapUser(dto: any): User {
+    const role = dto?.role === 'Admin' ? 'Admin' : 'Student';
+    return {
+      id: String(dto.id),
+      name: dto.name ?? '',
+      email: dto.email ?? '',
+      role,
+      departmentCode: dto.departmentCode ?? null
+    };
   }
 }

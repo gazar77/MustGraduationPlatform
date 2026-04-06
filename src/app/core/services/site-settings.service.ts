@@ -14,4 +14,27 @@ export class SiteSettingsService {
   getSetting(key: string): Observable<{ key: string, value: string }> {
     return this.http.get<{ key: string, value: string }>(`${this.apiUrl}/${key}`);
   }
+
+  /** Admin: all key/value pairs. */
+  getAll(): Observable<{ key: string; value: string }[]> {
+    return this.http.get<{ key: string; value: string }[]>(this.apiUrl);
+  }
+
+  /** Admin: create or update a setting value (raw string as stored in DB). */
+  upsert(key: string, value: string): Observable<{ key: string; value: string }> {
+    return this.http.put<{ key: string; value: string }>(`${this.apiUrl}/${encodeURIComponent(key)}`, { value });
+  }
+
+  /** DB may store JSON-encoded strings (e.g. `"2026-04-30T23:59:59Z"`). */
+  parseStoredValue(raw: string): string {
+    if (raw == null || raw === '') {
+      return '';
+    }
+    try {
+      const v = JSON.parse(raw);
+      return typeof v === 'string' ? v : raw;
+    } catch {
+      return raw;
+    }
+  }
 }

@@ -19,8 +19,13 @@ export class ProjectSubmissionService {
     );
   }
 
-  addSubmission(submission: Omit<ProjectSubmission, 'id' | 'status' | 'submissionDate'>): Observable<ProjectSubmission> {
+  addSubmission(submission: Omit<ProjectSubmission, 'id' | 'status' | 'submissionDate' | 'fileUrl'>): Observable<ProjectSubmission> {
     return this.http.post<ProjectSubmission>(this.apiUrl, submission);
+  }
+
+  /** Multipart upload; API saves the file under wwwroot/uploads and returns fileUrl. */
+  addSubmissionWithFile(formData: FormData): Observable<ProjectSubmission> {
+    return this.http.post<ProjectSubmission>(`${this.apiUrl}/with-file`, formData);
   }
 
   updateStatus(id: number, status: ProjectSubmission['status']): Observable<ProjectSubmission> {

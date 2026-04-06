@@ -333,6 +333,40 @@ namespace MustGraduationPlatform.Infrastructure.Migrations
                     b.ToTable("DocumentTemplates");
                 });
 
+            modelBuilder.Entity("MustGraduationPlatform.Domain.Entities.GraduationRequirementFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RequirementKey")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "RequirementKey")
+                        .IsUnique();
+
+                    b.ToTable("GraduationRequirementFiles");
+                });
+
             modelBuilder.Entity("MustGraduationPlatform.Domain.Entities.Idea", b =>
                 {
                     b.Property<int>("Id")

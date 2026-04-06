@@ -9,6 +9,7 @@ using MustGraduationPlatform.Infrastructure.Options;
 using MustGraduationPlatform.Infrastructure.Persistence;
 using MustGraduationPlatform.Infrastructure.Security;
 using MustGraduationPlatform.Infrastructure.Services;
+using MustGraduationPlatform.Infrastructure.Storage;
 
 namespace MustGraduationPlatform.Infrastructure;
 
@@ -38,6 +39,8 @@ public static class DependencyInjection
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
         services.Configure<SmtpOptions>(configuration.GetSection(SmtpOptions.SectionName));
 
+        services.AddSingleton<IFileStorage, WwwRootFileStorageService>();
+
         services.AddSingleton<JwtTokenService>();
         services.AddHttpContextAccessor();
 
@@ -52,6 +55,8 @@ public static class DependencyInjection
         services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IDepartmentService, DepartmentService>();
         services.AddScoped<ISiteSettingsService, SiteSettingsService>();
+        services.AddScoped<IGraduationService, GraduationService>();
+        services.AddScoped<IDoctorDashboardService, DoctorDashboardService>();
 
         if (!string.IsNullOrWhiteSpace(configuration["Smtp:Host"]))
             services.AddScoped<IEmailSender, SmtpEmailSender>();

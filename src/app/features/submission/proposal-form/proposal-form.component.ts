@@ -33,7 +33,11 @@ export class ProposalFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.siteSettingsService.getSetting('proposalDeadline').subscribe(res => {
-      this.deadlineDate = new Date(res.value);
+      const s = this.siteSettingsService.parseStoredValue(res.value);
+      const d = new Date(s);
+      if (!isNaN(d.getTime())) {
+        this.deadlineDate = d;
+      }
       this.calculateDeadline();
     });
   }
@@ -61,19 +65,24 @@ export class ProposalFormComponent implements OnInit {
   onSubmit(): void {
     if (this.proposalForm.valid && this.selectedFile && this.submissionStatus !== 'closed') {
       const val = this.proposalForm.value;
-      this.projectSubmissionService.addSubmission({
-        type: 'proposal',
-        studentName: val.teamLeaderName,
-        teamLeaderName: val.teamLeaderName,
-        projectNumber: val.projectNumber,
-        projectTitle: val.projectTitle,
-        supervisorName: val.supervisorName,
-        notes: val.notes,
-        fileName: this.selectedFile.name
-      }).subscribe(() => {
-        alert(this.langService.translate('submission.proposal.successMsg') || 'Submission Successful!');
-        this.proposalForm.reset();
-        this.selectedFile = null;
+      const fd = new FormData();
+      fd.append('type', 'proposal');
+      fd.append('studentName', val.teamLeaderName);
+      fd.append('teamLeaderName', val.teamLeaderName);
+      fd.append('projectNumber', val.projectNumber);
+      fd.append('projectTitle', val.projectTitle);
+      fd.append('supervisorName', val.supervisorName);
+      fd.append('notes', val.notes ?? '');
+      fd.append('file', this.selectedFile, this.selectedFile.name);
+      this.projectSubmissionService.addSubmissionWithFile(fd).subscribe({
+        next: () => {
+          alert(this.langService.translate('submission.proposal.successMsg') || 'Submission Successful!');
+          this.proposalForm.reset();
+          this.selectedFile = null;
+        },
+        error: () => {
+          alert(this.langService.translate('submission.proposal.errorMsg') || 'Upload failed. Check the API and wwwroot/uploads.');
+        }
       });
     } else {
         this.proposalForm.markAllAsTouched();

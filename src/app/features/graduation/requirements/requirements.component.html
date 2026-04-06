@@ -7,15 +7,25 @@
             يرجى رفع جميع المستندات المطلوبة للمرحلة رقم {{ requirementNumber }} في ملف مضغوط واحد (ZIP) أو بصيغة PDF.
         </div>
 
+        <div *ngIf="lastUploadUrl" class="alert alert-success mt-3">
+            آخر ملف مرفوع:
+            <a [href]="lastUploadUrl" target="_blank" rel="noopener">فتح / تنزيل</a>
+        </div>
+
+        <div *ngIf="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>
+        <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+
         <div class="upload-section mt-5 text-center">
             <div class="upload-box p-5 border-dashed">
                 <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
                 <h4>قم بسحب الملف هنا أو اضغط للاختيار</h4>
-                <input type="file" (change)="onFileUpload($event)" class="file-input">
+                <input type="file" (change)="onFileSelected($event)" class="file-input" [disabled]="uploading">
             </div>
 
             <div class="mt-4">
-                <button class="btn btn-primary btn-lg px-5">تسليم المتطلبات</button>
+                <button type="button" class="btn btn-primary btn-lg px-5" (click)="submit()" [disabled]="uploading">
+                    {{ uploading ? 'جاري الرفع…' : 'تسليم المتطلبات' }}
+                </button>
             </div>
         </div>
     </div>

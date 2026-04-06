@@ -154,13 +154,17 @@
       </button>
 
       <!-- Auth Action Button -->
-      <!-- Logged In State: Show Logout (or Profile) -->
-      <button *ngIf="authService.currentUser$ | async as user; else loginButton" 
-              class="btn-auth logout-btn ms-2" 
-              (click)="logout()">
-        <i class="fas fa-sign-out-alt"></i>
-        <span>{{ (languageService.currentLang$ | async) === 'en' ? 'Logout' : 'خروج' }}</span>
-      </button>
+      <ng-container *ngIf="authService.currentUser$ | async as user; else loginButton">
+        <a *ngIf="user.role === 'Admin'" routerLink="/doctor" class="btn-auth ms-2 text-decoration-none d-inline-flex align-items-center gap-1"
+           [title]="(languageService.currentLang$ | async) === 'en' ? 'Faculty / supervisor dashboard' : 'لوحة المشرف'">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <span class="d-none d-md-inline">{{ (languageService.currentLang$ | async) === 'en' ? 'Faculty' : 'مشرف' }}</span>
+        </a>
+        <button class="btn-auth logout-btn ms-2" (click)="logout()">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>{{ (languageService.currentLang$ | async) === 'en' ? 'Logout' : 'خروج' }}</span>
+        </button>
+      </ng-container>
 
       <!-- Logged Out State: Show Login -->
       <ng-template #loginButton>

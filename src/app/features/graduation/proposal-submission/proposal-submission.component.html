@@ -1,66 +1,11 @@
-<div class="proposal-page container">
-    <header class="page-header">
+<div class="proposal-page container py-5">
+    <header class="page-header text-center mb-4">
         <h1>تسليم مقترح المشروع (Proposal)</h1>
-        <p>برجاء تعبئة البيانات ورفع ملف الـ PDF الخاص بمقترح المشروع</p>
+        <p>يتم تسليم المقترح عبر نموذج التسليم الرسمي مع رفع الملف وتخزينه على الخادم.</p>
     </header>
 
-    <div class="proposal-grid">
-        <div class="main-column">
-            <form class="card proposal-form">
-                <div class="form-group">
-                    <label>اسم المشروع</label>
-                    <input type="text" value="نظام إدارة مشاريع التخرج الذكي" readonly class="readonly-input">
-                </div>
-
-                <div class="form-group">
-                    <label>ملخص المشروع (Abstract)</label>
-                    <textarea rows="4" placeholder="اكتب ملخصاً موجزاً عن المشروع..."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>الأهداف</label>
-                    <textarea rows="3" placeholder="أهم الأهداف التي يسعى المشروع لتحقيقها..."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>الأدوات والتقنيات المستخدمة</label>
-                    <input type="text" placeholder="مثال: Angular, .NET Core, SQL Server">
-                </div>
-
-                <div class="file-upload card">
-                    <div class="upload-content">
-                        <span class="icon">📁</span>
-                        <p>اسحب ملف الـ PDF هنا أو اضغط للاختيار</p>
-                        <input type="file" accept=".pdf">
-                    </div>
-                </div>
-
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary">حفظ كمسودة</button>
-                    <button type="submit" class="btn btn-primary">تسليم المقترح نهائياً</button>
-                </div>
-            </form>
-        </div>
-
-        <div class="side-column">
-            <div class="card status-card">
-                <h3>حالة التسليم</h3>
-                <div class="status-badge status-draft">مسودة</div>
-                <hr>
-                <div class="deadline-timer">
-                    <p>آخر موعد للتسليم:</p>
-                    <div class="timer">14 يوم : 05 ساعة</div>
-                </div>
-            </div>
-
-            <div class="card info-card">
-                <h3>تعليمات هامة</h3>
-                <ul>
-                    <li>يجب أن يكون الملف بصيغة PDF فقط.</li>
-                    <li>تأكد من كتابة أسماء جميع أعضاء الفريق في الصفحة الأولى.</li>
-                    <li>الحجم الأقصى للملف 10 ميجابايت.</li>
-                </ul>
-            </div>
-        </div>
+    <div class="card p-4 text-center" style="max-width: 560px; margin: 0 auto;">
+        <p class="mb-4">انتقل إلى صفحة <strong>التسليم</strong> لإكمال البيانات ورفع ملف PDF للمقترح.</p>
+        <a routerLink="/submission" class="btn btn-primary btn-lg">الذهاب إلى تسليم المقترح</a>
     </div>
 </div>

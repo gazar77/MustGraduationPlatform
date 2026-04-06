@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MustGraduationPlatform.Domain.Entities;
@@ -137,6 +138,25 @@ public static class DataSeeder
                 LastUpdate = DateTime.UtcNow,
                 IsVisible = true,
                 DisplayOrder = 1
+            });
+            await db.SaveChangesAsync(ct);
+        }
+
+        if (!await db.Proposals.AnyAsync(ct))
+        {
+            db.Proposals.Add(new Proposal
+            {
+                ProjectName = "نظام إدارة مشاريع التخرج الذكي",
+                TeamName = "فريق ألفا",
+                MembersJson = JsonSerializer.Serialize(new[] { "student@must.edu.eg", "طالب تجريبي", "2022001" }),
+                Department = "CS",
+                ProposedSupervisor = "د. محمد علي",
+                Idea = "نظام متكامل لإدارة مشاريع التخرج.",
+                Goals = "أتمتة التسجيل والمتابعة.",
+                Description = "مشروع تجريبي لربط الطالب باستمارة التخرج.",
+                ToolsJson = JsonSerializer.Serialize(new[] { "Angular", ".NET" }, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }),
+                Status = "New",
+                SubmissionDate = DateTime.UtcNow
             });
             await db.SaveChangesAsync(ct);
         }

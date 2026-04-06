@@ -18,6 +18,13 @@ export class NewsService {
     );
   }
 
+  /** Admin: full list including hidden (requires auth cookie). */
+  getAllForManage(): Observable<News[]> {
+    return this.http.get<News[]>(`${this.apiUrl}/manage`).pipe(
+      catchError(() => of([]))
+    );
+  }
+
   getVisibleNews(): Observable<News[]> {
     return this.getNews().pipe(
       map(news => news.filter(n => n.isVisible).sort((a, b) => (a.order || 0) - (b.order || 0)))

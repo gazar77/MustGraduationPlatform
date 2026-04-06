@@ -42,8 +42,8 @@ const routes: Routes = [
       {
         path: 'doctor',
         loadChildren: () => import('./features/doctor/doctor.module').then(m => m.DoctorModule),
-        canActivate: [AuthGuard], // Keep doctor private for now, or depending on requirements
-        data: { roles: ['Doctor', 'Admin'] }
+        canActivate: [AuthGuard],
+        data: { roles: ['Admin'] }
       },
       {
         path: 'contact',

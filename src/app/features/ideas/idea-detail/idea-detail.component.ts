@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Idea } from '../../../core/models/idea.model';
+import { IdeaService } from '../../../core/services/idea.service';
+import { switchMap, of, map, catchError } from 'rxjs';
 
 @Component({
   selector: 'app-idea-detail',
@@ -10,29 +12,43 @@ import { Idea } from '../../../core/models/idea.model';
 })
 export class IdeaDetailComponent implements OnInit {
   idea?: Idea;
+  loading = true;
+  error: string | null = null;
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(
+    private route: ActivatedRoute,
+    private ideaService: IdeaService
+  ) { }
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    // In a real app, fetch from service. Mocking for now.
-    if (id) {
-      this.idea = {
-        id: Number(id),
-        title: 'نظام إدارة مشاريع التخرج الذكي',
-        description: 'مشروع يهدف إلى تسهيل عملية تسجيل ومتابعة مشاريع التخرج بكلية الحاسبات والمعلومات بجامعة مصر للعلوم والتكنولوجيا، مع دعم كامل للذكاء الاصطناعي في توزيع اللجان وتقييم المقترحات.',
-        category: 'الذكاء الاصطناعي',
-        status: 'Open',
-        difficulty: 'Hard',
-        maxTeamSize: 4,
-        supervisorDoctorId: 1,
-        supervisorName: 'د. أحمد علي',
-        requiredSkills: ['Angular', 'Node.js', 'Python', 'TensorFlow'],
-        createdAt: new Date(),
-        isVisible: true,
-        order: 0
-      };
-    }
+    this.route.paramMap.pipe(
+      switchMap(params => {
+        const id = params.get('id');
+        if (!id) {
+          return of<{ status: 'invalid_id' } | { status: 'ok'; idea: Idea } | { status: 'http_error' }>(
+            { status: 'invalid_id' }
+          );
+        }
+        return this.ideaService.getIdeaById(Number(id)).pipe(
+          map((idea: Idea) => ({ status: 'ok' as const, idea })),
+          catchError(() => of({ status: 'http_error' as const }))
+        );
+      })
+    ).subscribe(res => {
+      this.loading = false;
+      if (res.status === 'invalid_id') {
+        this.error = 'معرف الفكرة غير صالح';
+        return;
+      }
+      if (res.status === 'http_error') {
+        this.error = 'تعذر تحميل الفكرة أو غير موجودة.';
+        return;
+      }
+      if (res.status === 'ok') {
+        this.error = null;
+        this.idea = res.idea;
+      }
+    });
   }
 
   getStatusArabic(status: string): string {

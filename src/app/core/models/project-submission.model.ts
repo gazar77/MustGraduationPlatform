@@ -8,6 +8,8 @@ export interface ProjectSubmission {
   supervisorName?: string;
   teamLeaderName?: string;
   fileName: string;
+  /** Public path under the API host, e.g. /uploads/... (prefix API origin when SPA is on another domain). */
+  fileUrl?: string | null;
   notes: string;
   status: 'New' | 'Pending' | 'Reviewed' | 'Accepted' | 'Rejected';
   submissionDate: Date | string;

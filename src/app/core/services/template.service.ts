@@ -18,6 +18,13 @@ export class TemplateService {
     );
   }
 
+  /** Admin: full list including hidden (requires auth cookie). */
+  getAllForManage(): Observable<Template[]> {
+    return this.http.get<Template[]>(`${this.apiUrl}/manage`).pipe(
+      catchError(() => of([]))
+    );
+  }
+
   getVisibleTemplates(): Observable<Template[]> {
     return this.getTemplates().pipe(
       map(templates => templates.filter(t => t.isVisible).sort((a, b) => (a.order || 0) - (b.order || 0)))
@@ -30,6 +37,20 @@ export class TemplateService {
 
   addTemplate(template: Template): Observable<Template> {
     return this.http.post<Template>(this.apiUrl, template);
+  }
+
+  /** Admin: multipart upload; stores file under wwwroot/uploads and sets fileUrl. */
+  addTemplateWithFile(
+    file: File,
+    meta: { title: string; description: string; isVisible: boolean; displayOrder: number }
+  ): Observable<Template> {
+    const fd = new FormData();
+    fd.append('title', meta.title);
+    fd.append('description', meta.description);
+    fd.append('isVisible', String(meta.isVisible));
+    fd.append('displayOrder', String(meta.displayOrder));
+    fd.append('file', file, file.name);
+    return this.http.post<Template>(`${this.apiUrl}/with-file`, fd);
   }
 
   updateTemplate(id: number, data: Partial<Template>): Observable<Template> {

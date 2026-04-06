@@ -10,10 +10,12 @@ namespace MustGraduationPlatform.Api.Controllers.V1;
 public class IdeasController : ControllerBase
 {
     private readonly IIdeaService _ideas;
+    private readonly IAuthService _auth;
 
-    public IdeasController(IIdeaService ideas)
+    public IdeasController(IIdeaService ideas, IAuthService auth)
     {
         _ideas = ideas;
+        _auth = auth;
     }
 
     [HttpGet]
@@ -25,6 +27,16 @@ public class IdeasController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult<IReadOnlyList<IdeaDto>>> GetAll(CancellationToken ct)
         => Ok(await _ideas.GetAllAsync(ct));
+
+    /// <summary>Ideas where the current admin user's display name matches <see cref="Idea.SupervisorName"/> (faculty dashboard).</summary>
+    [HttpGet("for-me")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<IReadOnlyList<IdeaDto>>> GetForMe(CancellationToken ct)
+    {
+        var me = await _auth.GetCurrentUserAsync(User, ct);
+        if (me is null) return Unauthorized();
+        return Ok(await _ideas.GetForSupervisorAsync(me.Name, ct));
+    }
 
     [HttpGet("{id:int}")]
     [AllowAnonymous]
@@ -41,6 +53,11 @@ public class IdeasController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult<IdeaDto>> Create([FromBody] IdeaCreateUpdateDto dto, CancellationToken ct)
         => Ok(await _ideas.CreateAsync(dto, ct));
+
+    [HttpPost("student-submit")]
+    [Authorize(Roles = "Student,Admin")]
+    public async Task<ActionResult<IdeaDto>> StudentSubmit([FromBody] IdeaStudentSubmitDto request, CancellationToken ct)
+        => Ok(await _ideas.CreateStudentSubmissionAsync(request, ct));
 
     [HttpPut("{id:int}")]
     [Authorize(Roles = "Admin")]

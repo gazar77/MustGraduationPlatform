@@ -4,10 +4,10 @@ import { NewsService } from '../../../core/services/news.service';
 import { EventService } from '../../../core/services/event.service';
 import { TemplateService } from '../../../core/services/template.service';
 import { IdeaService } from '../../../core/services/idea.service';
-import { DashboardService } from '../../../core/services/dashboard.service';
 import { ContactService } from '../../../core/services/contact.service';
 import { ProjectSubmissionService } from '../../../core/services/project-submission.service';
 import { ProposalService } from '../../../core/services/proposal.service';
+import { DashboardService } from '../../../core/services/dashboard.service';
 import { of, Observable } from 'rxjs';
 
 @Component({
@@ -34,10 +34,10 @@ export class AdminManagementComponent implements OnInit {
     private eventService: EventService,
     private templateService: TemplateService,
     private ideaService: IdeaService,
-    private dashboardService: DashboardService,
     private proposalService: ProposalService,
     private contactService: ContactService,
-    private projectSubmissionService: ProjectSubmissionService
+    private projectSubmissionService: ProjectSubmissionService,
+    private dashboardService: DashboardService
   ) {}
 
   ngOnInit(): void {
@@ -99,7 +99,7 @@ export class AdminManagementComponent implements OnInit {
           { key: 'publishDate', label: 'التاريخ' },
           { key: 'author', label: 'الناشر' }
         ];
-        this.newsService.getNews().subscribe(res => this.items = res);
+        this.newsService.getAllForManage().subscribe(res => this.items = res);
         break;
       case 'event':
         this.title = 'إدارة الفعاليات';
@@ -108,7 +108,7 @@ export class AdminManagementComponent implements OnInit {
           { key: 'date', label: 'التاريخ' },
           { key: 'location', label: 'المكان' }
         ];
-        this.eventService.getEvents().subscribe(res => this.items = res);
+        this.eventService.getAllForManage().subscribe(res => this.items = res);
         break;
       case 'template':
         this.title = 'إدارة النماذج والوثائق';
@@ -117,7 +117,7 @@ export class AdminManagementComponent implements OnInit {
           { key: 'fileSize', label: 'الحجم' },
           { key: 'lastUpdate', label: 'تحديث' }
         ];
-        this.templateService.getTemplates().subscribe(res => this.items = res);
+        this.templateService.getAllForManage().subscribe(res => this.items = res);
         break;
       case 'ideas':
         this.title = 'إدارة أفكار المشاريع';
@@ -127,7 +127,7 @@ export class AdminManagementComponent implements OnInit {
           { key: 'supervisorName', label: 'المشرف' },
           { key: 'status', label: 'الحالة' }
         ];
-        this.ideaService.getIdeas().subscribe(res => this.items = res);
+        this.ideaService.getAllForManage().subscribe(res => this.items = res);
         break;
     }
   }
@@ -179,16 +179,28 @@ export class AdminManagementComponent implements OnInit {
         { name: 'status', label: 'الحالة', type: 'select', options: ['Open', 'Reserved', 'Approved', 'Closed'], value: item?.status }
       ];
     } else if (this.type === 'proposals') {
-      this.modalConfig.title = 'تفاصيل وتحديث المقترح';
-      this.modalConfig.fields = [
-        { name: 'projectNumber', label: 'رقم المشروع', type: 'readonly', value: item?.projectNumber },
-        { name: 'projectTitle', label: 'اسم المشروع', type: 'readonly', value: item?.projectTitle },
-        { name: 'teamLeaderName', label: 'اسم قائد الفريق', type: 'readonly', value: item?.teamLeaderName },
-        { name: 'supervisorName', label: 'المشرف المقترح', type: 'readonly', value: item?.supervisorName },
-        { name: 'fileName', label: 'الملف المرفق', type: 'readonly', value: item?.fileName },
-        { name: 'notes', label: 'ملاحظات الإرسال', type: 'readonly', value: item?.notes },
-        { name: 'status', label: 'الحالة', type: 'select', options: ['New', 'Pending', 'Reviewed', 'Accepted', 'Rejected'], value: item?.status || 'Pending' }
-      ];
+      if (isEdit) {
+        this.modalConfig.title = 'تفاصيل وتحديث المقترح';
+        this.modalConfig.fields = [
+          { name: 'projectNumber', label: 'رقم المشروع', type: 'readonly', value: item?.projectNumber },
+          { name: 'projectTitle', label: 'اسم المشروع', type: 'readonly', value: item?.projectTitle },
+          { name: 'teamLeaderName', label: 'اسم قائد الفريق', type: 'readonly', value: item?.teamLeaderName },
+          { name: 'supervisorName', label: 'المشرف المقترح', type: 'readonly', value: item?.supervisorName },
+          { name: 'fileName', label: 'الملف المرفق', type: 'readonly', value: item?.fileName },
+          { name: 'notes', label: 'ملاحظات الإرسال', type: 'readonly', value: item?.notes },
+          { name: 'status', label: 'الحالة', type: 'select', options: ['New', 'Pending', 'Reviewed', 'Accepted', 'Rejected'], value: item?.status || 'Pending' }
+        ];
+      } else {
+        this.modalConfig.title = 'إضافة تسليم مقترح';
+        this.modalConfig.fields = [
+          { name: 'projectNumber', label: 'رقم المشروع', type: 'text', value: '' },
+          { name: 'projectTitle', label: 'اسم المشروع', type: 'text', value: '' },
+          { name: 'teamLeaderName', label: 'قائد الفريق', type: 'text', value: '' },
+          { name: 'supervisorName', label: 'المشرف المقترح', type: 'text', value: '' },
+          { name: 'fileName', label: 'اسم الملف', type: 'text', value: '' },
+          { name: 'notes', label: 'ملاحظات', type: 'textarea', value: '' }
+        ];
+      }
     } else if (this.type === 'contact') {
       this.modalConfig.title = 'تفاصيل رسالة التواصل';
       this.modalConfig.fields = [
@@ -227,18 +239,25 @@ export class AdminManagementComponent implements OnInit {
       case 'event': obs = this.eventService.addEvent({ ...data }); break;
       case 'template': obs = this.templateService.addTemplate({ ...data, fileUrl: '#' }); break;
       case 'ideas': obs = this.ideaService.addIdea({ ...data, difficulty: 'Medium', requiredSkills: [], maxTeamSize: 4 }); break;
-      case 'proposals': 
-        const newProposal = { ...data, id: Date.now(), members: [data.leaderName], submittedAt: new Date() };
-        this.items.push(newProposal);
-        obs = of(newProposal);
+      case 'proposals':
+        obs = this.projectSubmissionService.addSubmission({
+          type: 'proposal',
+          studentName: data.teamLeaderName,
+          teamLeaderName: data.teamLeaderName,
+          projectNumber: data.projectNumber,
+          projectTitle: data.projectTitle,
+          supervisorName: data.supervisorName,
+          notes: data.notes || '',
+          fileName: data.fileName || '-'
+        });
         break;
     }
 
     obs?.subscribe(() => {
-      this.dashboardService.addActivity({ 
-        type: this.getActivityType(), 
-        description: `تم إضافة ${this.getTranslatedType()} جديد: ${data.title || data.teamName}`, 
-        user: 'أدمن النظام' 
+      this.dashboardService.addActivity({
+        type: this.getActivityType(),
+        description: `تم إضافة ${this.getTranslatedType()} جديد: ${data.title || data.teamName}`,
+        user: 'أدمن النظام'
       }).subscribe();
       this.initView();
       this.modalConfig.isOpen = false;
@@ -259,10 +278,10 @@ export class AdminManagementComponent implements OnInit {
     }
 
     obs?.subscribe(() => {
-      this.dashboardService.addActivity({ 
-        type: this.getActivityType(), 
-        description: `تم تحديث ${this.getTranslatedType()}: ${data.title || data.teamName}`, 
-        user: 'أدمن النظام' 
+      this.dashboardService.addActivity({
+        type: this.getActivityType(),
+        description: `تم تحديث ${this.getTranslatedType()}: ${data.title || data.teamName}`,
+        user: 'أدمن النظام'
       }).subscribe();
       this.initView();
       this.modalConfig.isOpen = false;
@@ -284,10 +303,10 @@ export class AdminManagementComponent implements OnInit {
       }
 
       obs?.subscribe(() => {
-        this.dashboardService.addActivity({ 
-          type: this.getActivityType(), 
-          description: `تم حذف ${this.getTranslatedType()}: ${item.title || item.teamName}`, 
-          user: 'أدمن النظام' 
+        this.dashboardService.addActivity({
+          type: this.getActivityType(),
+          description: `تم حذف ${this.getTranslatedType()}: ${item.title || item.teamName}`,
+          user: 'أدمن النظام'
         }).subscribe();
         this.initView();
       });
@@ -317,9 +336,11 @@ export class AdminManagementComponent implements OnInit {
     obs?.subscribe(() => this.initView());
   }
 
-  private getActivityType(): any {
-    switch(this.type) {
+  private getActivityType(): string {
+    switch (this.type) {
       case 'news': return 'News';
+      case 'event': return 'Event';
+      case 'template': return 'Template';
       case 'ideas': return 'Idea';
       case 'proposals': return 'Proposal';
       case 'contact': return 'Contact';
@@ -330,7 +351,7 @@ export class AdminManagementComponent implements OnInit {
   }
 
   private getTranslatedType(): string {
-    switch(this.type) {
+    switch (this.type) {
       case 'news': return 'خبر';
       case 'event': return 'فعالية';
       case 'template': return 'نموذج';

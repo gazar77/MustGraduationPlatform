@@ -1,3 +1,4 @@
+/** Static mega-menu tree; a future CMS could replace this with API-driven menu items. */
 export interface MenuItem {
   label: string;
   translationKey?: string; // Key for LanguageService

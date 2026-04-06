@@ -9,7 +9,7 @@ export interface DashboardStats {
 
 export interface Activity {
   id: number;
-  type: 'Idea' | 'News' | 'Event' | 'Proposal';
+  type: string;
   description: string;
   timestamp: Date | string;
   user: string;

@@ -27,3 +27,11 @@ public record IdeaCreateUpdateDto(
     string Status,
     bool IsVisible,
     int DisplayOrder);
+
+/// <summary>Student-submitted idea pending admin review (not visible until toggled).</summary>
+public record IdeaStudentSubmitDto(
+    string Title,
+    string Description,
+    string Category,
+    int MaxTeamSize,
+    string SupervisorName);

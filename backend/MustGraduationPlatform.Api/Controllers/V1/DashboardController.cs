@@ -25,4 +25,9 @@ public class DashboardController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<IReadOnlyList<ActivityDto>>> Activities(CancellationToken ct)
         => Ok(await _dashboard.GetRecentActivitiesAsync(ct));
+
+    [HttpPost("activities")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<ActivityDto>> AddActivity([FromBody] ActivityCreateDto dto, CancellationToken ct)
+        => Ok(await _dashboard.AddActivityAsync(dto, ct));
 }

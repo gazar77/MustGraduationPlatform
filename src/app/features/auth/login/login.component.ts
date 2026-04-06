@@ -31,7 +31,6 @@ export class LoginComponent implements OnInit {
   step: 'Identify' | 'AdminLogin' | 'StudentCode' | 'StudentLogin' = 'Identify';
 
   ngOnInit(): void {
-    // If already logged in, redirect to dashboard
     if (this.authService.currentUserValue) {
       const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
       if (this.authService.currentUserValue.role === 'Admin') {
@@ -52,7 +51,7 @@ export class LoginComponent implements OnInit {
     this.error = '';
 
     if (this.step === 'Identify') {
-      this.authService.identify().subscribe({
+      this.authService.identify(this.f['email'].value).subscribe({
         next: (res) => {
           this.userType = res.userType as any;
           if (res.exists) {
@@ -62,6 +61,7 @@ export class LoginComponent implements OnInit {
               this.f['password'].updateValueAndValidity();
             } else if (res.userType === 'Student') {
               this.sendStudentCode();
+              return;
             }
           } else {
             this.error = 'البريد الإلكتروني غير مسجل';

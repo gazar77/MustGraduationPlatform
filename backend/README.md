@@ -52,7 +52,7 @@ On startup, the database is migrated and **seed data** is applied (if empty). Te
 
 | Email | Role | Password (change in production) |
 |-------|------|----------------------------------|
-| `admin@must.edu.eg` | Admin | `MustAdminTest#2026` |
+| `admin@must.edu.eg` | Admin (includes faculty; use `/doctor` for supervisor-focused views) | `MustAdminTest#2026` |
 | `student@must.edu.eg` | Student | `MustStudentTest#2026` |
 
 These values are defined in `MustGraduationPlatform.Infrastructure/Persistence/DataSeeder.cs`.
@@ -62,6 +62,7 @@ These values are defined in `MustGraduationPlatform.Infrastructure/Persistence/D
 - **JWT** — `Jwt` section: `SigningKey` must be long enough for HS256 (use a strong secret in production via environment variables).
 - **SMTP** — `Smtp` section for student OTP emails. If `Host` is empty, emails are logged to the console instead (development).
 - **CORS** — `Cors:AllowedOrigins` must include your Angular SPA origin.
+- **File uploads (local disk)** — `POST /api/v1/project-submissions/with-file` saves files under **`wwwroot/uploads`** on the API host. `UseStaticFiles()` serves them at **`/uploads/...`**. The stored `fileUrl` is a path like `/uploads/...`; when the Angular app runs on another origin (e.g. Vercel), build the browser URL as **API public origin** + `fileUrl` (same host as the API, without `/api/v1`). Ensure the deploy folder includes **`wwwroot`** so uploads persist next to the app.
 
 ## MonsterASP.net deployment
 
@@ -72,10 +73,11 @@ These values are defined in `MustGraduationPlatform.Infrastructure/Persistence/D
 3. Set **`Jwt__SigningKey`** to a strong random string (do not commit to source control).
 4. Set **`Jwt__Issuer`** / **`Jwt__Audience`** if you override defaults.
 5. Set **`Cors__AllowedOrigins__0`** (and `__1`, etc.) to your Angular production URL(s).
-6. Configure **SMTP** in the panel or via env vars (`Smtp__Host`, `Smtp__User`, `Smtp__Password`, `Smtp__From`) for student activation emails.
-7. **One-click publish folder (FTP / manual upload):** from the `backend` folder run **`publish-for-monsterasp.bat`** (double-click) or **`publish-for-monsterasp.ps1`**. Each run **deletes** the previous `backend/publish` folder, then builds **Release** framework-dependent output there. Upload that folder’s contents to MonsterASP (or zip and deploy).  
+6. Student file uploads write to **`wwwroot/uploads`** on the server; keep that folder writable and included in deployments so files are not lost on publish.
+7. Configure **SMTP** in the panel or via env vars (`Smtp__Host`, `Smtp__User`, `Smtp__Password`, `Smtp__From`) for student activation emails.
+8. **One-click publish folder (FTP / manual upload):** from the `backend` folder run **`publish-for-monsterasp.bat`** (double-click) or **`publish-for-monsterasp.ps1`**. Each run **deletes** the previous `backend/publish` folder, then builds **Release** framework-dependent output there. Upload that folder’s contents to MonsterASP (or zip and deploy).  
    Alternatively use **Web Deploy** from Visual Studio with a `.publishSettings` profile from the panel.
-8. After deployment, run **`dotnet ef database update`** against the hosted database (from a machine that can reach the server), or run migrations as part of your pipeline.
+9. After deployment, run **`dotnet ef database update`** against the hosted database (from a machine that can reach the server), or run migrations as part of your pipeline.
 
 Use HTTPS in production so `Secure` cookies work for authentication.
 

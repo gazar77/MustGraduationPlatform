@@ -55,19 +55,25 @@ export class ProjectRegistrationComponent implements OnInit {
     if (this.registrationForm.valid && this.selectedFile) {
       this.route.data.subscribe(data => {
         const type = data['type'] === 'reg1' ? 'project1' : 'project2';
-        this.projectSubmissionService.addSubmission({
-            type,
-            studentName: this.registrationForm.value.teamLeaderName,
-            teamLeaderName: this.registrationForm.value.teamLeaderName,
-            projectNumber: this.registrationForm.value.projectNumber,
-            projectTitle: this.registrationForm.value.projectTitle,
-            supervisorName: this.registrationForm.value.supervisorName,
-            fileName: this.selectedFile!.name,
-            notes: this.registrationForm.value.notes
-        }).subscribe(() => {
+        const v = this.registrationForm.value;
+        const fd = new FormData();
+        fd.append('type', type);
+        fd.append('studentName', v.teamLeaderName);
+        fd.append('teamLeaderName', v.teamLeaderName);
+        fd.append('projectNumber', v.projectNumber);
+        fd.append('projectTitle', v.projectTitle);
+        fd.append('supervisorName', v.supervisorName);
+        fd.append('notes', v.notes ?? '');
+        fd.append('file', this.selectedFile!, this.selectedFile!.name);
+        this.projectSubmissionService.addSubmissionWithFile(fd).subscribe({
+          next: () => {
             alert(this.langService.translate('submission.registration.successMsg') + ' ' + this.langService.translate(this.titleKey));
             this.selectedFile = null;
             this.registrationForm.reset();
+          },
+          error: () => {
+            alert('Upload failed. Check the API and that wwwroot/uploads is writable.');
+          }
         });
       });
     } else {

@@ -18,6 +18,13 @@ export class EventService {
     );
   }
 
+  /** Admin: full list including hidden (requires auth cookie). */
+  getAllForManage(): Observable<Event[]> {
+    return this.http.get<Event[]>(`${this.apiUrl}/manage`).pipe(
+      catchError(() => of([]))
+    );
+  }
+
   getVisibleEvents(): Observable<Event[]> {
     return this.getEvents().pipe(
       map(events => events.filter(e => e.isVisible).sort((a, b) => (a.order || 0) - (b.order || 0)))

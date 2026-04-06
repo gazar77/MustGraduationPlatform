@@ -18,6 +18,20 @@ export class IdeaService {
     );
   }
 
+  /** Admin: full list including hidden (requires auth cookie). */
+  getAllForManage(): Observable<Idea[]> {
+    return this.http.get<Idea[]>(`${this.apiUrl}/manage`).pipe(
+      catchError(() => of([]))
+    );
+  }
+
+  /** Admin (faculty): ideas where API matches current user's name to supervisor (auth cookie). */
+  getIdeasForMe(): Observable<Idea[]> {
+    return this.http.get<Idea[]>(`${this.apiUrl}/for-me`).pipe(
+      catchError(() => of([]))
+    );
+  }
+
   getVisibleIdeas(): Observable<Idea[]> {
     // Backend should ideally handle 'visible' filtering, but if not we can filter here
     return this.getIdeas().pipe(
@@ -31,6 +45,17 @@ export class IdeaService {
 
   addIdea(idea: Idea): Observable<Idea> {
     return this.http.post<Idea>(this.apiUrl, idea);
+  }
+
+  /** Student/Admin: submit a new idea for review (hidden until admin publishes). */
+  submitStudentIdea(payload: {
+    title: string;
+    description: string;
+    category: string;
+    maxTeamSize: number;
+    supervisorName: string;
+  }): Observable<Idea> {
+    return this.http.post<Idea>(`${this.apiUrl}/student-submit`, payload);
   }
 
   updateIdea(id: number, data: Partial<Idea>): Observable<Idea> {

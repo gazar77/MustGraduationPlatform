@@ -3,16 +3,19 @@ using MustGraduationPlatform.Application.Abstractions;
 using MustGraduationPlatform.Application.Dtos;
 using MustGraduationPlatform.Domain.Entities;
 using MustGraduationPlatform.Infrastructure.Persistence;
+using MustGraduationPlatform.Infrastructure.Storage;
 
 namespace MustGraduationPlatform.Infrastructure.Services;
 
 public class ProjectSubmissionService : IProjectSubmissionService
 {
     private readonly AppDbContext _db;
+    private readonly IFileStorage _files;
 
-    public ProjectSubmissionService(AppDbContext db)
+    public ProjectSubmissionService(AppDbContext db, IFileStorage files)
     {
         _db = db;
+        _files = files;
     }
 
     public async Task<IReadOnlyList<ProjectSubmissionDto>> GetAsync(string? type, CancellationToken ct = default)
@@ -24,7 +27,29 @@ public class ProjectSubmissionService : IProjectSubmissionService
         return list.Select(EntityMappers.ToDto).ToList();
     }
 
-    public async Task<ProjectSubmissionDto> CreateAsync(ProjectSubmissionCreateDto dto, CancellationToken ct = default)
+    public Task<ProjectSubmissionDto> CreateAsync(ProjectSubmissionCreateDto dto, CancellationToken ct = default)
+        => SaveAsync(dto, dto.FileName, fileStorageUrl: null, ct);
+
+    public async Task<ProjectSubmissionDto> CreateWithFileAsync(
+        ProjectSubmissionCreateDto dto,
+        Stream fileStream,
+        string originalFileName,
+        string? contentType,
+        CancellationToken ct = default)
+    {
+        SubmissionFileValidation.ValidateOrThrow(originalFileName, fileStream.Length);
+        var safeName = SubmissionFileValidation.SanitizeFileName(originalFileName);
+        var relativePath = $"{dto.Type}/{DateTime.UtcNow:yyyy/MM}/{Guid.NewGuid()}_{safeName}";
+
+        var publicUrl = await _files.SaveAsync(relativePath, fileStream, ct);
+        return await SaveAsync(dto, safeName, publicUrl, ct);
+    }
+
+    private async Task<ProjectSubmissionDto> SaveAsync(
+        ProjectSubmissionCreateDto dto,
+        string fileName,
+        string? fileStorageUrl,
+        CancellationToken ct)
     {
         var e = new ProjectSubmission
         {
@@ -35,7 +60,8 @@ public class ProjectSubmissionService : IProjectSubmissionService
             ProjectTitle = dto.ProjectTitle,
             SupervisorName = dto.SupervisorName,
             TeamLeaderName = dto.TeamLeaderName,
-            FileName = dto.FileName,
+            FileName = fileName,
+            FileStoragePath = fileStorageUrl,
             Notes = dto.Notes,
             Status = "Pending",
             SubmissionDate = DateTime.UtcNow

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MustGraduationPlatform.Application.Abstractions;
 using MustGraduationPlatform.Application.Dtos;
+using MustGraduationPlatform.Api.Models;
 
 namespace MustGraduationPlatform.Api.Controllers.V1;
 
@@ -26,6 +27,29 @@ public class ProjectSubmissionsController : ControllerBase
     [Authorize(Roles = "Student,Admin")]
     public async Task<ActionResult<ProjectSubmissionDto>> Create([FromBody] ProjectSubmissionCreateDto dto, CancellationToken ct)
         => Ok(await _submissions.CreateAsync(dto, ct));
+
+    [HttpPost("with-file")]
+    [Consumes("multipart/form-data")]
+    [Authorize(Roles = "Student,Admin")]
+    [RequestFormLimits(MultipartBodyLengthLimit = 26_214_400)]
+    public async Task<ActionResult<ProjectSubmissionDto>> CreateWithFile([FromForm] ProjectSubmissionFormModel model, CancellationToken ct)
+    {
+        if (model.File is null || model.File.Length == 0)
+            return BadRequest(new { message = "File is required." });
+
+        await using var stream = model.File.OpenReadStream();
+        var dto = new ProjectSubmissionCreateDto(
+            model.Type,
+            model.StudentName,
+            model.Email,
+            model.ProjectNumber,
+            model.ProjectTitle,
+            model.SupervisorName,
+            model.TeamLeaderName,
+            model.File.FileName,
+            model.Notes ?? string.Empty);
+        return Ok(await _submissions.CreateWithFileAsync(dto, stream, model.File.FileName, model.File.ContentType, ct));
+    }
 
     [HttpPatch("{id:int}/status")]
     [Authorize(Roles = "Admin")]

@@ -6,6 +6,7 @@ import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.compo
 import { UserListComponent } from './user-list/user-list.component';
 import { ManagementTableComponent } from './components/management-table/management-table.component';
 import { AdminManagementComponent } from './admin-management/admin-management.component';
+import { AdminSettingsComponent } from './admin-settings/admin-settings.component';
 import { AdminLayoutComponent } from '../../core/layouts/admin-layout/admin-layout.component';
 import { AdminSidebarComponent } from './components/admin-sidebar/admin-sidebar.component';
 import { AdminNavbarComponent } from './components/admin-navbar/admin-navbar.component';
@@ -16,6 +17,7 @@ import { AdminNavbarComponent } from './components/admin-navbar/admin-navbar.com
     UserListComponent,
     ManagementTableComponent,
     AdminManagementComponent,
+    AdminSettingsComponent,
     AdminLayoutComponent,
     AdminSidebarComponent,
     AdminNavbarComponent

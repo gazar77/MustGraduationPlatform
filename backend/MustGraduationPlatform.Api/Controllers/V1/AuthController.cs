@@ -44,6 +44,14 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<AuthSuccessDto>> Register([FromBody] StudentRegisterRequestDto request, CancellationToken ct)
         => Ok(await _auth.RegisterStudentAsync(request, ct));
 
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<ActionResult<UserDto>> Me(CancellationToken ct)
+    {
+        var user = await _auth.GetCurrentUserAsync(User, ct);
+        return user is null ? Unauthorized() : Ok(user);
+    }
+
     [HttpPost("logout")]
     [AllowAnonymous]
     public async Task<IActionResult> Logout(CancellationToken ct)

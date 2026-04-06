@@ -6,6 +6,15 @@ public interface IProjectSubmissionService
 {
     Task<IReadOnlyList<ProjectSubmissionDto>> GetAsync(string? type, CancellationToken ct = default);
     Task<ProjectSubmissionDto> CreateAsync(ProjectSubmissionCreateDto dto, CancellationToken ct = default);
+
+    /// <summary>Uploads file to blob storage and saves the public blob URL on the submission record.</summary>
+    Task<ProjectSubmissionDto> CreateWithFileAsync(
+        ProjectSubmissionCreateDto dto,
+        Stream fileStream,
+        string originalFileName,
+        string? contentType,
+        CancellationToken ct = default);
+
     Task<ProjectSubmissionDto?> UpdateStatusAsync(int id, ProjectSubmissionStatusUpdateDto dto, CancellationToken ct = default);
     Task<bool> DeleteAsync(int id, CancellationToken ct = default);
 }

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MustGraduationPlatform.Application.Abstractions;
 using MustGraduationPlatform.Application.Dtos;
+using MustGraduationPlatform.Domain.Entities;
 using MustGraduationPlatform.Domain.Enums;
 using MustGraduationPlatform.Infrastructure.Identity;
 using MustGraduationPlatform.Infrastructure.Persistence;
@@ -49,5 +50,19 @@ public class DashboardService : IDashboardService
             .Take(20)
             .ToListAsync(ct);
         return list.Select(EntityMappers.ToDto).ToList();
+    }
+
+    public async Task<ActivityDto> AddActivityAsync(ActivityCreateDto dto, CancellationToken ct = default)
+    {
+        var e = new DashboardActivity
+        {
+            Type = dto.Type,
+            Description = dto.Description,
+            UserDisplayName = dto.User,
+            Timestamp = DateTime.UtcNow
+        };
+        _db.DashboardActivities.Add(e);
+        await _db.SaveChangesAsync(ct);
+        return EntityMappers.ToDto(e);
     }
 }

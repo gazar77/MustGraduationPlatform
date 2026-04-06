@@ -3,17 +3,23 @@ using MustGraduationPlatform.Application.Abstractions;
 using MustGraduationPlatform.Application.Dtos;
 using MustGraduationPlatform.Domain.Entities;
 using MustGraduationPlatform.Infrastructure.Persistence;
+using MustGraduationPlatform.Infrastructure.Storage;
 
 namespace MustGraduationPlatform.Infrastructure.Services;
 
 public class TemplateService : ITemplateService
 {
     private readonly AppDbContext _db;
+    private readonly IFileStorage _files;
 
-    public TemplateService(AppDbContext db)
+    public TemplateService(AppDbContext db, IFileStorage files)
     {
         _db = db;
+        _files = files;
     }
+
+    private static string FormatFileSize(long bytes) =>
+        bytes < 1024 ? $"{bytes} B" : bytes < 1024 * 1024 ? $"{bytes / 1024.0:0.##} KB" : $"{bytes / (1024.0 * 1024):0.##} MB";
 
     public async Task<IReadOnlyList<TemplateDto>> GetVisibleAsync(CancellationToken ct = default)
     {
@@ -41,6 +47,28 @@ public class TemplateService : ITemplateService
             Description = dto.Description,
             FileUrl = dto.FileUrl,
             FileSize = dto.FileSize,
+            LastUpdate = DateTime.UtcNow,
+            IsVisible = dto.IsVisible,
+            DisplayOrder = dto.DisplayOrder
+        };
+        _db.DocumentTemplates.Add(e);
+        await _db.SaveChangesAsync(ct);
+        return EntityMappers.ToDto(e);
+    }
+
+    public async Task<TemplateDto> CreateWithFileAsync(TemplateCreateUpdateDto dto, Stream fileStream, long fileLength, string fileName, string? contentType, CancellationToken ct = default)
+    {
+        SubmissionFileValidation.ValidateOrThrow(fileName, fileLength);
+        var safe = SubmissionFileValidation.SanitizeFileName(fileName);
+        var relativePath = $"templates/{DateTime.UtcNow:yyyy/MM}/{Guid.NewGuid():N}_{safe}";
+        var url = await _files.SaveAsync(relativePath, fileStream, ct);
+        var sizeLabel = FormatFileSize(fileLength);
+        var e = new DocumentTemplate
+        {
+            Title = dto.Title,
+            Description = dto.Description,
+            FileUrl = url,
+            FileSize = sizeLabel,
             LastUpdate = DateTime.UtcNow,
             IsVisible = dto.IsVisible,
             DisplayOrder = dto.DisplayOrder
