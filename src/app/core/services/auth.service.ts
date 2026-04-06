@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap, of, catchError, map } from 'rxjs';
+import { BehaviorSubject, Observable, tap, of, catchError, map, finalize } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { User } from '../models/user.model';
 
@@ -64,7 +64,7 @@ export class AuthService {
 
   logout(): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/logout`, {}).pipe(
-      tap(() => {
+      finalize(() => {
         this.currentUserSubject.next(null);
       })
     );

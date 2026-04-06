@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -95,7 +94,6 @@ public class AuthService : IAuthService
             throw new AppException("AUTH_OTP_NOT_ALLOWED", "Activation codes are only for student accounts.");
 
         var code = GenerateNumericCode(6);
-        var hash = HashCode(code);
         var expires = DateTime.UtcNow.AddMinutes(15);
 
         if (user is not null)
@@ -107,7 +105,7 @@ public class AuthService : IAuthService
             _db.StudentLoginOtps.Add(new StudentLoginOtp
             {
                 UserId = user.Id,
-                CodeHash = hash,
+                Code = code,
                 ExpiresAtUtc = expires,
                 Consumed = false,
                 CreatedAtUtc = DateTime.UtcNow
@@ -122,7 +120,7 @@ public class AuthService : IAuthService
             _db.RegistrationOtps.Add(new RegistrationOtp
             {
                 NormalizedEmail = normalized,
-                CodeHash = hash,
+                Code = code,
                 ExpiresAtUtc = expires,
                 Consumed = false,
                 CreatedAtUtc = DateTime.UtcNow
@@ -150,9 +148,9 @@ public class AuthService : IAuthService
         if (user.UserRole != UserRole.Student)
             throw new AppException("AUTH_NOT_STUDENT", "This account is not a student account.");
 
-        var hash = HashCode(request.Code);
+        var codeInput = request.Code.Trim();
         var otp = await _db.StudentLoginOtps
-            .Where(x => x.UserId == user.Id && x.CodeHash == hash && !x.Consumed && x.ExpiresAtUtc > DateTime.UtcNow)
+            .Where(x => x.UserId == user.Id && x.Code == codeInput && !x.Consumed && x.ExpiresAtUtc > DateTime.UtcNow)
             .OrderByDescending(x => x.CreatedAtUtc)
             .FirstOrDefaultAsync(ct);
 
@@ -180,9 +178,9 @@ public class AuthService : IAuthService
         if (existing is not null)
             throw new AppException("AUTH_EMAIL_TAKEN", "An account with this email already exists.");
 
-        var hash = HashCode(request.ActivationCode);
+        var codeInput = request.ActivationCode.Trim();
         var reg = await _db.RegistrationOtps
-            .Where(x => x.NormalizedEmail == normalized && x.CodeHash == hash && !x.Consumed && x.ExpiresAtUtc > DateTime.UtcNow)
+            .Where(x => x.NormalizedEmail == normalized && x.Code == codeInput && !x.Consumed && x.ExpiresAtUtc > DateTime.UtcNow)
             .OrderByDescending(x => x.CreatedAtUtc)
             .FirstOrDefaultAsync(ct);
 
@@ -269,9 +267,6 @@ public class AuthService : IAuthService
             u.Email ?? "",
             u.UserRole.ToString(),
             u.Department?.Code);
-
-    private static string HashCode(string code) =>
-        Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(code)));
 
     private static string GenerateNumericCode(int digits)
     {

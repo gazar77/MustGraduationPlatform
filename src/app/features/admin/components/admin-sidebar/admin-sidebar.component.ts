@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Router } from '@angular/router';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-admin-sidebar',
@@ -16,8 +17,9 @@ export class AdminSidebarComponent {
     this.isCollapsed = !this.isCollapsed;
   }
 
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/auth/login']);
+  logout(): void {
+    this.authService.logout()
+      .pipe(finalize(() => this.router.navigate(['/auth/login'])))
+      .subscribe();
   }
 }

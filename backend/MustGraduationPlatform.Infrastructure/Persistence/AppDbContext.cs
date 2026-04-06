@@ -51,6 +51,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
 
         builder.Entity<StudentLoginOtp>(e =>
         {
+            e.Property(x => x.Code).HasMaxLength(32);
             e.HasOne<ApplicationUser>()
                 .WithMany()
                 .HasForeignKey(x => x.UserId)
@@ -59,6 +60,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
 
         builder.Entity<RegistrationOtp>(e =>
         {
+            e.Property(x => x.Code).HasMaxLength(32);
             e.HasIndex(x => x.NormalizedEmail);
         });
 

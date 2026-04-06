@@ -5,7 +5,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { LanguageService } from '../../../core/services/language.service';
 import { MENU_ITEMS, MenuItem } from '../../../core/data/navigation.data';
-import { Subscription } from 'rxjs';
+import { Subscription, finalize } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -101,10 +101,12 @@ export class HeaderComponent implements OnDestroy {
   }
 
   logout(): void {
-    this.authService.logout().subscribe(() => {
-      this.router.navigate(['/auth/login']);
-      this.closeMenus();
-    });
+    this.authService.logout()
+      .pipe(finalize(() => {
+        this.router.navigate(['/auth/login']);
+        this.closeMenus();
+      }))
+      .subscribe();
   }
 
   toggleTheme(): void {
