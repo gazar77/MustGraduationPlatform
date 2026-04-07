@@ -18,6 +18,12 @@ $green-accent: #1FA56B;
   justify-content: center;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
+  &:not(.compact) {
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: clamp(2rem, 5vh, 4.5rem);
+  }
+
   @media (max-width: 992px) {
     height: 40vh;
     min-height: 350px;
@@ -72,9 +78,7 @@ $green-accent: #1FA56B;
   align-items: center;
 
   .hero-banner:not(.compact) & {
-    @media (min-width: 992px) {
-      margin-top: 72px;
-    }
+    margin-top: 0;
   }
 }
 
