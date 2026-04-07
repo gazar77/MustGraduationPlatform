@@ -43,7 +43,8 @@
                         <span class="main-text">{{ selectedFile ? selectedFile.name : langService.translate('submission.registration.dragFile') }}</span>
                         <span class="sub-text">{{ langService.translate('submission.registration.supportedFiles') }}</span>
                     </div>
-                    <input type="file" id="reg-file" (change)="onFileChange($event)" hidden>
+                    <input type="file" id="reg-file" (change)="onFileChange($event)" hidden
+                           accept=".pdf,.doc,.docx,.ppt,.pptx,.zip,.rar,.7z,.png,.jpg,.jpeg,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation">
                 </label>
                 <button *ngIf="selectedFile" class="btn-remove" type="button" (click)="selectedFile = null">
                     <i class="fas fa-times"></i>

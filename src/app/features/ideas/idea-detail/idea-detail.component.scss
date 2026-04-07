@@ -79,6 +79,14 @@
         border: 1px solid #e2e8f0;
     }
 
+    .reservation-status-display {
+        background: #011835;
+        color: #fff;
+        border-radius: 8px;
+        user-select: none;
+        pointer-events: none;
+    }
+
     .help-card {
         border-radius: 12px;
         border: none;

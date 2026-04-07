@@ -59,6 +59,14 @@
                [accept]="field.accept || 'application/pdf,.pdf'"
                class="form-control"
                (change)="onFileChange(field.name, $event)">
+
+        <input *ngIf="field.type === 'word'"
+               type="file"
+               [id]="field.name"
+               [attr.name]="field.name"
+               [accept]="field.accept || '.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'"
+               class="form-control"
+               (change)="onFileChange(field.name, $event)">
       </div>
     </div>
     

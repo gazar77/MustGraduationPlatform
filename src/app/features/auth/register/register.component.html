@@ -6,60 +6,66 @@
             <p>بوابة مشاريع التخرج - كلية الحاسبات والمعلومات</p>
         </div>
 
-        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
+        <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="auth-form">
             <div class="form-group">
                 <label for="email">البريد الإلكتروني الجامعي</label>
-                <input type="email" id="email" formControlName="email" placeholder="example@must.edu.eg" [readonly]="step !== 'Identify'">
+                <input type="email" id="email" formControlName="email" placeholder="example@must.edu.eg" [readonly]="codeSent">
                 <div *ngIf="f['email'].touched && f['email'].errors" class="error-msg">
                     <small *ngIf="f['email'].errors['required']">البريد الإلكتروني مطلوب</small>
                     <small *ngIf="f['email'].errors['email']">برجاء إدخال بريد إلكتروني صحيح</small>
                 </div>
             </div>
 
-            <ng-container *ngIf="step === 'EnterDetails'">
-                <div class="form-group">
-                    <label for="fullName">الاسم بالكامل</label>
-                    <input type="text" id="fullName" formControlName="fullName" placeholder="أدخل اسمك بالكامل">
-                    <div *ngIf="f['fullName'].touched && f['fullName'].errors" class="error-msg">
-                        <small *ngIf="f['fullName'].errors['required']">الاسم مطلوب</small>
-                    </div>
+            <div class="form-group">
+                <label for="fullName">الاسم بالكامل</label>
+                <input type="text" id="fullName" formControlName="fullName" placeholder="أدخل اسمك بالكامل">
+                <div *ngIf="f['fullName'].touched && f['fullName'].errors" class="error-msg">
+                    <small *ngIf="f['fullName'].errors['required']">الاسم مطلوب</small>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="departmentId">القسم</label>
-                    <select id="departmentId" formControlName="departmentId">
-                        <option value="">اختر القسم</option>
-                        <option *ngFor="let dept of departments" [value]="dept.id">{{ dept.code }} — {{ dept.nameAr }}</option>
-                    </select>
-                    <div *ngIf="f['departmentId'].touched && f['departmentId'].errors" class="error-msg">
-                        <small *ngIf="f['departmentId'].errors['required']">القسم مطلوب</small>
-                    </div>
+            <div class="form-group">
+                <label for="departmentId">القسم</label>
+                <select id="departmentId" formControlName="departmentId">
+                    <option value="">اختر القسم</option>
+                    <option *ngFor="let dept of departments" [value]="dept.id">{{ dept.code }} — {{ dept.nameAr }}</option>
+                </select>
+                <div *ngIf="f['departmentId'].touched && f['departmentId'].errors" class="error-msg">
+                    <small *ngIf="f['departmentId'].errors['required']">القسم مطلوب</small>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="password">كلمة المرور</label>
-                    <input type="password" id="password" formControlName="password" placeholder="********">
-                    <div *ngIf="f['password'].touched && f['password'].errors" class="error-msg">
-                        <small *ngIf="f['password'].errors['required']">كلمة المرور مطلوبة</small>
-                        <small *ngIf="f['password'].errors['minlength']">يجب ألا تقل كلمة المرور عن 6 أحرف</small>
-                    </div>
+            <div class="form-group">
+                <label for="password">كلمة المرور</label>
+                <input type="password" id="password" formControlName="password" placeholder="********">
+                <div *ngIf="f['password'].touched && f['password'].errors" class="error-msg">
+                    <small *ngIf="f['password'].errors['required']">كلمة المرور مطلوبة</small>
+                    <small *ngIf="f['password'].errors['minlength']">يجب ألا تقل كلمة المرور عن 6 أحرف</small>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="activationCode">كود التحقق (وصلك عبر الإيميل)</label>
-                    <input type="text" id="activationCode" formControlName="activationCode" placeholder="123456" maxlength="6">
-                    <div *ngIf="f['activationCode'].touched && f['activationCode'].errors" class="error-msg">
-                        <small *ngIf="f['activationCode'].errors['required']">كود التحقق مطلوب</small>
-                    </div>
+            <div class="form-group">
+                <label for="activationCode">كود التحقق</label>
+                <div class="d-flex flex-wrap gap-2 align-items-start activation-row">
+                    <input type="text" id="activationCode" class="flex-grow-1" formControlName="activationCode" placeholder="123456" maxlength="6" autocomplete="one-time-code">
+                    <button type="button" class="btn btn-outline-primary send-code-btn" (click)="sendActivationCode()" [disabled]="sendCodeLoading || f['email'].invalid">
+                        <span *ngIf="!sendCodeLoading">إرسال الكود</span>
+                        <span *ngIf="sendCodeLoading">جاري الإرسال…</span>
+                    </button>
                 </div>
-            </ng-container>
+                <small class="text-muted d-block mt-1" *ngIf="codeSent">تم إرسال الكود إلى بريدك. تحقق من صندوق الوارد.</small>
+                <div *ngIf="f['activationCode'].touched && f['activationCode'].errors" class="error-msg">
+                    <small *ngIf="f['activationCode'].errors['required']">كود التحقق مطلوب</small>
+                </div>
+            </div>
 
             <div *ngIf="error" class="error-msg" style="margin-bottom: 15px; text-align: center;">
                 <p>{{error}}</p>
             </div>
 
             <button type="submit" class="btn btn-primary w-full" [disabled]="isLoading">
-                {{ step === 'Identify' ? 'إرسال كود التحقق' : 'إنشاء حساب' }}
+                <span *ngIf="!isLoading">إنشاء حساب</span>
+                <span *ngIf="isLoading">جاري الإنشاء…</span>
             </button>
 
             <div class="auth-links">

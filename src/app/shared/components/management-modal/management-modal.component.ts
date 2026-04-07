@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 
-export type ModalFieldType = 'text' | 'textarea' | 'select' | 'date' | 'readonly' | 'image' | 'pdf';
+export type ModalFieldType = 'text' | 'textarea' | 'select' | 'date' | 'readonly' | 'image' | 'pdf' | 'word';
 
 @Component({
   selector: 'app-management-modal',
@@ -14,7 +14,7 @@ export class ManagementModalComponent implements OnChanges {
   @Output() save = new EventEmitter<Record<string, unknown>>();
 
   formData: Record<string, unknown> = {};
-  /** Selected files for `image` / `pdf` field names */
+  /** Selected files for `image` / `pdf` / `word` field names */
   fileMap: Record<string, File | null> = {};
 
   @Input() fields: {
@@ -31,7 +31,7 @@ export class ManagementModalComponent implements OnChanges {
       this.formData = {};
       this.fileMap = {};
       this.fields.forEach(f => {
-        if (f.type === 'image' || f.type === 'pdf') {
+        if (f.type === 'image' || f.type === 'pdf' || f.type === 'word') {
           this.fileMap[f.name] = null;
           this.formData[f.name] = '';
         } else {

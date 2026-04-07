@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
 import { UserLayoutComponent } from './core/layouts/user-layout/user-layout.component';
 import { ComingSoonComponent } from './shared/components/coming-soon/coming-soon.component';
+import { TutorialsPageComponent } from './features/tutorials/tutorials-page.component';
 
 const routes: Routes = [
   {
@@ -38,6 +39,10 @@ const routes: Routes = [
       {
         path: 'templates',
         loadChildren: () => import('./features/templates/templates.module').then(m => m.TemplatesModule)
+      },
+      {
+        path: 'resources/tutorials',
+        component: TutorialsPageComponent
       },
       {
         path: 'doctor',

@@ -69,23 +69,35 @@ $header-height: 105px;
       .nav-item {
         height: 100%;
         position: relative;
-        margin: 0 5px;
+        margin: 0 2px;
+        flex-shrink: 0;
 
-        /* Top level link */
+        /* Top level link — keep labels on one line */
         .nav-link {
           display: flex;
           align-items: center;
           height: 100%;
-          padding: 0 20px; 
+          padding: 0 10px;
           color: $text-white;
-          font-size: 16px; 
-          font-weight: 700; 
+          font-size: 13px;
+          font-weight: 700;
           text-decoration: none;
           transition: all 0.2s ease;
-          text-transform: uppercase; 
+          text-transform: uppercase;
+          white-space: nowrap;
 
           &:hover, &.active {
             color: $must-green;
+          }
+
+          @media (min-width: 1200px) {
+            padding: 0 12px;
+            font-size: 14px;
+          }
+
+          @media (min-width: 1400px) {
+            padding: 0 14px;
+            font-size: 15px;
           }
         }
 
@@ -312,6 +324,10 @@ $header-height: 105px;
         transform: scale(1.1);
       }
     }
+    .auth-login-group {
+      flex-wrap: nowrap;
+    }
+
     .btn-auth {
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.3);
@@ -325,6 +341,23 @@ $header-height: 105px;
       align-items: center;
       gap: 8px;
       transition: all 0.2s ease;
+      text-decoration: none;
+
+      &.btn-auth-compact {
+        padding: 0.35rem 0.65rem;
+        font-size: 12px;
+        border-radius: 16px;
+        gap: 4px;
+
+        i {
+          font-size: 13px;
+        }
+
+        @media (min-width: 768px) {
+          padding: 0.4rem 0.85rem;
+          font-size: 13px;
+        }
+      }
 
       span {
         @media (max-width: 768px) {
@@ -340,6 +373,7 @@ $header-height: 105px;
         border-color: $must-green;
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(31, 165, 107, 0.3);
+        color: $text-white;
       }
 
       &.logout-btn {

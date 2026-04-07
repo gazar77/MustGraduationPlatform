@@ -10,12 +10,6 @@
                 <option value="">{{ langService.translate('ideas.filters.allCategories') }}</option>
                 <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
             </select>
-            <select [(ngModel)]="selectedStatus" (change)="filterIdeas()">
-                <option value="">{{ langService.translate('ideas.filters.allStatuses') }}</option>
-                <option value="Open">{{ langService.translate('ideas.filters.available') }}</option>
-                <option value="Reserved">{{ langService.translate('ideas.filters.reserved') }}</option>
-                <option value="Approved">{{ langService.translate('ideas.filters.approved') }}</option>
-            </select>
         </div>
     </div>
 

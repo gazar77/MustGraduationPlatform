@@ -4,7 +4,7 @@ import { Idea } from '../../../core/models/idea.model';
 import { IdeaService } from '../../../core/services/idea.service';
 import { SiteSettingsService } from '../../../core/services/site-settings.service';
 import { LanguageService } from '../../../core/services/language.service';
-import { switchMap, of, map, catchError, forkJoin, finalize } from 'rxjs';
+import { switchMap, of, map, catchError, forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-idea-detail',
@@ -16,9 +16,8 @@ export class IdeaDetailComponent implements OnInit {
   idea?: Idea;
   loading = true;
   error: string | null = null;
-  /** When site setting IdeaReservationsOpen is false, reservation CTAs are disabled. */
+  /** When site setting IdeaReservationsOpen is false, ideas show as closed for reservation. */
   reservationsOpen = true;
-  reserveBusy = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -84,45 +83,12 @@ export class IdeaDetailComponent implements OnInit {
     return map[status] || status;
   }
 
-  getDifficultyArabic(difficulty: string): string {
-    const map: { [key: string]: string } = {
-      'Easy': 'سهل',
-      'Medium': 'متوسط',
-      'Hard': 'صعب'
-    };
-    return map[difficulty] || difficulty;
-  }
-
-  get reservationButtonDisabled(): boolean {
-    if (!this.idea) return true;
-    return this.reserveBusy || !this.reservationsOpen || this.idea.status !== 'Open';
-  }
-
-  get reservationButtonLabel(): string {
+  /** Open vs Closed for supervision card (read-only: not a reservation action). */
+  get ideaAvailabilityLabel(): string {
     if (!this.idea) return '';
-    if (!this.reservationsOpen) {
-      return this.lang.translate('ideas.detail.masterClosed');
+    if (this.reservationsOpen && this.idea.status === 'Open') {
+      return this.lang.translate('ideas.status.Open');
     }
-    if (this.idea.status !== 'Open') {
-      return this.getStatusArabic(this.idea.status);
-    }
-    return this.lang.translate('ideas.detail.reserveBtn');
-  }
-
-  onReserve(): void {
-    if (!this.idea || this.reservationButtonDisabled) return;
-    this.reserveBusy = true;
-    this.ideaService.reserveIdea(this.idea.id).pipe(
-      finalize(() => { this.reserveBusy = false; })
-    ).subscribe({
-      next: (idea) => {
-        this.idea = idea;
-        alert(this.lang.translate('ideas.detail.reserveSuccess'));
-      },
-      error: (err: { error?: { message?: string } }) => {
-        const msg = err?.error?.message || this.lang.translate('ideas.detail.reserveFailed');
-        alert(msg);
-      }
-    });
+    return this.lang.translate('ideas.status.Closed');
   }
 }

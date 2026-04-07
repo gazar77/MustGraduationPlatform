@@ -14,6 +14,7 @@ import { SiteSettingsService } from '../../../core/services/site-settings.servic
 })
 export class IdeaRegisterComponent implements OnInit {
     registrationForm!: FormGroup;
+    exportBusy = false;
 
     constructor(
         private fb: FormBuilder,
@@ -123,6 +124,80 @@ export class IdeaRegisterComponent implements OnInit {
         }
         for(let i = 0; i < 5; i++) {
             this.addStudent();
+        }
+    }
+
+    async exportPdf(): Promise<void> {
+        const el = document.getElementById('idea-register-document');
+        if (!el) return;
+        this.exportBusy = true;
+        try {
+            const html2canvas = (await import('html2canvas')).default;
+            const { jsPDF } = await import('jspdf');
+            const canvas = await html2canvas(el, { scale: 2, useCORS: true, logging: false });
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const imgWidth = pageWidth;
+            const imgHeight = (canvas.height * pageWidth) / canvas.width;
+            let heightLeft = imgHeight;
+            let position = 0;
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+            pdf.save('graduation-project-registration.pdf');
+        } catch (e) {
+            console.error(e);
+            alert('PDF export failed.');
+        } finally {
+            this.exportBusy = false;
+        }
+    }
+
+    async exportWord(): Promise<void> {
+        this.exportBusy = true;
+        try {
+            const { Document, Packer, Paragraph, TextRun, HeadingLevel } = await import('docx');
+            const { saveAs } = await import('file-saver');
+            const v = this.registrationForm.getRawValue() as Record<string, unknown>;
+            const students = (v['students'] as Array<{ studentName?: string; universityId?: string; mobileNumber?: string }>) || [];
+            const children = [
+                new Paragraph({ text: 'Graduation Project Registration', heading: HeadingLevel.TITLE }),
+                new Paragraph({ children: [new TextRun({ text: 'Academic Year: ', bold: true }), new TextRun(String(v['academicYear'] ?? ''))] }),
+                new Paragraph({ children: [new TextRun({ text: 'Semester: ', bold: true }), new TextRun(String(v['semester'] ?? ''))] }),
+                new Paragraph({ children: [new TextRun({ text: 'Department: ', bold: true }), new TextRun(String(v['department'] ?? ''))] }),
+                new Paragraph({ children: [new TextRun({ text: 'Project Title (English): ', bold: true }), new TextRun(String(v['titleEn'] ?? ''))] }),
+                new Paragraph({ children: [new TextRun({ text: 'Project Title (Arabic): ', bold: true }), new TextRun(String(v['titleAr'] ?? ''))] }),
+                new Paragraph({ children: [new TextRun({ text: 'Category: ', bold: true }), new TextRun(String(v['category'] ?? ''))] }),
+                new Paragraph({ children: [new TextRun({ text: 'Supervisor: ', bold: true }), new TextRun(String(v['supervisorName'] ?? ''))] }),
+                new Paragraph({ children: [new TextRun({ text: 'Assistant Supervisor: ', bold: true }), new TextRun(String(v['assistantSupervisorName'] ?? ''))] }),
+                new Paragraph({ children: [new TextRun({ text: 'External Organization: ', bold: true }), new TextRun(String(v['externalOrg'] ?? ''))] }),
+                new Paragraph({ text: 'Project Team Students', heading: HeadingLevel.HEADING_2 }),
+            ];
+            students.forEach((s, i) => {
+                children.push(
+                    new Paragraph({
+                        children: [
+                            new TextRun({ text: `${i + 1}. `, bold: true }),
+                            new TextRun(`${s.studentName ?? ''} — ID: ${s.universityId ?? ''} — Mobile: ${s.mobileNumber ?? ''}`),
+                        ],
+                    })
+                );
+            });
+            const doc = new Document({ sections: [{ children }] });
+            const blob = await Packer.toBlob(doc);
+            saveAs(blob, 'graduation-project-registration.docx');
+        } catch (e) {
+            console.error(e);
+            alert('Word export failed.');
+        } finally {
+            this.exportBusy = false;
         }
     }
 }

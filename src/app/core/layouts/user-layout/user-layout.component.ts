@@ -7,6 +7,7 @@ import { Component } from '@angular/core';
     <main class="content-area">
       <router-outlet></router-outlet>
     </main>
+    <app-site-quick-nav></app-site-quick-nav>
     <app-footer></app-footer>
   `,
   styles: [`

@@ -45,10 +45,27 @@ export class ProjectRegistrationComponent implements OnInit {
     });
   }
 
-  onFileChange(event: any): void {
-    if (event.target.files.length > 0) {
-      this.selectedFile = event.target.files[0];
+  private static readonly allowedExt = new Set([
+    '.pdf', '.doc', '.docx', '.ppt', '.pptx', '.zip', '.rar', '.7z', '.png', '.jpg', '.jpeg'
+  ]);
+  private static readonly maxBytes = 25 * 1024 * 1024;
+
+  onFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) {
+      this.selectedFile = null;
+      return;
     }
+    const ext = '.' + (file.name.split('.').pop() || '').toLowerCase();
+    if (!ProjectRegistrationComponent.allowedExt.has(ext) || file.size > ProjectRegistrationComponent.maxBytes) {
+      const ar = typeof localStorage !== 'undefined' && localStorage.getItem('lang') === 'ar';
+      alert(ar ? 'نوع الملف غير مسموح أو الحجم يتجاوز 25 ميجابايت.' : 'File type not allowed or file exceeds 25 MB.');
+      input.value = '';
+      this.selectedFile = null;
+      return;
+    }
+    this.selectedFile = file;
   }
 
   onSubmit(): void {

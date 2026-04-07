@@ -51,31 +51,14 @@
                     <label class="text-muted d-block small">الدكتور المشرف</label>
                     <span class="fw-bold text-navy h6">{{ idea.supervisorName }}</span>
                 </div>
-                <div class="info-item mb-3">
-                    <label class="text-muted d-block small">أقصى عدد للطلاب</label>
-                    <span class="fw-bold h6">{{ idea.maxTeamSize }} طلاب</span>
-                </div>
-                <div class="info-item mb-3">
-                    <label class="text-muted d-block small">مستوى الصعوبة</label>
-                    <span class="badge" [ngClass]="{
-                        'bg-success': idea.difficulty === 'Easy',
-                        'bg-warning text-dark': idea.difficulty === 'Medium',
-                        'bg-danger': idea.difficulty === 'Hard'
-                    }">{{ getDifficultyArabic(idea.difficulty) }}</span>
-                </div>
-
                 <hr>
 
-                <button
-                    type="button"
-                    class="btn btn-primary w-full py-3 fw-bold mt-2"
-                    [disabled]="reservationButtonDisabled"
-                    (click)="onReserve()">
-                    <i class="fas fa-bookmark me-2"></i> {{ reservationButtonLabel }}
-                </button>
-                <p class="text-center small text-muted mt-3" *ngIf="idea.status === 'Open' && reservationsOpen">
-                    * سيتم إرسال طلبك للدكتور المشرف للمراجعة
-                </p>
+                <div
+                    class="reservation-status-display w-100 py-3 fw-bold mt-2 text-center"
+                    role="status"
+                    [attr.aria-label]="ideaAvailabilityLabel">
+                    <i class="fas fa-info-circle me-2" aria-hidden="true"></i>{{ ideaAvailabilityLabel }}
+                </div>
             </div>
 
             <div class="card help-card bg-navy text-white p-4 text-center shadow-sm">

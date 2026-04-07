@@ -11,7 +11,16 @@
     </app-hero-banner>
 
     <div class="document-wrapper container py-5">
-        <div class="official-document">
+        <div class="idea-export-toolbar no-print mb-3 d-flex flex-wrap gap-2 justify-content-end align-items-center">
+            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="exportPdf()" [disabled]="exportBusy">
+                {{ langService.translate('ideas.register.exportPdf') }}
+            </button>
+            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="exportWord()" [disabled]="exportBusy">
+                {{ langService.translate('ideas.register.exportWord') }}
+            </button>
+            <span class="text-muted small" *ngIf="exportBusy">{{ langService.translate('ideas.register.exportBusy') }}</span>
+        </div>
+        <div id="idea-register-document" class="official-document">
             <!-- Document Header -->
             <div class="doc-header">
                 <h2>Misr University for Science & Technology</h2>

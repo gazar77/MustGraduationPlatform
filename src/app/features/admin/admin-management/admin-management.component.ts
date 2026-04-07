@@ -171,24 +171,20 @@ export class AdminManagementComponent implements OnInit {
             { name: 'title', label: 'الاسم', type: 'text', value: item?.title },
             { name: 'description', label: 'الوصف', type: 'textarea', value: item?.description },
             { name: 'fileSize', label: 'حجم الملف الحالي', type: 'readonly', value: item?.fileSize },
-            { name: 'pdfFile', label: 'ملف PDF جديد (اختياري)', type: 'pdf', value: null }
+            { name: 'wordFile', label: 'ملف Word جديد (اختياري)', type: 'word', value: null }
           ]
         : [
             { name: 'title', label: 'الاسم', type: 'text', value: item?.title },
             { name: 'description', label: 'الوصف', type: 'textarea', value: item?.description },
-            { name: 'pdfFile', label: 'ملف PDF', type: 'pdf', value: null }
+            { name: 'wordFile', label: 'ملف Word (.doc أو .docx)', type: 'word', value: null }
           ];
     } else if (this.type === 'ideas') {
       this.modalConfig.title = isEdit ? 'تعديل فكرة مشروع' : 'إضافة فكرة مشروع جديدة';
-      const statusOpts = ['Open', 'Reserved', 'Approved', 'Closed'] as const;
-      const raw = item?.status != null ? String(item.status).trim() : '';
-      const statusValue = (statusOpts as readonly string[]).includes(raw) ? raw : 'Open';
       this.modalConfig.fields = [
         { name: 'title', label: 'عنوان المشروع', type: 'text', value: item?.title },
         { name: 'category', label: 'التصنيف', type: 'text', value: item?.category },
         { name: 'description', label: 'الوصف', type: 'textarea', value: item?.description },
-        { name: 'supervisorName', label: 'اسم المشرف', type: 'text', value: item?.supervisorName },
-        { name: 'status', label: 'الحالة', type: 'select', options: [...statusOpts], value: statusValue }
+        { name: 'supervisorName', label: 'اسم المشرف', type: 'text', value: item?.supervisorName }
       ];
     } else if (this.type === 'proposals') {
       if (isEdit) {
@@ -305,7 +301,7 @@ export class AdminManagementComponent implements OnInit {
         break;
       }
       case 'template': {
-        const pdf = data.pdfFile;
+        const pdf = data.wordFile;
         if (pdf instanceof File) {
           obs = this.templateService.addTemplateWithFile(pdf, {
             title: data.title,
@@ -329,14 +325,12 @@ export class AdminManagementComponent implements OnInit {
         break;
       }
       case 'ideas': {
-        const status =
-          data.status != null && String(data.status).trim() !== '' ? data.status : 'Open';
         obs = this.ideaService.addIdea({
           title: data.title,
           description: data.description,
           category: data.category,
           supervisorName: data.supervisorName,
-          status,
+          status: 'Open',
           difficulty: 'Medium',
           requiredSkills: [],
           maxTeamSize: 4,
@@ -431,7 +425,7 @@ export class AdminManagementComponent implements OnInit {
         break;
       }
       case 'template': {
-        const pdf = data.pdfFile;
+        const pdf = data.wordFile;
         if (pdf instanceof File) {
           obs = this.templateService.updateTemplateWithFile(this.editingItem.id, pdf, {
             title: data.title,
@@ -454,14 +448,12 @@ export class AdminManagementComponent implements OnInit {
       }
       case 'ideas': {
         const item = this.editingItem;
-        const status =
-          data.status != null && String(data.status).trim() !== '' ? data.status : item.status;
         obs = this.ideaService.updateIdea(item.id, {
           title: data.title,
           description: data.description,
           category: data.category,
           supervisorName: data.supervisorName,
-          status,
+          status: item.status,
           difficulty: item.difficulty ?? 'Medium',
           requiredSkills: Array.isArray(item.requiredSkills) ? item.requiredSkills : [],
           maxTeamSize: item.maxTeamSize ?? 4,

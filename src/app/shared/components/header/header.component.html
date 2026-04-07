@@ -166,12 +166,18 @@
         </button>
       </ng-container>
 
-      <!-- Logged Out State: Show Login -->
+      <!-- Logged Out State: Register + Login -->
       <ng-template #loginButton>
-        <button class="btn-auth login-btn ms-2" routerLink="/auth/login">
-          <i class="fas fa-user-circle"></i>
-          <span>{{ (languageService.currentLang$ | async) === 'en' ? 'Login' : 'دخول' }}</span>
-        </button>
+        <div class="auth-login-group ms-2 d-flex align-items-center gap-1 gap-md-2">
+          <a class="btn-auth btn-auth-compact register-link" routerLink="/auth/register">
+            <i class="fas fa-user-plus"></i>
+            <span>{{ languageService.translate('nav.signUp') }}</span>
+          </a>
+          <a class="btn-auth btn-auth-compact login-btn" routerLink="/auth/login">
+            <i class="fas fa-user-circle"></i>
+            <span>{{ languageService.translate('nav.login') }}</span>
+          </a>
+        </div>
       </ng-template>
 
       <!-- Standard Hamburger for both Desktop and Mobile matching screenshot -->

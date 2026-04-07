@@ -15,7 +15,6 @@ export class IdeaListComponent implements OnInit {
   filteredIdeas: Idea[] = [];
   searchQuery: string = '';
   selectedCategory: string = '';
-  selectedStatus: string = '';
   currentUser: User | null = null;
 
   categories: ProjectCategory[] = [
@@ -53,9 +52,8 @@ export class IdeaListComponent implements OnInit {
       const matchesSearch = idea.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
         idea.description.toLowerCase().includes(this.searchQuery.toLowerCase());
       const matchesCategory = this.selectedCategory ? idea.category === this.selectedCategory : true;
-      const matchesStatus = this.selectedStatus ? idea.status === this.selectedStatus : true;
 
-      return matchesSearch && matchesCategory && matchesStatus;
+      return matchesSearch && matchesCategory;
     });
   }
 }

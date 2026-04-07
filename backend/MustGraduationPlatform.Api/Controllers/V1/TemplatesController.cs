@@ -100,7 +100,14 @@ public class TemplatesController : ControllerBase
         if (string.IsNullOrEmpty(ext))
             ext = ".bin";
         var downloadName = SanitizeDownloadName(item.Title) + ext;
-        return PhysicalFile(fullPath, "application/octet-stream", fileDownloadName: downloadName);
+        var contentType = ext.ToLowerInvariant() switch
+        {
+            ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            ".doc" => "application/msword",
+            ".pdf" => "application/pdf",
+            _ => "application/octet-stream"
+        };
+        return PhysicalFile(fullPath, contentType, fileDownloadName: downloadName);
     }
 
     [HttpGet("{id:int}")]

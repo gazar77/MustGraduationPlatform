@@ -7,6 +7,7 @@ import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 import { UserLayoutComponent } from './core/layouts/user-layout/user-layout.component';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+import { SiteQuickNavComponent } from './shared/components/site-quick-nav/site-quick-nav.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
     HttpClientModule,
     AppRoutingModule,
     CoreModule,
-    SharedModule
+    SharedModule,
+    SiteQuickNavComponent
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }

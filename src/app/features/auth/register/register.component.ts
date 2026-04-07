@@ -12,8 +12,9 @@ import { AuthService } from '../../../core/services/auth.service';
 export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
   isLoading = false;
+  sendCodeLoading = false;
+  codeSent = false;
   departments: any[] = [];
-  step: 'Identify' | 'EnterDetails' = 'Identify';
   error = '';
 
   constructor(
@@ -43,39 +44,43 @@ export class RegisterComponent implements OnInit {
 
   get f() { return this.registerForm.controls; }
 
-  onSubmit(): void {
-    if (this.registerForm.invalid && this.step === 'EnterDetails') return;
-    if (this.f['email'].invalid && this.step === 'Identify') return;
+  sendActivationCode(): void {
+    this.error = '';
+    this.f['email'].markAsTouched();
+    if (this.f['email'].invalid) return;
+
+    this.sendCodeLoading = true;
+    this.authService.studentSendCode(this.f['email'].value).subscribe({
+      next: () => {
+        this.codeSent = true;
+        this.sendCodeLoading = false;
+      },
+      error: (err: HttpErrorResponse) => {
+        const code = err.error?.code;
+        if (code === 'AUTH_EMAIL_TAKEN') {
+          this.error = 'هذا البريد مسجل مسبقاً. سجّل الدخول أو استخدم بريداً آخر.';
+        } else {
+          this.error = 'فشل إرسال كود التحقق. تأكد من أن البريد الإلكتروني صحيح وغير مسجل مسبقاً.';
+        }
+        this.sendCodeLoading = false;
+      }
+    });
+  }
+
+  onRegister(): void {
+    this.registerForm.markAllAsTouched();
+    if (this.registerForm.invalid) return;
 
     this.isLoading = true;
     this.error = '';
-
-    if (this.step === 'Identify') {
-      this.authService.studentSendCode(this.f['email'].value).subscribe({
-        next: () => {
-          this.step = 'EnterDetails';
-          this.isLoading = false;
-        },
-        error: (err: HttpErrorResponse) => {
-          const code = err.error?.code;
-          if (code === 'AUTH_EMAIL_TAKEN') {
-            this.error = 'هذا البريد مسجل مسبقاً. سجّل الدخول أو استخدم بريداً آخر.';
-          } else {
-            this.error = 'فشل إرسال كود التحقق. تأكد من أن البريد الإلكتروني صحيح وغير مسجل مسبقاً.';
-          }
-          this.isLoading = false;
-        }
-      });
-    } else {
-      this.authService.register(this.registerForm.value).subscribe({
-        next: () => {
-          this.router.navigate(['/auth/login']);
-        },
-        error: () => {
-          this.error = 'فشل إنشاء الحساب. برجاء التأكد من البيانات وكود التحقق.';
-          this.isLoading = false;
-        }
-      });
-    }
+    this.authService.register(this.registerForm.value).subscribe({
+      next: () => {
+        this.router.navigate(['/auth/login']);
+      },
+      error: () => {
+        this.error = 'فشل إنشاء الحساب. برجاء التأكد من البيانات وكود التحقق.';
+        this.isLoading = false;
+      }
+    });
   }
 }

@@ -5,41 +5,7 @@
     <h1 class="hero-title">{{ title || langService.translate('dashboard.heroTitle') }}</h1>
 
     <div class="quick-nav-container" *ngIf="!compact">
-      <div class="hero-nav-pill-shell">
-        <nav class="hero-quick-nav" aria-label="Quick links">
-          <a *ngFor="let link of mainQuickLinks"
-             [routerLink]="link.url"
-             routerLinkActive="active"
-             [routerLinkActiveOptions]="{ exact: link.url === '/dashboard' }"
-             class="nav-pill">
-            {{ langService.translate('nav.' + link.labelKey) }}
-          </a>
-
-          <div #portalDropdown
-               class="hero-nav-dropdown"
-               [class.is-open]="portalMenuOpen">
-            <button type="button"
-                    class="nav-pill nav-pill-dropdown-trigger"
-                    (click)="togglePortalMenu($event)"
-                    [attr.aria-expanded]="portalMenuOpen"
-                    aria-haspopup="true"
-                    [attr.aria-controls]="'hero-portal-submenu'">
-              {{ langService.translate('nav.portalServices') }}
-              <i class="fas fa-chevron-down hero-dropdown-chevron" aria-hidden="true"></i>
-            </button>
-            <ul id="hero-portal-submenu" class="hero-dropdown-panel" role="menu">
-              <li *ngFor="let link of portalLinks" role="none">
-                <a [routerLink]="link.url"
-                   role="menuitem"
-                   class="hero-dropdown-link"
-                   (click)="closePortalMenu()">
-                  {{ langService.translate('nav.' + link.labelKey) }}
-                </a>
-              </li>
-            </ul>
-          </div>
-        </nav>
-      </div>
+      <app-quick-nav-links></app-quick-nav-links>
     </div>
 
     <div class="breadcrumb-container" *ngIf="breadcrumbs && breadcrumbs.length > 0">

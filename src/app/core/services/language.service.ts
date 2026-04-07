@@ -48,7 +48,13 @@ export class LanguageService {
         contact: 'Contact Us',
         doctor: 'Doctor Panel',
         admin: 'Admin Panel',
-        logout: 'Logout'
+        logout: 'Logout',
+        signUp: 'Register',
+        login: 'Login',
+        ideaRegister: 'Idea Register',
+        submission: 'Submission',
+        resources: 'Resources',
+        tutorials: 'Tutorials'
       },
       footer: {
         links: 'Links',
@@ -146,7 +152,10 @@ export class LanguageService {
           leaderName: 'Team Leader Name',
           leaderId: 'University ID',
           submitBtn: 'Submit Request',
-          successMsg: 'Project idea registered successfully!'
+          successMsg: 'Project idea registered successfully!',
+          exportPdf: 'Download PDF',
+          exportWord: 'Download Word',
+          exportBusy: 'Please wait…'
         },
         detail: {
           reserveBtn: 'Reserve this idea',
@@ -209,7 +218,7 @@ export class LanguageService {
           reg2Instructions: 'Please upload progress reports for the second phase and final requirements.',
           deadline: 'Deadline for Submission',
           dragFile: 'Drag the file here to upload',
-          supportedFiles: 'Supports PDF, DOCX (Max 10MB)',
+          supportedFiles: 'PDF, Word, PowerPoint (.ppt/.pptx), images, ZIP/RAR/7Z — max 25 MB',
           additionalNotes: 'Additional Notes (Optional)',
           notesPlaceholder: 'Write any notes you want to attach with the documents...',
           cancel: 'Cancel',
@@ -284,11 +293,16 @@ export class LanguageService {
         title: 'Templates & Models Library',
         subtitle: 'Download guide files and required templates for your graduation project.',
         lastUpdate: 'Last updated: ',
-        downloadBtn: 'Download ',
+        downloadBtn: 'Download',
+        downloadWord: 'Download Word',
         prompts: {
           newTitle: 'Enter new template title:',
           newDesc: 'Enter template description:'
         }
+      },
+      tutorials: {
+        title: 'Tutorials',
+        placeholder: 'Tutorial materials and guides will appear here.'
       },
       contact: {
         title: 'Contact Us',
@@ -354,7 +368,13 @@ export class LanguageService {
         contact: 'اتصل بنا',
         doctor: 'لوحة الدكتور',
         admin: 'لوحة المدير',
-        logout: 'تسجيل الخروج'
+        logout: 'تسجيل الخروج',
+        signUp: 'تسجيل',
+        login: 'دخول',
+        ideaRegister: 'تسجيل الفكرة',
+        submission: 'التسليم',
+        resources: 'الموارد',
+        tutorials: 'الدروس التعليمية'
       },
       footer: {
         links: 'روابط هامة',
@@ -451,7 +471,10 @@ export class LanguageService {
           leaderName: 'اسم قائد الفريق',
           leaderId: 'الرقم الجامعي',
           submitBtn: 'إرسال الطلب',
-          successMsg: 'تم تسجيل فكرة المشروع بنجاح!'
+          successMsg: 'تم تسجيل فكرة المشروع بنجاح!',
+          exportPdf: 'تحميل PDF',
+          exportWord: 'تحميل Word',
+          exportBusy: 'يرجى الانتظار…'
         },
         detail: {
           reserveBtn: 'حجز هذه الفكرة',
@@ -514,7 +537,7 @@ export class LanguageService {
           reg2Instructions: 'يرجى رفع تقارير الإنجاز للمرحلة الثانية والمتطلبات النهائية للتسجيل.',
           deadline: 'آخر موعد للتقديم',
           dragFile: 'اسحب الملف هنا لرفعه',
-          supportedFiles: 'يدعم ملفات PDF, DOCX (بحد أقصى 10 ميجابايت)',
+          supportedFiles: 'PDF وWord وPowerPoint، صور، وملفات مضغوطة — بحد أقصى 25 ميجابايت',
           additionalNotes: 'ملاحظات إضافية (اختياري)',
           notesPlaceholder: 'اكتب أي ملاحظات تود إرفاقها مع المستندات...',
           cancel: 'إلغاء',
@@ -589,11 +612,16 @@ export class LanguageService {
         title: 'مكتبة القوالب والنماذج',
         subtitle: 'قم بتحميل الملفات الإرشادية والقوالب المطلوبة لمشروع تخرجك',
         lastUpdate: 'آخر تحديث: ',
-        downloadBtn: 'تحميل ',
+        downloadBtn: 'تحميل',
+        downloadWord: 'تحميل Word',
         prompts: {
           newTitle: 'أدخل عنوان النموذج الجديد:',
           newDesc: 'أدخل وصف النموذج:'
         }
+      },
+      tutorials: {
+        title: 'الدروس التعليمية',
+        placeholder: 'ستُعرض هنا المواد التعليمية والأدلة.'
       },
       contact: {
         title: 'اتصل بنا',
