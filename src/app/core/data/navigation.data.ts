@@ -11,6 +11,15 @@ export interface MenuItem {
 
 export const MENU_ITEMS: MenuItem[] = [
   {
+    label: 'Portal Services',
+    translationKey: 'portalServices',
+    children: [
+      { label: 'Submit Proposal', translationKey: 'submitProposal', routerLink: '/submission/proposal' },
+      { label: 'Project Submission 1', translationKey: 'req1', routerLink: '/submission/project-registration-1' },
+      { label: 'Project Submission 2', translationKey: 'req2', routerLink: '/submission/project-registration-2' }
+    ]
+  },
+  {
     label: 'The University',
     translationKey: 'university',
     externalUrl: 'https://must.edu.eg/',

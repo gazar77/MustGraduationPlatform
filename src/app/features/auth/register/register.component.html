@@ -29,7 +29,7 @@
                     <label for="departmentId">القسم</label>
                     <select id="departmentId" formControlName="departmentId">
                         <option value="">اختر القسم</option>
-                        <option *ngFor="let dept of departments" [value]="dept.id">{{dept.name}}</option>
+                        <option *ngFor="let dept of departments" [value]="dept.id">{{ dept.code }} — {{ dept.nameAr }}</option>
                     </select>
                     <div *ngIf="f['departmentId'].touched && f['departmentId'].errors" class="error-msg">
                         <small *ngIf="f['departmentId'].errors['required']">القسم مطلوب</small>

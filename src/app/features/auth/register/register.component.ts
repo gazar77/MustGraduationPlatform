@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -55,8 +56,13 @@ export class RegisterComponent implements OnInit {
           this.step = 'EnterDetails';
           this.isLoading = false;
         },
-        error: () => {
-          this.error = 'فشل إرسال كود التحقق. تأكد من أن البريد الإلكتروني صحيح وغير مسجل مسبقاً.';
+        error: (err: HttpErrorResponse) => {
+          const code = err.error?.code;
+          if (code === 'AUTH_EMAIL_TAKEN') {
+            this.error = 'هذا البريد مسجل مسبقاً. سجّل الدخول أو استخدم بريداً آخر.';
+          } else {
+            this.error = 'فشل إرسال كود التحقق. تأكد من أن البريد الإلكتروني صحيح وغير مسجل مسبقاً.';
+          }
           this.isLoading = false;
         }
       });

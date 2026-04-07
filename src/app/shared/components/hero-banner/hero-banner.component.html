@@ -1,30 +1,53 @@
 <div class="hero-banner" [class.compact]="compact" [style.backgroundImage]="compact ? 'none' : 'url(\'' + currentBgImage + '\')' " [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
-  <!-- Enhanced Dark Overlay -->
   <div class="overlay"></div>
 
-  <!-- Hero Content Centered -->
   <div class="hero-content container">
     <h1 class="hero-title">{{ title || langService.translate('dashboard.heroTitle') }}</h1>
-    
-    <!-- Quick Navigation (Core Project Parts) - Only shown on Dashboard (Full Mode) -->
+
     <div class="quick-nav-container" *ngIf="!compact">
-      <nav class="hero-quick-nav">
-        <a *ngFor="let link of quickLinks" 
-           [routerLink]="link.url" 
-           routerLinkActive="active"
-           class="nav-pill">
-           {{ langService.translate('nav.' + link.labelKey) }}
-        </a>
-      </nav>
+      <div class="hero-nav-pill-shell">
+        <nav class="hero-quick-nav" aria-label="Quick links">
+          <a *ngFor="let link of mainQuickLinks"
+             [routerLink]="link.url"
+             routerLinkActive="active"
+             [routerLinkActiveOptions]="{ exact: link.url === '/dashboard' }"
+             class="nav-pill">
+            {{ langService.translate('nav.' + link.labelKey) }}
+          </a>
+
+          <div #portalDropdown
+               class="hero-nav-dropdown"
+               [class.is-open]="portalMenuOpen">
+            <button type="button"
+                    class="nav-pill nav-pill-dropdown-trigger"
+                    (click)="togglePortalMenu($event)"
+                    [attr.aria-expanded]="portalMenuOpen"
+                    aria-haspopup="true"
+                    [attr.aria-controls]="'hero-portal-submenu'">
+              {{ langService.translate('nav.portalServices') }}
+              <i class="fas fa-chevron-down hero-dropdown-chevron" aria-hidden="true"></i>
+            </button>
+            <ul id="hero-portal-submenu" class="hero-dropdown-panel" role="menu">
+              <li *ngFor="let link of portalLinks" role="none">
+                <a [routerLink]="link.url"
+                   role="menuitem"
+                   class="hero-dropdown-link"
+                   (click)="closePortalMenu()">
+                  {{ langService.translate('nav.' + link.labelKey) }}
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
     </div>
 
-    <!-- Original Breadcrumb (Optional/Secondary) -->
     <div class="breadcrumb-container" *ngIf="breadcrumbs && breadcrumbs.length > 0">
       <nav class="hero-breadcrumbs">
         <ng-container *ngFor="let crumb of breadcrumbs; let last = last">
           <a *ngIf="crumb.url" [routerLink]="crumb.url" class="crumb-link">{{ crumb.label }}</a>
           <span *ngIf="!crumb.url" class="crumb-current" [class.active]="last">{{ crumb.label }}</span>
-          
+
           <span *ngIf="!last" class="crumb-separator">
             <i class="fas fa-chevron-right rtl-flip"></i>
           </span>
@@ -34,4 +57,3 @@
   </div>
 
 </div>
-

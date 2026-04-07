@@ -90,42 +90,24 @@ public class AuthService : IAuthService
         var normalized = MustEmailRules.Normalize(request.Email);
         var user = await _userManager.FindByEmailAsync(normalized);
 
-        if (user is not null && user.UserRole != UserRole.Student)
-            throw new AppException("AUTH_OTP_NOT_ALLOWED", "Activation codes are only for student accounts.");
+        if (user is not null)
+            throw new AppException("AUTH_EMAIL_TAKEN", "An account with this email already exists. Use sign-in with your password, or use a different email to register.");
 
         var code = GenerateNumericCode(6);
         var expires = DateTime.UtcNow.AddMinutes(15);
 
-        if (user is not null)
-        {
-            await _db.StudentLoginOtps
-                .Where(x => x.UserId == user.Id && !x.Consumed)
-                .ExecuteDeleteAsync(ct);
+        await _db.RegistrationOtps
+            .Where(x => x.NormalizedEmail == normalized && !x.Consumed)
+            .ExecuteDeleteAsync(ct);
 
-            _db.StudentLoginOtps.Add(new StudentLoginOtp
-            {
-                UserId = user.Id,
-                Code = code,
-                ExpiresAtUtc = expires,
-                Consumed = false,
-                CreatedAtUtc = DateTime.UtcNow
-            });
-        }
-        else
+        _db.RegistrationOtps.Add(new RegistrationOtp
         {
-            await _db.RegistrationOtps
-                .Where(x => x.NormalizedEmail == normalized && !x.Consumed)
-                .ExecuteDeleteAsync(ct);
-
-            _db.RegistrationOtps.Add(new RegistrationOtp
-            {
-                NormalizedEmail = normalized,
-                Code = code,
-                ExpiresAtUtc = expires,
-                Consumed = false,
-                CreatedAtUtc = DateTime.UtcNow
-            });
-        }
+            NormalizedEmail = normalized,
+            Code = code,
+            ExpiresAtUtc = expires,
+            Consumed = false,
+            CreatedAtUtc = DateTime.UtcNow
+        });
 
         await _db.SaveChangesAsync(ct);
 
@@ -148,20 +130,8 @@ public class AuthService : IAuthService
         if (user.UserRole != UserRole.Student)
             throw new AppException("AUTH_NOT_STUDENT", "This account is not a student account.");
 
-        var codeInput = request.Code.Trim();
-        var otp = await _db.StudentLoginOtps
-            .Where(x => x.UserId == user.Id && x.Code == codeInput && !x.Consumed && x.ExpiresAtUtc > DateTime.UtcNow)
-            .OrderByDescending(x => x.CreatedAtUtc)
-            .FirstOrDefaultAsync(ct);
-
-        if (otp is null)
-            throw new AppException("AUTH_INVALID_OTP", "Invalid or expired activation code.");
-
         if (!await _userManager.CheckPasswordAsync(user, request.Password))
             throw new AppException("AUTH_INVALID_CREDENTIALS", "Invalid password.");
-
-        otp.Consumed = true;
-        await _db.SaveChangesAsync(ct);
 
         var full = await _db.Users.Include(u => u.Department).FirstAsync(u => u.Id == user.Id, ct);
         AppendAuthCookie(full);

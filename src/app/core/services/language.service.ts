@@ -12,6 +12,7 @@ export class LanguageService {
     en: {
       nav: {
         portal: 'Portal',
+        portalServices: 'Portal Services',
         university: 'The University',
         academics: 'Academics',
         admission: 'Admission',
@@ -311,6 +312,7 @@ export class LanguageService {
     ar: {
       nav: {
         portal: 'بوابة الطالب',
+        portalServices: 'خدمات البوابة',
         university: 'الجامعة',
         academics: 'الأكاديميات',
         admission: 'القبول والتسجيل',

@@ -22,7 +22,6 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
     public DbSet<SiteSetting> SiteSettings => Set<SiteSetting>();
     public DbSet<DashboardActivity> DashboardActivities => Set<DashboardActivity>();
-    public DbSet<StudentLoginOtp> StudentLoginOtps => Set<StudentLoginOtp>();
     public DbSet<RegistrationOtp> RegistrationOtps => Set<RegistrationOtp>();
     public DbSet<GraduationRequirementFile> GraduationRequirementFiles => Set<GraduationRequirementFile>();
 
@@ -47,15 +46,6 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
         builder.Entity<SiteSetting>(e =>
         {
             e.HasIndex(x => x.Key).IsUnique();
-        });
-
-        builder.Entity<StudentLoginOtp>(e =>
-        {
-            e.Property(x => x.Code).HasMaxLength(32);
-            e.HasOne<ApplicationUser>()
-                .WithMany()
-                .HasForeignKey(x => x.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.Entity<RegistrationOtp>(e =>

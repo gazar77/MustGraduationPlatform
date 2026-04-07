@@ -8,7 +8,7 @@ public record AdminLoginRequestDto(string Email, string Password);
 
 public record StudentSendCodeRequestDto(string Email);
 
-public record StudentLoginRequestDto(string Email, string Code, string Password);
+public record StudentLoginRequestDto(string Email, string Password);
 
 public record StudentRegisterRequestDto(
     string Email,

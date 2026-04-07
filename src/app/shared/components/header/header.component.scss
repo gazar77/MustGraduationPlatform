@@ -207,18 +207,20 @@ $header-height: 105px;
           }
         }
 
-        /* --- Simple Dropdown --- */
+        /* --- Simple Dropdown (light panel, CSS3-menu style) --- */
         .simple-dropdown {
           position: absolute;
           top: 100%;
           left: 0;
-          min-width: 250px;
-          background-color: $left-panel-bg;
+          min-width: 260px;
+          background: linear-gradient(180deg, #ffffff 0%, #f3f4f6 100%);
+          border-radius: 12px;
+          border: 1px solid rgba(0, 0, 0, 0.08);
           opacity: 0;
           visibility: hidden;
           transition: opacity 0.2s ease, visibility 0.2s ease;
           z-index: 100;
-          box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
 
           &.show {
             opacity: 1;
@@ -227,21 +229,22 @@ $header-height: 105px;
 
           .simple-dropdown-list {
             list-style: none;
-            padding: 15px 0;
+            padding: 6px 0;
             margin: 0;
 
             li {
               .simple-dropdown-link {
                 display: block;
-                padding: 14px 25px;
-                color: $text-white;
+                padding: 12px 22px;
+                color: #2d3748;
                 font-size: 15px;
-                font-weight: 700;
+                font-weight: 600;
                 text-decoration: none;
-                transition: color 0.15s;
+                transition: background 0.15s ease, color 0.15s ease;
 
                 &:hover {
-                  color: $must-green;
+                  background: #2563eb;
+                  color: #ffffff;
                 }
               }
             }

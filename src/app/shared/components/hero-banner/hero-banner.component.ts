@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LanguageService } from '../../../core/services/language.service';
@@ -15,22 +15,28 @@ export class HeroBannerComponent implements OnInit {
   @Input() breadcrumbs: { label: string, url?: string }[] | null = null;
   @Input() compact: boolean = false;
 
-  // Actual project parts for constant access
-  @Input() quickLinks: { labelKey: string, url: string }[] = [
+  /** Primary hero pills (excludes the three submission routes — those live under Portal Services). */
+  @Input() mainQuickLinks: { labelKey: string, url: string }[] = [
     { labelKey: 'home', url: '/dashboard' },
     { labelKey: 'ideas', url: '/ideas/list' },
     { labelKey: 'register', url: '/ideas/register' },
-    { labelKey: 'submitProposal', url: '/submission/proposal' },
-    { labelKey: 'req1', url: '/submission/project-registration-1' },
-    { labelKey: 'req2', url: '/submission/project-registration-2' },
     { labelKey: 'templates', url: '/templates' },
     { labelKey: 'news', url: '/news/list' },
     { labelKey: 'events', url: '/events/calendar' },
     { labelKey: 'contact', url: '/contact' }
   ];
 
-  constructor(public langService: LanguageService) {}
-  
+  readonly portalLinks: { labelKey: string, url: string }[] = [
+    { labelKey: 'submitProposal', url: '/submission/proposal' },
+    { labelKey: 'req1', url: '/submission/project-registration-1' },
+    { labelKey: 'req2', url: '/submission/project-registration-2' }
+  ];
+
+  @ViewChild('portalDropdown') portalDropdown?: ElementRef<HTMLElement>;
+
+  /** Mobile: tap toggles the portal submenu. */
+  portalMenuOpen = false;
+
   @Input() bgImages: string[] = [
     '/assets/h1.jpeg',
     '/assets/h2.jpeg',
@@ -44,11 +50,13 @@ export class HeroBannerComponent implements OnInit {
 
   currentSlideIndex = 0;
 
-  ngOnInit() {
+  constructor(public langService: LanguageService) {}
+
+  ngOnInit(): void {
     this.startSlider();
   }
 
-  startSlider() {
+  startSlider(): void {
     setInterval(() => {
       this.currentSlideIndex = (this.currentSlideIndex + 1) % this.bgImages.length;
     }, 5000);
@@ -57,4 +65,28 @@ export class HeroBannerComponent implements OnInit {
   get currentBgImage(): string {
     return this.bgImages[this.currentSlideIndex];
   }
+
+  togglePortalMenu(event: MouseEvent): void {
+    if (window.innerWidth < 992) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.portalMenuOpen = !this.portalMenuOpen;
+    }
+  }
+
+  closePortalMenu(): void {
+    this.portalMenuOpen = false;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (window.innerWidth >= 992) return;
+    const root = this.portalDropdown?.nativeElement;
+    if (!root || !this.portalMenuOpen) return;
+    const t = event.target as Node;
+    if (root.contains(t)) return;
+    this.portalMenuOpen = false;
+  }
+
 }
+

@@ -23,13 +23,12 @@ export class LoginComponent implements OnInit {
   ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      password: [''],
-      code: ['']
+      password: ['']
     });
   }
 
   userType: 'Admin' | 'Student' | null = null;
-  step: 'Identify' | 'AdminLogin' | 'StudentCode' | 'StudentLogin' = 'Identify';
+  step: 'Identify' | 'AdminLogin' | 'StudentLogin' = 'Identify';
 
   ngOnInit(): void {
     if (this.authService.currentUserValue) {
@@ -61,8 +60,9 @@ export class LoginComponent implements OnInit {
               this.f['password'].setValidators([Validators.required]);
               this.f['password'].updateValueAndValidity();
             } else if (res.userType === 'Student') {
-              this.sendStudentCode();
-              return;
+              this.step = 'StudentLogin';
+              this.f['password'].setValidators([Validators.required]);
+              this.f['password'].updateValueAndValidity();
             }
           } else {
             this.error = 'البريد الإلكتروني غير مسجل';
@@ -83,29 +83,14 @@ export class LoginComponent implements OnInit {
         }
       });
     } else if (this.step === 'StudentLogin') {
-      this.authService.studentLogin(this.f['email'].value, this.f['code'].value, this.f['password'].value).subscribe({
+      this.authService.studentLogin(this.f['email'].value, this.f['password'].value).subscribe({
         next: () => this.router.navigateByUrl('/dashboard'),
         error: (err) => {
-          this.error = this.httpErrorMessage(err, 'الكود أو كلمة المرور غير صحيحة.');
+          this.error = this.httpErrorMessage(err, 'كلمة المرور غير صحيحة أو رفض الخادم الطلب.');
           this.loading = false;
         }
       });
     }
-  }
-
-  sendStudentCode(): void {
-    this.authService.studentSendCode(this.f['email'].value).subscribe({
-      next: () => {
-        this.step = 'StudentLogin';
-        this.f['code'].setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(6)]);
-        this.f['code'].updateValueAndValidity();
-        this.loading = false;
-      },
-      error: (err) => {
-        this.error = this.httpErrorMessage(err, 'فشل إرسال كود التحقق');
-        this.loading = false;
-      }
-    });
   }
 
   /** Prefer clear message when API is unreachable (status 0 / connection reset). */

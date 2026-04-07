@@ -44,8 +44,8 @@ export class AuthService {
     return this.http.post<void>(`${this.apiUrl}/student/send-code`, { email });
   }
 
-  studentLogin(email: string, code: string, password?: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/student/login`, { email, code, password }).pipe(
+  studentLogin(email: string, password: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/student/login`, { email, password }).pipe(
       tap(res => {
         if (res?.user) {
           this.currentUserSubject.next(this.mapUser(res.user));
