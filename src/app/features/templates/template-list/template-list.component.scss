@@ -1,6 +1,9 @@
 .templates-page {
-    padding: 3rem 0 5rem;
     min-height: calc(100vh - 200px);
+
+    &__main {
+        padding: 3rem 0 5rem;
+    }
 
     .page-header {
         text-align: center;

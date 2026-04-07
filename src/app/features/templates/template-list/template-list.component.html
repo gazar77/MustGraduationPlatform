@@ -1,25 +1,27 @@
-<div class="templates-page container" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
+<div class="templates-page" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
     <app-hero-banner [title]="langService.translate('templates.title')"></app-hero-banner>
 
-    <div class="templates-grid">
-        <div *ngFor="let template of templates" class="template-card card">
-            <div class="template-icon">
-                <i class="fas fa-file-alt"></i>
-            </div>
-            <div class="template-info">
-                <h3>{{ template.title }}</h3>
-                <p>{{ template.description }}</p>
-                <div class="template-meta">
-                    <span class="size">{{ template.fileSize }}</span>
-                    <span class="update">{{ langService.translate('templates.lastUpdate') }} {{ template.lastUpdate }}</span>
+    <div class="container templates-page__main">
+        <div class="templates-grid">
+            <div *ngFor="let template of templates" class="template-card card">
+                <div class="template-icon">
+                    <i class="fas fa-file-alt"></i>
                 </div>
+                <div class="template-info">
+                    <h3>{{ template.title }}</h3>
+                    <p>{{ template.description }}</p>
+                    <div class="template-meta">
+                        <span class="size">{{ template.fileSize }}</span>
+                        <span class="update">{{ langService.translate('templates.lastUpdate') }} {{ template.lastUpdate }}</span>
+                    </div>
+                </div>
+                <button type="button"
+                        class="btn btn-secondary"
+                        [disabled]="!canDownload(template)"
+                        (click)="downloadTemplate(template)">
+                  {{ langService.translate('templates.downloadWord') }}
+                </button>
             </div>
-            <button type="button"
-                    class="btn btn-secondary"
-                    [disabled]="!canDownload(template)"
-                    (click)="downloadTemplate(template)">
-              {{ langService.translate('templates.downloadWord') }}
-            </button>
         </div>
     </div>
 </div>

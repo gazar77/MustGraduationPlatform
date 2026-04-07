@@ -1,88 +1,90 @@
-<div class="registration-container" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
-    <div class="registration-card">
+<div class="registration-page" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
     <app-hero-banner [title]="langService.translate(titleKey)"></app-hero-banner>
 
-    <div class="registration-header-meta container mb-4">
-        <div class="deadline-badge">
-            <i class="fas fa-clock"></i>
-            <div>
-                <span>{{ langService.translate('submission.registration.deadline') }}</span>
-                <strong>{{ deadline | date:'fullDate' }}</strong>
-            </div>
-        </div>
-    </div>
-
-    <!-- START OF REACTIVE FORM -->
-    <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="form-container">
-        <section class="form-section">
-            <div class="row custom-form-row">
-                <div class="col-md-6 form-group">
-                    <label>رقم المشروع / Project Number <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" formControlName="projectNumber" placeholder="Ex: PRJ-001">
-                </div>
-                <div class="col-md-6 form-group">
-                    <label>عنوان المشروع / Project Title <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" formControlName="projectTitle" placeholder="Project Name">
-                </div>
-                <div class="col-md-6 form-group">
-                    <label>اسم المشرف / Supervisor Name <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" formControlName="supervisorName" placeholder="Dr. XYZ">
-                </div>
-                <div class="col-md-6 form-group">
-                    <label>اسم قائد الفريق / Team Leader <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" formControlName="teamLeaderName" placeholder="Student Name">
-                </div>
-            </div>
-        </section>
-
-        <section class="upload-section mt-4">
-            <div class="upload-box" [class.has-file]="selectedFile">
-                <label for="reg-file" class="upload-label">
-                    <i class="fas" [ngClass]="selectedFile ? 'fa-file-check' : 'fa-file-upload'"></i>
-                    <div class="label-text">
-                        <span class="main-text">{{ selectedFile ? selectedFile.name : langService.translate('submission.registration.dragFile') }}</span>
-                        <span class="sub-text">{{ langService.translate('submission.registration.supportedFiles') }}</span>
+    <div class="registration-container">
+        <div class="registration-card">
+            <div class="registration-header-meta container mb-4">
+                <div class="deadline-badge">
+                    <i class="fas fa-clock"></i>
+                    <div>
+                        <span>{{ langService.translate('submission.registration.deadline') }}</span>
+                        <strong>{{ deadline | date:'fullDate' }}</strong>
                     </div>
-                    <input type="file" id="reg-file" (change)="onFileChange($event)" hidden
-                           accept=".pdf,.doc,.docx,.ppt,.pptx,.zip,.rar,.7z,.png,.jpg,.jpeg,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation">
-                </label>
-                <button *ngIf="selectedFile" class="btn-remove" type="button" (click)="selectedFile = null">
-                    <i class="fas fa-times"></i>
-                </button>
+                </div>
             </div>
-        </section>
 
-        <section class="notes-section mt-4">
-            <label>{{ langService.translate('submission.registration.additionalNotes') }}</label>
-            <textarea formControlName="notes" class="form-control" rows="4" [placeholder]="langService.translate('submission.registration.notesPlaceholder')"></textarea>
-        </section>
+            <!-- START OF REACTIVE FORM -->
+            <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="form-container">
+                <section class="form-section">
+                    <div class="row custom-form-row">
+                        <div class="col-md-6 form-group">
+                            <label>رقم المشروع / Project Number <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" formControlName="projectNumber" placeholder="Ex: PRJ-001">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>عنوان المشروع / Project Title <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" formControlName="projectTitle" placeholder="Project Name">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>اسم المشرف / Supervisor Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" formControlName="supervisorName" placeholder="Dr. XYZ">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>اسم قائد الفريق / Team Leader <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" formControlName="teamLeaderName" placeholder="Student Name">
+                        </div>
+                    </div>
+                </section>
 
-        <footer class="card-footer mt-4">
-            <button type="button" class="btn btn-outline" routerLink="/dashboard">{{ langService.translate('submission.registration.cancel') }}</button>
-            <button type="submit" class="btn btn-primary" [disabled]="registrationForm.invalid || !selectedFile">
-                <i class="fas fa-paper-plane"></i>
-                {{ langService.translate('submission.registration.submitDocs') }}
-            </button>
-        </footer>
-    </form>
-    </div>
+                <section class="upload-section mt-4">
+                    <div class="upload-box" [class.has-file]="selectedFile">
+                        <label for="reg-file" class="upload-label">
+                            <i class="fas" [ngClass]="selectedFile ? 'fa-file-check' : 'fa-file-upload'"></i>
+                            <div class="label-text">
+                                <span class="main-text">{{ selectedFile ? selectedFile.name : langService.translate('submission.registration.dragFile') }}</span>
+                                <span class="sub-text">{{ langService.translate('submission.registration.supportedFiles') }}</span>
+                            </div>
+                            <input type="file" id="reg-file" (change)="onFileChange($event)" hidden
+                                   accept=".pdf,.doc,.docx,.ppt,.pptx,.zip,.rar,.7z,.png,.jpg,.jpeg,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation">
+                        </label>
+                        <button *ngIf="selectedFile" class="btn-remove" type="button" (click)="selectedFile = null">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </section>
 
-    <!-- Helpful Tips -->
-    <div class="tips-grid">
-        <div class="tip-card">
-            <i class="fas fa-shield-alt"></i>
-            <h4>{{ langService.translate('submission.registration.tips.verifyTitle') }}</h4>
-            <p>{{ langService.translate('submission.registration.tips.verifyText') }}</p>
+                <section class="notes-section mt-4">
+                    <label>{{ langService.translate('submission.registration.additionalNotes') }}</label>
+                    <textarea formControlName="notes" class="form-control" rows="4" [placeholder]="langService.translate('submission.registration.notesPlaceholder')"></textarea>
+                </section>
+
+                <footer class="card-footer mt-4">
+                    <button type="button" class="btn btn-outline" routerLink="/dashboard">{{ langService.translate('submission.registration.cancel') }}</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="registrationForm.invalid || !selectedFile">
+                        <i class="fas fa-paper-plane"></i>
+                        {{ langService.translate('submission.registration.submitDocs') }}
+                    </button>
+                </footer>
+            </form>
         </div>
-        <div class="tip-card">
-            <i class="fas fa-lock"></i>
-            <h4>{{ langService.translate('submission.registration.tips.privacyTitle') }}</h4>
-            <p>{{ langService.translate('submission.registration.tips.privacyText') }}</p>
-        </div>
-        <div class="tip-card">
-            <i class="fas fa-headset"></i>
-            <h4>{{ langService.translate('submission.registration.tips.helpTitle') }}</h4>
-            <p>{{ langService.translate('submission.registration.tips.helpText') }}</p>
+
+        <!-- Helpful Tips -->
+        <div class="tips-grid">
+            <div class="tip-card">
+                <i class="fas fa-shield-alt"></i>
+                <h4>{{ langService.translate('submission.registration.tips.verifyTitle') }}</h4>
+                <p>{{ langService.translate('submission.registration.tips.verifyText') }}</p>
+            </div>
+            <div class="tip-card">
+                <i class="fas fa-lock"></i>
+                <h4>{{ langService.translate('submission.registration.tips.privacyTitle') }}</h4>
+                <p>{{ langService.translate('submission.registration.tips.privacyText') }}</p>
+            </div>
+            <div class="tip-card">
+                <i class="fas fa-headset"></i>
+                <h4>{{ langService.translate('submission.registration.tips.helpTitle') }}</h4>
+                <p>{{ langService.translate('submission.registration.tips.helpText') }}</p>
+            </div>
         </div>
     </div>
 </div>

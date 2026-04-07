@@ -1,23 +1,25 @@
-<div class="ideas-page container" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
+<div class="ideas-page" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
     <app-hero-banner [title]="langService.translate('ideas.title')"></app-hero-banner>
 
-    <div class="filters-section card">
-        <div class="search-box">
-            <input type="text" [placeholder]="langService.translate('ideas.searchPlaceholder')" [(ngModel)]="searchQuery" (input)="filterIdeas()">
+    <div class="container ideas-page__main">
+        <div class="filters-section card">
+            <div class="search-box">
+                <input type="text" [placeholder]="langService.translate('ideas.searchPlaceholder')" [(ngModel)]="searchQuery" (input)="filterIdeas()">
+            </div>
+            <div class="filter-group">
+                <select [(ngModel)]="selectedCategory" (change)="filterIdeas()">
+                    <option value="">{{ langService.translate('ideas.filters.allCategories') }}</option>
+                    <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+                </select>
+            </div>
         </div>
-        <div class="filter-group">
-            <select [(ngModel)]="selectedCategory" (change)="filterIdeas()">
-                <option value="">{{ langService.translate('ideas.filters.allCategories') }}</option>
-                <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
-            </select>
+
+        <div class="ideas-grid">
+            <app-idea-card *ngFor="let idea of filteredIdeas" [idea]="idea"></app-idea-card>
         </div>
-    </div>
 
-    <div class="ideas-grid">
-        <app-idea-card *ngFor="let idea of filteredIdeas" [idea]="idea"></app-idea-card>
-    </div>
-
-    <div *ngIf="filteredIdeas.length === 0" class="no-results">
-        <p>{{ langService.translate('ideas.noResults') }}</p>
+        <div *ngIf="filteredIdeas.length === 0" class="no-results">
+            <p>{{ langService.translate('ideas.noResults') }}</p>
+        </div>
     </div>
 </div>
