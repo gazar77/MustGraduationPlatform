@@ -7,4 +7,6 @@ export interface News {
   category: 'Announcement' | 'Event' | 'Reminder';
   isVisible: boolean;
   order?: number;
+  /** Relative `/uploads/...` path from API */
+  imagePath?: string;
 }

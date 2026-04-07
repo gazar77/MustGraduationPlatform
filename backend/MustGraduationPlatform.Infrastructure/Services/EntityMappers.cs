@@ -30,6 +30,7 @@ internal static class EntityMappers
         e.Author,
         e.PublishDate,
         e.Category,
+        e.ImagePath,
         e.IsVisible,
         e.DisplayOrder);
 

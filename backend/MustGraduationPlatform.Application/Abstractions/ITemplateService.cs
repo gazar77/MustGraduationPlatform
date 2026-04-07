@@ -10,6 +10,7 @@ public interface ITemplateService
     Task<TemplateDto> CreateAsync(TemplateCreateUpdateDto dto, CancellationToken ct = default);
     Task<TemplateDto> CreateWithFileAsync(TemplateCreateUpdateDto dto, Stream fileStream, long fileLength, string fileName, string? contentType, CancellationToken ct = default);
     Task<TemplateDto?> UpdateAsync(int id, TemplateCreateUpdateDto dto, CancellationToken ct = default);
+    Task<TemplateDto?> UpdateWithFileAsync(int id, TemplateCreateUpdateDto dto, Stream fileStream, long fileLength, string fileName, string? contentType, CancellationToken ct = default);
     Task<bool> DeleteAsync(int id, CancellationToken ct = default);
     Task<TemplateDto?> ToggleVisibilityAsync(int id, CancellationToken ct = default);
 }

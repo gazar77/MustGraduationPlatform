@@ -151,7 +151,8 @@ export class AdminManagementComponent implements OnInit {
       this.modalConfig.fields = [
         { name: 'title', label: 'العنوان', type: 'text', value: item?.title },
         { name: 'content', label: 'المحتوى', type: 'textarea', value: item?.content },
-        { name: 'category', label: 'التصنيف', type: 'select', options: ['Announcement', 'Event', 'Reminder'], value: item?.category }
+        { name: 'category', label: 'التصنيف', type: 'select', options: ['Announcement', 'Event', 'Reminder'], value: item?.category },
+        { name: 'coverImage', label: isEdit ? 'صورة الخبر (اختياري — لتحديث الصورة)' : 'صورة الخبر', type: 'image', value: null }
       ];
     } else if (this.type === 'event') {
       this.modalConfig.title = isEdit ? 'تعديل فعالية' : 'إضافة فعالية جديدة';
@@ -160,15 +161,23 @@ export class AdminManagementComponent implements OnInit {
         { name: 'description', label: 'الوصف', type: 'textarea', value: item?.description },
         { name: 'date', label: 'التاريخ', type: 'date', value: item?.date },
         { name: 'location', label: 'المكان', type: 'text', value: item?.location },
-        { name: 'category', label: 'التصنيف', type: 'select', options: ['academic', 'social', 'workshop', 'competition'], value: item?.category }
+        { name: 'category', label: 'التصنيف', type: 'select', options: ['academic', 'social', 'workshop', 'competition'], value: item?.category },
+        { name: 'coverImage', label: isEdit ? 'صورة الفعالية (اختياري)' : 'صورة الفعالية', type: 'image', value: null }
       ];
     } else if (this.type === 'template') {
       this.modalConfig.title = isEdit ? 'تعديل نموذج' : 'إضافة نموذج جديد';
-      this.modalConfig.fields = [
-        { name: 'title', label: 'الاسم', type: 'text', value: item?.title },
-        { name: 'description', label: 'الوصف', type: 'textarea', value: item?.description },
-        { name: 'fileSize', label: 'حجم الملف', type: 'text', value: item?.fileSize || '1.0 MB' }
-      ];
+      this.modalConfig.fields = isEdit
+        ? [
+            { name: 'title', label: 'الاسم', type: 'text', value: item?.title },
+            { name: 'description', label: 'الوصف', type: 'textarea', value: item?.description },
+            { name: 'fileSize', label: 'حجم الملف الحالي', type: 'readonly', value: item?.fileSize },
+            { name: 'pdfFile', label: 'ملف PDF جديد (اختياري)', type: 'pdf', value: null }
+          ]
+        : [
+            { name: 'title', label: 'الاسم', type: 'text', value: item?.title },
+            { name: 'description', label: 'الوصف', type: 'textarea', value: item?.description },
+            { name: 'pdfFile', label: 'ملف PDF', type: 'pdf', value: null }
+          ];
     } else if (this.type === 'ideas') {
       this.modalConfig.title = isEdit ? 'تعديل فكرة مشروع' : 'إضافة فكرة مشروع جديدة';
       this.modalConfig.fields = [
@@ -235,9 +244,87 @@ export class AdminManagementComponent implements OnInit {
   private performAdd(data: any) {
     let obs: Observable<any> | undefined;
     switch (this.type) {
-      case 'news': obs = this.newsService.addNews({ ...data, author: 'أدمن النظام' }); break;
-      case 'event': obs = this.eventService.addEvent({ ...data }); break;
-      case 'template': obs = this.templateService.addTemplate({ ...data, fileUrl: '#' }); break;
+      case 'news': {
+        const img = data.coverImage;
+        if (img instanceof File) {
+          const fd = new FormData();
+          fd.append('Title', data.title);
+          fd.append('Content', String(data.content ?? ''));
+          fd.append('Author', 'أدمن النظام');
+          fd.append('Category', data.category);
+          fd.append('IsVisible', 'true');
+          fd.append('DisplayOrder', '0');
+          fd.append('Image', img, img.name);
+          obs = this.newsService.addNewsWithImage(fd);
+        } else {
+          obs = this.newsService.addNews({
+            id: 0,
+            title: data.title,
+            content: data.content,
+            author: 'أدمن النظام',
+            category: data.category,
+            isVisible: true,
+            publishDate: new Date(),
+            order: 0,
+            displayOrder: 0
+          } as any);
+        }
+        break;
+      }
+      case 'event': {
+        const img = data.coverImage;
+        if (img instanceof File) {
+          const fd = new FormData();
+          fd.append('Title', data.title);
+          fd.append('Description', String(data.description ?? ''));
+          fd.append('Date', String(data.date));
+          fd.append('Time', '');
+          fd.append('Location', data.location);
+          fd.append('Organizer', '');
+          fd.append('Category', data.category);
+          fd.append('IsVisible', 'true');
+          fd.append('DisplayOrder', '0');
+          fd.append('Image', img, img.name);
+          obs = this.eventService.addEventWithImage(fd);
+        } else {
+          obs = this.eventService.addEvent({
+            id: 0,
+            title: data.title,
+            description: data.description,
+            date: data.date,
+            location: data.location,
+            category: data.category,
+            isVisible: true,
+            order: 0,
+            displayOrder: 0
+          } as any);
+        }
+        break;
+      }
+      case 'template': {
+        const pdf = data.pdfFile;
+        if (pdf instanceof File) {
+          obs = this.templateService.addTemplateWithFile(pdf, {
+            title: data.title,
+            description: data.description ?? '',
+            isVisible: true,
+            displayOrder: 0
+          });
+        } else {
+          obs = this.templateService.addTemplate({
+            id: 0,
+            title: data.title,
+            description: data.description,
+            fileUrl: '#',
+            fileSize: '—',
+            lastUpdate: new Date(),
+            isVisible: true,
+            order: 0,
+            displayOrder: 0
+          } as any);
+        }
+        break;
+      }
       case 'ideas': obs = this.ideaService.addIdea({ ...data, difficulty: 'Medium', requiredSkills: [], maxTeamSize: 4 }); break;
       case 'proposals':
         obs = this.projectSubmissionService.addSubmission({
@@ -267,9 +354,85 @@ export class AdminManagementComponent implements OnInit {
   private performUpdate(data: any) {
     let obs: Observable<any> | undefined;
     switch (this.type) {
-      case 'news': obs = this.newsService.updateNews(this.editingItem.id, data); break;
-      case 'event': obs = this.eventService.updateEvent(this.editingItem.id, data); break;
-      case 'template': obs = this.templateService.updateTemplate(this.editingItem.id, data); break;
+      case 'news': {
+        const img = data.coverImage;
+        if (img instanceof File) {
+          const fd = new FormData();
+          fd.append('Title', data.title);
+          fd.append('Content', String(data.content ?? ''));
+          fd.append('Author', String(data.author ?? this.editingItem.author));
+          fd.append('Category', data.category);
+          fd.append('IsVisible', String(this.editingItem.isVisible ?? true));
+          fd.append('DisplayOrder', String(this.editingItem.order ?? 0));
+          fd.append('Image', img, img.name);
+          obs = this.newsService.updateNewsWithImage(this.editingItem.id, fd);
+        } else {
+          obs = this.newsService.updateNews(this.editingItem.id, {
+            title: data.title,
+            content: data.content,
+            author: data.author ?? this.editingItem.author,
+            category: data.category,
+            isVisible: this.editingItem.isVisible,
+            order: this.editingItem.order,
+            displayOrder: this.editingItem.order
+          } as any);
+        }
+        break;
+      }
+      case 'event': {
+        const img = data.coverImage;
+        if (img instanceof File) {
+          const fd = new FormData();
+          fd.append('Title', data.title);
+          fd.append('Description', String(data.description ?? ''));
+          fd.append('Date', String(data.date));
+          fd.append('Time', this.editingItem.time ?? '');
+          fd.append('Location', data.location);
+          fd.append('Organizer', this.editingItem.organizer ?? '');
+          fd.append('Category', data.category);
+          fd.append('IsVisible', String(this.editingItem.isVisible ?? true));
+          fd.append('DisplayOrder', String(this.editingItem.order ?? 0));
+          fd.append('Image', img, img.name);
+          obs = this.eventService.updateEventWithImage(this.editingItem.id, fd);
+        } else {
+          obs = this.eventService.updateEvent(this.editingItem.id, {
+            title: data.title,
+            description: data.description,
+            date: data.date,
+            location: data.location,
+            category: data.category,
+            time: this.editingItem.time,
+            organizer: this.editingItem.organizer,
+            image: this.editingItem.image,
+            isVisible: this.editingItem.isVisible,
+            order: this.editingItem.order,
+            displayOrder: this.editingItem.order
+          } as any);
+        }
+        break;
+      }
+      case 'template': {
+        const pdf = data.pdfFile;
+        if (pdf instanceof File) {
+          obs = this.templateService.updateTemplateWithFile(this.editingItem.id, pdf, {
+            title: data.title,
+            description: data.description ?? '',
+            isVisible: this.editingItem.isVisible ?? true,
+            displayOrder: this.editingItem.order ?? 0
+          });
+        } else {
+          obs = this.templateService.updateTemplate(this.editingItem.id, {
+            title: data.title,
+            description: data.description,
+            fileUrl: this.editingItem.fileUrl,
+            fileSize: this.editingItem.fileSize,
+            isVisible: this.editingItem.isVisible,
+            order: this.editingItem.order,
+            displayOrder: this.editingItem.order
+          } as any);
+        }
+        break;
+      }
       case 'ideas': obs = this.ideaService.updateIdea(this.editingItem.id, data); break;
       case 'proposals': obs = this.projectSubmissionService.updateStatus(this.editingItem.id, data.status); break;
       case 'contact': obs = this.contactService.updateMessageStatus(this.editingItem.id, data.status); break;

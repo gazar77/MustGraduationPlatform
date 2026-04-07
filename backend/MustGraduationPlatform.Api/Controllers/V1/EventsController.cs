@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MustGraduationPlatform.Application.Abstractions;
 using MustGraduationPlatform.Application.Dtos;
+using MustGraduationPlatform.Api.Models;
 
 namespace MustGraduationPlatform.Api.Controllers.V1;
 
@@ -14,6 +15,55 @@ public class EventsController : ControllerBase
     public EventsController(IEventService events)
     {
         _events = events;
+    }
+
+    [HttpPost("with-image")]
+    [Authorize(Roles = "Admin")]
+    [Consumes("multipart/form-data")]
+    [RequestFormLimits(MultipartBodyLengthLimit = 6_291_456)]
+    public async Task<ActionResult<EventDto>> CreateWithImage([FromForm] EventFormModel model, CancellationToken ct)
+    {
+        if (model.Image is null || model.Image.Length == 0)
+            return BadRequest(new { message = "Image is required." });
+
+        var dto = new EventCreateUpdateDto(
+            model.Title,
+            model.Description ?? "",
+            model.Date,
+            model.Time,
+            null,
+            model.Location,
+            model.Organizer,
+            model.Category,
+            model.IsVisible,
+            model.DisplayOrder);
+        await using var stream = model.Image.OpenReadStream();
+        return Ok(await _events.CreateWithImageAsync(dto, stream, model.Image.Length, model.Image.FileName, ct));
+    }
+
+    [HttpPut("{id:int}/with-image")]
+    [Authorize(Roles = "Admin")]
+    [Consumes("multipart/form-data")]
+    [RequestFormLimits(MultipartBodyLengthLimit = 6_291_456)]
+    public async Task<ActionResult<EventDto>> UpdateWithImage(int id, [FromForm] EventFormModel model, CancellationToken ct)
+    {
+        if (model.Image is null || model.Image.Length == 0)
+            return BadRequest(new { message = "Image is required." });
+
+        var dto = new EventCreateUpdateDto(
+            model.Title,
+            model.Description ?? "",
+            model.Date,
+            model.Time,
+            null,
+            model.Location,
+            model.Organizer,
+            model.Category,
+            model.IsVisible,
+            model.DisplayOrder);
+        await using var stream = model.Image.OpenReadStream();
+        var r = await _events.UpdateWithImageAsync(id, dto, stream, model.Image.Length, model.Image.FileName, ct);
+        return r is null ? NotFound() : Ok(r);
     }
 
     [HttpGet]

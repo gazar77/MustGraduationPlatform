@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { EventService } from '../../../core/services/event.service';
 import { Event } from '../../../core/models/event.model';
 import { LanguageService } from '../../../core/services/language.service';
+import { fileUrlToAbsolute } from '../../../core/utils/api-url.util';
 
 @Component({
   selector: 'app-event-details',
@@ -34,5 +35,9 @@ export class EventDetailsComponent implements OnInit {
 
   getCategoryTranslation(category: string): string {
     return this.langService.translate(`events.list.category.${category}`) || category;
+  }
+
+  eventHeroImage(ev: Event): string {
+    return fileUrlToAbsolute(ev.image);
   }
 }

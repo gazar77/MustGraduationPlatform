@@ -8,7 +8,9 @@ public interface INewsService
     Task<IReadOnlyList<NewsDto>> GetAllAsync(CancellationToken ct = default);
     Task<NewsDto?> GetByIdAsync(int id, CancellationToken ct = default);
     Task<NewsDto> CreateAsync(NewsCreateUpdateDto dto, CancellationToken ct = default);
+    Task<NewsDto> CreateWithImageAsync(NewsCreateUpdateDto dto, Stream imageStream, long imageLength, string fileName, CancellationToken ct = default);
     Task<NewsDto?> UpdateAsync(int id, NewsCreateUpdateDto dto, CancellationToken ct = default);
+    Task<NewsDto?> UpdateWithImageAsync(int id, NewsCreateUpdateDto dto, Stream imageStream, long imageLength, string fileName, CancellationToken ct = default);
     Task<bool> DeleteAsync(int id, CancellationToken ct = default);
     Task<NewsDto?> ToggleVisibilityAsync(int id, CancellationToken ct = default);
 }

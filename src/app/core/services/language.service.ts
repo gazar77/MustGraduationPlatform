@@ -147,6 +147,12 @@ export class LanguageService {
           leaderId: 'University ID',
           submitBtn: 'Submit Request',
           successMsg: 'Project idea registered successfully!'
+        },
+        detail: {
+          reserveBtn: 'Reserve this idea',
+          masterClosed: 'Closed',
+          reserveSuccess: 'The idea has been reserved successfully.',
+          reserveFailed: 'Could not reserve this idea. Sign in as a student, or reservations may be closed.'
         }
       },
       submission: {
@@ -446,6 +452,12 @@ export class LanguageService {
           leaderId: 'الرقم الجامعي',
           submitBtn: 'إرسال الطلب',
           successMsg: 'تم تسجيل فكرة المشروع بنجاح!'
+        },
+        detail: {
+          reserveBtn: 'حجز هذه الفكرة',
+          masterClosed: 'مغلق',
+          reserveSuccess: 'تم حجز الفكرة بنجاح.',
+          reserveFailed: 'تعذر حجز الفكرة. قد تحتاج لتسجيل الدخول كطالب، أو أن الحجز مغلق.'
         }
       },
       submission: {

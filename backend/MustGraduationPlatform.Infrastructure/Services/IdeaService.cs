@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using MustGraduationPlatform.Application.Abstractions;
 using MustGraduationPlatform.Application.Dtos;
+using MustGraduationPlatform.Application.Exceptions;
 using MustGraduationPlatform.Domain.Entities;
 using MustGraduationPlatform.Infrastructure.Persistence;
 
@@ -11,11 +12,15 @@ public class IdeaService : IIdeaService
 {
     private static readonly JsonSerializerOptions Json = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
-    private readonly AppDbContext _db;
+    public const string IdeaReservationsOpenKey = "IdeaReservationsOpen";
 
-    public IdeaService(AppDbContext db)
+    private readonly AppDbContext _db;
+    private readonly ISiteSettingsService _siteSettings;
+
+    public IdeaService(AppDbContext db, ISiteSettingsService siteSettings)
     {
         _db = db;
+        _siteSettings = siteSettings;
     }
 
     public async Task<IReadOnlyList<IdeaDto>> GetVisibleAsync(CancellationToken ct = default)
@@ -121,6 +126,24 @@ public class IdeaService : IIdeaService
         var e = await _db.Ideas.FindAsync(new object[] { id }, ct);
         if (e is null) return null;
         e.IsVisible = !e.IsVisible;
+        await _db.SaveChangesAsync(ct);
+        return EntityMappers.ToDto(e);
+    }
+
+    public async Task<IdeaDto?> ReserveAsync(int id, CancellationToken ct = default)
+    {
+        var setting = await _siteSettings.GetByKeyAsync(IdeaReservationsOpenKey, ct);
+        var reservationsOpen = setting is null
+            || string.Equals(setting.Value.Trim(), "true", StringComparison.OrdinalIgnoreCase);
+        if (!reservationsOpen)
+            throw new AppException("RESERVATIONS_CLOSED", "Idea reservations are currently closed.");
+
+        var e = await _db.Ideas.FindAsync(new object[] { id }, ct);
+        if (e is null) return null;
+        if (e.Status != "Open")
+            throw new AppException("IDEA_NOT_OPEN", "This idea is not available for reservation.");
+
+        e.Status = "Reserved";
         await _db.SaveChangesAsync(ct);
         return EntityMappers.ToDto(e);
     }

@@ -7,7 +7,7 @@
       <div class="events-grid">
         <article class="event-card" *ngFor="let event of events">
           <div class="event-image">
-            <img [src]="event.image" [alt]="event.title">
+            <img [src]="eventImageUrl(event)" [alt]="event.title">
             <span class="category-badge" [ngClass]="event.category">{{ getCategoryTranslation(event.category) }}</span>
           </div>
           <div class="event-content">

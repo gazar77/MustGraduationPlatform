@@ -4,6 +4,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { User } from '../../../core/models/user.model';
 import { LanguageService } from '../../../core/services/language.service';
 import { EventService } from '../../../core/services/event.service';
+import { fileUrlToAbsolute } from '../../../core/utils/api-url.util';
 
 @Component({
   selector: 'app-event-list',
@@ -32,6 +33,10 @@ export class EventListComponent implements OnInit {
 
   getCategoryTranslation(category: string): string {
     return this.langService.translate(`events.list.category.${category}`) || category;
+  }
+
+  eventImageUrl(ev: Event): string {
+    return fileUrlToAbsolute(ev.image);
   }
 
   onAddEvent(): void {

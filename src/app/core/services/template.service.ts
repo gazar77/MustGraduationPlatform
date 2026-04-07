@@ -57,6 +57,20 @@ export class TemplateService {
     return this.http.put<Template>(`${this.apiUrl}/${id}`, data);
   }
 
+  updateTemplateWithFile(
+    id: number,
+    file: File,
+    meta: { title: string; description: string; isVisible: boolean; displayOrder: number }
+  ): Observable<Template> {
+    const fd = new FormData();
+    fd.append('title', meta.title);
+    fd.append('description', meta.description);
+    fd.append('isVisible', String(meta.isVisible));
+    fd.append('displayOrder', String(meta.displayOrder));
+    fd.append('file', file, file.name);
+    return this.http.put<Template>(`${this.apiUrl}/${id}/with-file`, fd);
+  }
+
   deleteTemplate(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }

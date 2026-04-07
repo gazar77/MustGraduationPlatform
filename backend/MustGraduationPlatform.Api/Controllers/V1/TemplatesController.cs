@@ -40,6 +40,27 @@ public class TemplatesController : ControllerBase
         return Ok(await _templates.CreateWithFileAsync(dto, stream, model.File.Length, model.File.FileName, model.File.ContentType, ct));
     }
 
+    [HttpPut("{id:int}/with-file")]
+    [Authorize(Roles = "Admin")]
+    [Consumes("multipart/form-data")]
+    [RequestFormLimits(MultipartBodyLengthLimit = 26_214_400)]
+    public async Task<ActionResult<TemplateDto>> UpdateWithFile(int id, [FromForm] TemplateFormModel model, CancellationToken ct)
+    {
+        if (model.File is null || model.File.Length == 0)
+            return BadRequest(new { message = "File is required." });
+
+        var dto = new TemplateCreateUpdateDto(
+            model.Title,
+            model.Description ?? "",
+            "",
+            "",
+            model.IsVisible,
+            model.DisplayOrder);
+        await using var stream = model.File.OpenReadStream();
+        var r = await _templates.UpdateWithFileAsync(id, dto, stream, model.File.Length, model.File.FileName, model.File.ContentType, ct);
+        return r is null ? NotFound() : Ok(r);
+    }
+
     [HttpGet]
     [AllowAnonymous]
     public async Task<ActionResult<IReadOnlyList<TemplateDto>>> GetVisible(CancellationToken ct)

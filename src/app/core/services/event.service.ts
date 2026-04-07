@@ -39,8 +39,16 @@ export class EventService {
     return this.http.post<Event>(this.apiUrl, event);
   }
 
+  addEventWithImage(formData: FormData): Observable<Event> {
+    return this.http.post<Event>(`${this.apiUrl}/with-image`, formData);
+  }
+
   updateEvent(id: number, data: Partial<Event>): Observable<Event> {
     return this.http.put<Event>(`${this.apiUrl}/${id}`, data);
+  }
+
+  updateEventWithImage(id: number, formData: FormData): Observable<Event> {
+    return this.http.put<Event>(`${this.apiUrl}/${id}/with-image`, formData);
   }
 
   deleteEvent(id: number): Observable<any> {

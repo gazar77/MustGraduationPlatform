@@ -13,4 +13,5 @@ public interface IIdeaService
     Task<IdeaDto?> UpdateAsync(int id, IdeaCreateUpdateDto dto, CancellationToken ct = default);
     Task<bool> DeleteAsync(int id, CancellationToken ct = default);
     Task<IdeaDto?> ToggleVisibilityAsync(int id, CancellationToken ct = default);
+    Task<IdeaDto?> ReserveAsync(int id, CancellationToken ct = default);
 }

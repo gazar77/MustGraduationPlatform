@@ -161,6 +161,16 @@ public static class DataSeeder
             await db.SaveChangesAsync(ct);
         }
 
+        if (!await db.SiteSettings.AnyAsync(s => s.Key == "IdeaReservationsOpen", ct))
+        {
+            db.SiteSettings.Add(new SiteSetting
+            {
+                Key = "IdeaReservationsOpen",
+                Value = "true"
+            });
+            await db.SaveChangesAsync(ct);
+        }
+
         if (!await db.DashboardActivities.AnyAsync(ct))
         {
             db.DashboardActivities.Add(new DashboardActivity

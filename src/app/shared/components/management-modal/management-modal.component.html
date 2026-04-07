@@ -39,6 +39,20 @@
              style="min-height: 38px;">
           {{ formData[field.name] || 'غير متوفر' }}
         </div>
+
+        <input *ngIf="field.type === 'image'"
+               type="file"
+               [id]="field.name"
+               [accept]="field.accept || 'image/jpeg,image/png,image/webp,image/*'"
+               class="form-control"
+               (change)="onFileChange(field.name, $event)">
+
+        <input *ngIf="field.type === 'pdf'"
+               type="file"
+               [id]="field.name"
+               [accept]="field.accept || 'application/pdf,.pdf'"
+               class="form-control"
+               (change)="onFileChange(field.name, $event)">
       </div>
     </div>
     

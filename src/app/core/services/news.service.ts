@@ -39,8 +39,17 @@ export class NewsService {
     return this.http.post<News>(this.apiUrl, news);
   }
 
+  /** Admin: multipart; form keys must match `NewsFormModel` (binding is case-insensitive). */
+  addNewsWithImage(formData: FormData): Observable<News> {
+    return this.http.post<News>(`${this.apiUrl}/with-image`, formData);
+  }
+
   updateNews(id: number, data: Partial<News>): Observable<News> {
     return this.http.put<News>(`${this.apiUrl}/${id}`, data);
+  }
+
+  updateNewsWithImage(id: number, formData: FormData): Observable<News> {
+    return this.http.put<News>(`${this.apiUrl}/${id}/with-image`, formData);
   }
 
   deleteNews(id: number): Observable<any> {

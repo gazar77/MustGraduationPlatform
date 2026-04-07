@@ -27,7 +27,8 @@
                     <span class="badge" [ngClass]="{
                         'bg-success-soft text-success': idea.status === 'Open',
                         'bg-warning-soft text-warning': idea.status === 'Reserved',
-                        'bg-info-soft text-info': idea.status === 'Approved'
+                        'bg-info-soft text-info': idea.status === 'Approved',
+                        'bg-secondary-soft text-secondary': idea.status === 'Closed'
                     }">{{ getStatusArabic(idea.status) }}</span>
                 </div>
 
@@ -65,10 +66,14 @@
 
                 <hr>
 
-                <button class="btn btn-primary w-full py-3 fw-bold mt-2" [disabled]="idea.status !== 'Open'">
-                    <i class="fas fa-bookmark me-2"></i> حجز هذه الفكرة
+                <button
+                    type="button"
+                    class="btn btn-primary w-full py-3 fw-bold mt-2"
+                    [disabled]="reservationButtonDisabled"
+                    (click)="onReserve()">
+                    <i class="fas fa-bookmark me-2"></i> {{ reservationButtonLabel }}
                 </button>
-                <p class="text-center small text-muted mt-3" *ngIf="idea.status === 'Open'">
+                <p class="text-center small text-muted mt-3" *ngIf="idea.status === 'Open' && reservationsOpen">
                     * سيتم إرسال طلبك للدكتور المشرف للمراجعة
                 </p>
             </div>

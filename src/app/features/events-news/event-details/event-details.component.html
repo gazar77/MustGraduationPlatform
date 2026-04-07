@@ -1,6 +1,6 @@
 <div class="event-details-container" *ngIf="!loading && event" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
     <!-- Hero Section -->
-    <section class="hero-section" [style.background-image]="'url(' + event.image + ')'">
+    <section class="hero-section" [style.background-image]="'url(' + eventHeroImage(event) + ')'">
         <div class="overlay"></div>
         <div class="hero-content">
             <span class="category-badge">{{ getCategoryTranslation(event.category) }}</span>

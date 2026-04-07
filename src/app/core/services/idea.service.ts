@@ -62,6 +62,11 @@ export class IdeaService {
     return this.http.put<Idea>(`${this.apiUrl}/${id}`, data);
   }
 
+  /** Student/Admin: reserve an open idea (server enforces site setting + idea status). */
+  reserveIdea(id: number): Observable<Idea> {
+    return this.http.post<Idea>(`${this.apiUrl}/${id}/reserve`, {});
+  }
+
   deleteIdea(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }

@@ -22,6 +22,9 @@
             </div>
 
             <div class="card-body">
+                <div class="news-thumb mb-3" *ngIf="item.imagePath">
+                    <img [src]="newsImageUrl(item)" [alt]="item.title" class="img-fluid rounded shadow-sm" loading="lazy">
+                </div>
                 <h3 class="news-title">{{ item.title }}</h3>
                 <p class="news-excerpt">{{ item.content }}</p>
             </div>

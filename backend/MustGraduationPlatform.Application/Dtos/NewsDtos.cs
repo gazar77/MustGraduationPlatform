@@ -7,6 +7,7 @@ public record NewsDto(
     string Author,
     DateTime PublishDate,
     string Category,
+    string? ImagePath,
     bool IsVisible,
     int? Order);
 
@@ -16,4 +17,5 @@ public record NewsCreateUpdateDto(
     string Author,
     string Category,
     bool IsVisible,
-    int DisplayOrder);
+    int DisplayOrder,
+    string? ImagePath = null);

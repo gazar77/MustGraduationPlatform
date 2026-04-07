@@ -58,7 +58,7 @@ public class TemplateService : ITemplateService
 
     public async Task<TemplateDto> CreateWithFileAsync(TemplateCreateUpdateDto dto, Stream fileStream, long fileLength, string fileName, string? contentType, CancellationToken ct = default)
     {
-        SubmissionFileValidation.ValidateOrThrow(fileName, fileLength);
+        PdfUploadValidation.ValidateOrThrow(fileName, fileLength);
         var safe = SubmissionFileValidation.SanitizeFileName(fileName);
         var relativePath = $"templates/{DateTime.UtcNow:yyyy/MM}/{Guid.NewGuid():N}_{safe}";
         var url = await _files.SaveAsync(relativePath, fileStream, ct);
@@ -86,6 +86,26 @@ public class TemplateService : ITemplateService
         e.Description = dto.Description;
         e.FileUrl = dto.FileUrl;
         e.FileSize = dto.FileSize;
+        e.LastUpdate = DateTime.UtcNow;
+        e.IsVisible = dto.IsVisible;
+        e.DisplayOrder = dto.DisplayOrder;
+        await _db.SaveChangesAsync(ct);
+        return EntityMappers.ToDto(e);
+    }
+
+    public async Task<TemplateDto?> UpdateWithFileAsync(int id, TemplateCreateUpdateDto dto, Stream fileStream, long fileLength, string fileName, string? contentType, CancellationToken ct = default)
+    {
+        var e = await _db.DocumentTemplates.FindAsync(new object[] { id }, ct);
+        if (e is null) return null;
+        PdfUploadValidation.ValidateOrThrow(fileName, fileLength);
+        var safe = SubmissionFileValidation.SanitizeFileName(fileName);
+        var relativePath = $"templates/{DateTime.UtcNow:yyyy/MM}/{Guid.NewGuid():N}_{safe}";
+        var url = await _files.SaveAsync(relativePath, fileStream, ct);
+        var sizeLabel = FormatFileSize(fileLength);
+        e.Title = dto.Title;
+        e.Description = dto.Description;
+        e.FileUrl = url;
+        e.FileSize = sizeLabel;
         e.LastUpdate = DateTime.UtcNow;
         e.IsVisible = dto.IsVisible;
         e.DisplayOrder = dto.DisplayOrder;

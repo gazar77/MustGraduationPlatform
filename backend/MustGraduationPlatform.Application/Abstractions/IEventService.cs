@@ -8,7 +8,9 @@ public interface IEventService
     Task<IReadOnlyList<EventDto>> GetAllAsync(CancellationToken ct = default);
     Task<EventDto?> GetByIdAsync(int id, CancellationToken ct = default);
     Task<EventDto> CreateAsync(EventCreateUpdateDto dto, CancellationToken ct = default);
+    Task<EventDto> CreateWithImageAsync(EventCreateUpdateDto dto, Stream imageStream, long imageLength, string fileName, CancellationToken ct = default);
     Task<EventDto?> UpdateAsync(int id, EventCreateUpdateDto dto, CancellationToken ct = default);
+    Task<EventDto?> UpdateWithImageAsync(int id, EventCreateUpdateDto dto, Stream imageStream, long imageLength, string fileName, CancellationToken ct = default);
     Task<bool> DeleteAsync(int id, CancellationToken ct = default);
     Task<EventDto?> ToggleVisibilityAsync(int id, CancellationToken ct = default);
 }

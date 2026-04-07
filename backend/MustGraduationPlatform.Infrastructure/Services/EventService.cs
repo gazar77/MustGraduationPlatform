@@ -3,16 +3,19 @@ using MustGraduationPlatform.Application.Abstractions;
 using MustGraduationPlatform.Application.Dtos;
 using MustGraduationPlatform.Domain.Entities;
 using MustGraduationPlatform.Infrastructure.Persistence;
+using MustGraduationPlatform.Infrastructure.Storage;
 
 namespace MustGraduationPlatform.Infrastructure.Services;
 
 public class EventService : IEventService
 {
     private readonly AppDbContext _db;
+    private readonly IFileStorage _files;
 
-    public EventService(AppDbContext db)
+    public EventService(AppDbContext db, IFileStorage files)
     {
         _db = db;
+        _files = files;
     }
 
     public async Task<IReadOnlyList<EventDto>> GetVisibleAsync(CancellationToken ct = default)
@@ -53,6 +56,30 @@ public class EventService : IEventService
         return EntityMappers.ToDto(e);
     }
 
+    public async Task<EventDto> CreateWithImageAsync(EventCreateUpdateDto dto, Stream imageStream, long imageLength, string fileName, CancellationToken ct = default)
+    {
+        ImageUploadValidation.ValidateOrThrow(fileName, imageLength);
+        var safe = SubmissionFileValidation.SanitizeFileName(fileName);
+        var relativePath = $"events/{DateTime.UtcNow:yyyy/MM}/{Guid.NewGuid():N}_{safe}";
+        var url = await _files.SaveAsync(relativePath, imageStream, ct);
+        var e = new CalendarEvent
+        {
+            Title = dto.Title,
+            Description = dto.Description,
+            Date = dto.Date,
+            Time = dto.Time,
+            ImagePath = url,
+            Location = dto.Location,
+            Organizer = dto.Organizer,
+            Category = dto.Category,
+            IsVisible = dto.IsVisible,
+            DisplayOrder = dto.DisplayOrder
+        };
+        _db.CalendarEvents.Add(e);
+        await _db.SaveChangesAsync(ct);
+        return EntityMappers.ToDto(e);
+    }
+
     public async Task<EventDto?> UpdateAsync(int id, EventCreateUpdateDto dto, CancellationToken ct = default)
     {
         var e = await _db.CalendarEvents.FindAsync(new object[] { id }, ct);
@@ -62,6 +89,28 @@ public class EventService : IEventService
         e.Date = dto.Date;
         e.Time = dto.Time;
         e.ImagePath = dto.Image;
+        e.Location = dto.Location;
+        e.Organizer = dto.Organizer;
+        e.Category = dto.Category;
+        e.IsVisible = dto.IsVisible;
+        e.DisplayOrder = dto.DisplayOrder;
+        await _db.SaveChangesAsync(ct);
+        return EntityMappers.ToDto(e);
+    }
+
+    public async Task<EventDto?> UpdateWithImageAsync(int id, EventCreateUpdateDto dto, Stream imageStream, long imageLength, string fileName, CancellationToken ct = default)
+    {
+        var e = await _db.CalendarEvents.FindAsync(new object[] { id }, ct);
+        if (e is null) return null;
+        ImageUploadValidation.ValidateOrThrow(fileName, imageLength);
+        var safe = SubmissionFileValidation.SanitizeFileName(fileName);
+        var relativePath = $"events/{DateTime.UtcNow:yyyy/MM}/{Guid.NewGuid():N}_{safe}";
+        var url = await _files.SaveAsync(relativePath, imageStream, ct);
+        e.Title = dto.Title;
+        e.Description = dto.Description;
+        e.Date = dto.Date;
+        e.Time = dto.Time;
+        e.ImagePath = url;
         e.Location = dto.Location;
         e.Organizer = dto.Organizer;
         e.Category = dto.Category;

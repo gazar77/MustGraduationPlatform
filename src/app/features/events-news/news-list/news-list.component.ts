@@ -4,6 +4,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { User } from '../../../core/models/user.model';
 import { LanguageService } from '../../../core/services/language.service';
 import { NewsService } from '../../../core/services/news.service';
+import { fileUrlToAbsolute } from '../../../core/utils/api-url.util';
 
 @Component({
   selector: 'app-news-list',
@@ -32,6 +33,10 @@ export class NewsListComponent implements OnInit {
 
   getCategoryTranslation(category: string): string {
     return this.langService.translate(`news.list.category.${category}`) || category;
+  }
+
+  newsImageUrl(item: News): string {
+    return fileUrlToAbsolute(item.imagePath);
   }
 
   onAddNews(): void {

@@ -1,37 +1,67 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+
+export type ModalFieldType = 'text' | 'textarea' | 'select' | 'date' | 'readonly' | 'image' | 'pdf';
 
 @Component({
   selector: 'app-management-modal',
   templateUrl: './management-modal.component.html',
   styleUrls: ['./management-modal.component.scss']
 })
-export class ManagementModalComponent {
+export class ManagementModalComponent implements OnChanges {
   @Input() title: string = '';
   @Input() isOpen: boolean = false;
   @Output() close = new EventEmitter<void>();
-  @Output() save = new EventEmitter<any>();
+  @Output() save = new EventEmitter<Record<string, unknown>>();
 
-  formData: any = {};
+  formData: Record<string, unknown> = {};
+  /** Selected files for `image` / `pdf` field names */
+  fileMap: Record<string, File | null> = {};
 
-  // Form structure defined by the parent
-  @Input() fields: { name: string, label: string, type: 'text' | 'textarea' | 'select' | 'date' | 'readonly', options?: string[], value?: any }[] = [];
+  @Input() fields: {
+    name: string;
+    label: string;
+    type: ModalFieldType;
+    options?: string[];
+    value?: unknown;
+    accept?: string;
+  }[] = [];
 
-  ngOnChanges(): void {
-    if (this.isOpen && this.fields) {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.isOpen && this.fields?.length) {
+      this.formData = {};
+      this.fileMap = {};
       this.fields.forEach(f => {
-        this.formData[f.name] = f.value || '';
+        if (f.type === 'image' || f.type === 'pdf') {
+          this.fileMap[f.name] = null;
+          this.formData[f.name] = '';
+        } else {
+          this.formData[f.name] = f.value ?? '';
+        }
       });
     } else if (!this.isOpen) {
       this.formData = {};
+      this.fileMap = {};
     }
   }
 
-  onClose() {
+  onFileChange(fieldName: string, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    this.fileMap[fieldName] = file;
+  }
+
+  onClose(): void {
     this.close.emit();
   }
 
-  onSave() {
-    this.save.emit(this.formData);
-    this.formData = {}; // Reset
+  onSave(): void {
+    const payload: Record<string, unknown> = { ...this.formData };
+    Object.keys(this.fileMap).forEach(k => {
+      const f = this.fileMap[k];
+      if (f) payload[k] = f;
+    });
+    this.save.emit(payload);
+    this.formData = {};
+    this.fileMap = {};
   }
 }

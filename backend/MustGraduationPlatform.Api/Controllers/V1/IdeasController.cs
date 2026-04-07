@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MustGraduationPlatform.Application.Abstractions;
 using MustGraduationPlatform.Application.Dtos;
+using MustGraduationPlatform.Application.Exceptions;
 
 namespace MustGraduationPlatform.Api.Controllers.V1;
 
@@ -78,5 +79,20 @@ public class IdeasController : ControllerBase
     {
         var r = await _ideas.ToggleVisibilityAsync(id, ct);
         return r is null ? NotFound() : Ok(r);
+    }
+
+    [HttpPost("{id:int}/reserve")]
+    [Authorize(Roles = "Student,Admin")]
+    public async Task<ActionResult<IdeaDto>> Reserve(int id, CancellationToken ct)
+    {
+        try
+        {
+            var r = await _ideas.ReserveAsync(id, ct);
+            return r is null ? NotFound() : Ok(r);
+        }
+        catch (AppException ex)
+        {
+            return BadRequest(new { code = ex.Code, message = ex.Message });
+        }
     }
 }
