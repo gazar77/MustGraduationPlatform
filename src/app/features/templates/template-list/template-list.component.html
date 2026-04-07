@@ -14,7 +14,12 @@
                     <span class="update">{{ langService.translate('templates.lastUpdate') }} {{ template.lastUpdate }}</span>
                 </div>
             </div>
-            <a [href]="absFileUrl(template.fileUrl)" class="btn btn-secondary">{{ langService.translate('templates.downloadBtn') }}</a>
+            <button type="button"
+                    class="btn btn-secondary"
+                    [disabled]="!canDownload(template)"
+                    (click)="downloadTemplate(template)">
+              {{ langService.translate('templates.downloadBtn') }}
+            </button>
         </div>
     </div>
 </div>

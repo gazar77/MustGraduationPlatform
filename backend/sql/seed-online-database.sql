@@ -142,7 +142,7 @@ BEGIN TRY
         VALUES (
             N'قالب المقترح (Proposal Template)',
             N'النموذج الرسمي لكتابة مقترح مشروع التخرج.',
-            N'#', N'1.2 MB', SYSUTCDATETIME(), 1, 1
+            N'/uploads/templates/graduation-proposal-readme.txt', N'1 KB', SYSUTCDATETIME(), 1, 1
         );
     END
 

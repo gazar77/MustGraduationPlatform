@@ -133,8 +133,8 @@ public static class DataSeeder
             {
                 Title = "قالب المقترح (Proposal Template)",
                 Description = "النموذج الرسمي لكتابة مقترح مشروع التخرج.",
-                FileUrl = "#",
-                FileSize = "1.2 MB",
+                FileUrl = "/uploads/templates/graduation-proposal-readme.txt",
+                FileSize = "1 KB",
                 LastUpdate = DateTime.UtcNow,
                 IsVisible = true,
                 DisplayOrder = 1

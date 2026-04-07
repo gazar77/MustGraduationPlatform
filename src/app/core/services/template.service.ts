@@ -64,4 +64,9 @@ export class TemplateService {
   toggleVisibility(id: number): Observable<Template> {
     return this.http.patch<Template>(`${this.apiUrl}/${id}/toggle-visibility`, {});
   }
+
+  /** Binary stream with Content-Disposition from API — use for reliable downloads from the SPA (CORS). */
+  downloadTemplateFile(id: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${id}/download`, { responseType: 'blob' });
+  }
 }

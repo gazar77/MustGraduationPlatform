@@ -17,12 +17,46 @@ export class TemplateListComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private templateService: TemplateService, 
+    private templateService: TemplateService,
     public langService: LanguageService
   ) { }
 
   absFileUrl(url: string): string {
     return fileUrlToAbsolute(url);
+  }
+
+  canDownload(template: Template): boolean {
+    const u = template.fileUrl?.trim();
+    return !!u && u !== '#';
+  }
+
+  downloadTemplate(template: Template): void {
+    if (!this.canDownload(template)) return;
+    this.templateService.downloadTemplateFile(template.id).subscribe({
+      next: (blob) => {
+        const ext = this.extensionFromPath(template.fileUrl);
+        const base = this.safeFileBaseName(template.title);
+        const a = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download = `${base}${ext}`;
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+      error: () => {
+        window.open(this.absFileUrl(template.fileUrl), '_blank', 'noopener,noreferrer');
+      }
+    });
+  }
+
+  private extensionFromPath(path: string): string {
+    const m = path.trim().match(/\.([a-zA-Z0-9]{1,12})$/);
+    return m ? `.${m[1].toLowerCase()}` : '.bin';
+  }
+
+  private safeFileBaseName(title: string): string {
+    let s = (title || 'template').trim().replace(/[<>:"/\\|?*\u0000-\u001f]/g, '_');
+    return s.length > 120 ? s.slice(0, 120) : s;
   }
 
   ngOnInit(): void {
