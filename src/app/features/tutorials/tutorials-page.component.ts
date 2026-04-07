@@ -9,7 +9,7 @@ import { LanguageService } from '../../core/services/language.service';
   imports: [CommonModule, HeroBannerComponent],
   template: `
     <div class="tutorials-page" [attr.dir]="(lang.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
-      <app-hero-banner [title]="lang.translate('tutorials.title')" [compact]="true"></app-hero-banner>
+      <app-hero-banner [title]="lang.translate('tutorials.title')"></app-hero-banner>
       <div class="container py-5">
         <p class="lead text-muted">{{ lang.translate('tutorials.placeholder') }}</p>
       </div>

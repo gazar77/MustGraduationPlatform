@@ -1,5 +1,5 @@
 <div class="proposal-container" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
-    <app-hero-banner [title]="langService.translate('submission.proposal.title')" [compact]="true"></app-hero-banner>
+    <app-hero-banner [title]="langService.translate('submission.proposal.title')"></app-hero-banner>
 
     <div class="deadline-row container mb-4">
         <div class="deadline-box" [ngClass]="submissionStatus">

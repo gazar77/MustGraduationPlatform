@@ -18,8 +18,4 @@ export class IdeaCardComponent implements OnInit {
   getStatusTranslation(status: string): string {
     return this.langService.translate(`ideas.status.${status}`) || status;
   }
-
-  getDifficultyTranslation(difficulty: string): string {
-    return this.langService.translate(`ideas.difficulty.${difficulty}`) || difficulty;
-  }
 }

@@ -12,15 +12,9 @@
             <span class="label">{{ langService.translate('ideas.card.supervisor') }}</span>
             <span class="value">{{ idea.supervisorName }}</span>
         </div>
-        <div class="meta-item">
-            <span class="label">{{ langService.translate('ideas.card.difficultyLabel') }}</span>
-            <span class="value difficulty" [ngClass]="idea.difficulty.toLowerCase()">{{
-                getDifficultyTranslation(idea.difficulty) }}</span>
-        </div>
     </div>
 
     <div class="card-footer">
         <a [routerLink]="['/ideas', idea.id]" class="btn btn-primary">{{ langService.translate('ideas.card.viewDetails') }}</a>
-        <span class="team-size">{{ langService.translate('ideas.card.team') }} {{ idea.maxTeamSize }} {{ langService.translate('ideas.card.students') }}</span>
     </div>
 </div>

@@ -10,15 +10,17 @@
     <a routerLink="/ideas" class="btn btn-primary">العودة لقائمة الأفكار</a>
 </div>
 
-<div class="idea-detail-page container py-5" *ngIf="!loading && !error && idea">
-    <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a routerLink="/dashboard">الرئيسية</a></li>
-            <li class="breadcrumb-item"><a routerLink="/ideas">أفكار المشاريع</a></li>
-            <li class="breadcrumb-item active">{{ idea.title }}</li>
-        </ol>
-    </nav>
+<div class="idea-detail-page" *ngIf="!loading && !error && idea">
+    <app-hero-banner
+        [title]="idea.title"
+        [breadcrumbs]="[
+            { label: lang.translate('nav.home'), url: '/dashboard' },
+            { label: lang.translate('nav.ideas'), url: '/ideas' },
+            { label: idea.title }
+        ]">
+    </app-hero-banner>
 
+    <div class="container py-5">
     <div class="row">
         <div class="col-lg-8">
             <div class="card detail-card shadow-sm p-4 mb-4">
@@ -31,8 +33,6 @@
                         'bg-secondary-soft text-secondary': idea.status === 'Closed'
                     }">{{ getStatusArabic(idea.status) }}</span>
                 </div>
-
-                <h1 class="display-6 fw-bold text-navy mb-4">{{ idea.title }}</h1>
 
                 <h3 class="h5 fw-bold mb-3 border-bottom pb-2">وصف المشروع</h3>
                 <p class="lead text-muted mb-5">{{ idea.description }}</p>
@@ -68,5 +68,6 @@
                 <a routerLink="/contact" class="btn btn-outline-light btn-sm mt-3">اتصل بنا</a>
             </div>
         </div>
+    </div>
     </div>
 </div>

@@ -1,5 +1,5 @@
 <div class="news-list-container" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
-    <app-hero-banner [title]="langService.translate('news.list.title')" [compact]="true"></app-hero-banner>
+    <app-hero-banner [title]="langService.translate('news.list.title')"></app-hero-banner>
 
     <div class="container mb-4 text-end" *ngIf="currentUser?.role === 'Admin'">
         <button (click)="onAddNews()" class="btn btn-primary add-news-btn shadow-sm">

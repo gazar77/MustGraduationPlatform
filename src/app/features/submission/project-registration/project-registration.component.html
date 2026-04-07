@@ -1,6 +1,6 @@
 <div class="registration-container" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
     <div class="registration-card">
-    <app-hero-banner [title]="langService.translate(titleKey)" [compact]="true"></app-hero-banner>
+    <app-hero-banner [title]="langService.translate(titleKey)"></app-hero-banner>
 
     <div class="registration-header-meta container mb-4">
         <div class="deadline-badge">

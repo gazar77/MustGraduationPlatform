@@ -80,8 +80,6 @@
     .idea-meta {
         padding: 1.25rem;
         background: #f8fafc;
-        display: flex;
-        justify-content: space-between;
         border-top: 1px solid #f1f5f9;
 
         .meta-item {
@@ -97,27 +95,13 @@
                 font-weight: 700;
                 color: #011835;
             }
-
-            .difficulty {
-                &.easy {
-                    color: #10b981;
-                }
-
-                &.medium {
-                    color: #f59e0b;
-                }
-
-                &.hard {
-                    color: #ef4444;
-                }
-            }
         }
     }
 
     .card-footer {
         padding: 1.25rem;
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-start;
         align-items: center;
 
         .btn-primary {
@@ -131,12 +115,6 @@
             &:hover {
                 background: #1FA56B;
             }
-        }
-
-        .team-size {
-            font-size: 0.8rem;
-            color: #64748b;
-            font-weight: 500;
         }
     }
 }
