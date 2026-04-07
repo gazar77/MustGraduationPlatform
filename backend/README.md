@@ -60,7 +60,10 @@ These values are defined in `MustGraduationPlatform.Infrastructure/Persistence/D
 ## Configuration
 
 - **JWT** — `Jwt` section: `SigningKey` must be long enough for HS256 (use a strong secret in production via environment variables).
-- **SMTP** — `Smtp` section for student OTP emails. If `Host` is empty, emails are logged to the console instead (development).
+- **Email (registration OTP)** — Outbound mail for `POST /api/v1/auth/student/send-code` uses **`IEmailSender`**:
+  - If **`Brevo:ApiKey`** is set → **[BrevoTransactional API](https://developers.brevo.com/reference/sendtransacemail)** (`BrevoEmailSender`). Also set **`Brevo:FromEmail`** to a **verified sender** in Brevo; optional **`Brevo:FromName`**. Env vars: `Brevo__ApiKey`, `Brevo__FromEmail`, `Brevo__FromName`.
+  - Else if **`Smtp:Host`** is set → SMTP (`SmtpEmailSender`).
+  - Else → **console logging** only (`LoggingEmailSender`, development).
 - **Registration activation OTP (SQL)** — There is no `UserOtp` table. Codes from `POST /api/v1/auth/student/send-code` (registration only; the email must not already exist) are stored as the **numeric OTP string** in column **`Code`** on **`RegistrationOtps`**. Student sign-in uses email and password only (no OTP table). Query **`RegistrationOtps`** when debugging “no OTP row”; a successful API response (**204**) implies `SaveChanges` ran before email send. If `dotnet ef database update` failed mid-way on a host, run `DELETE FROM RegistrationOtps;` then apply the migration again.
 - **CORS** — `Cors:AllowedOrigins` must list **every** SPA origin you use (production and each Vercel preview URL). Credentials mode cannot use `*`. On the host, set `Cors__AllowedOrigins__0`, `__1`, … or override the array in config.
 - **API auth** — Identity registers cookie auth; the app is configured so unauthenticated requests to `[Authorize]` endpoints return **401/403** instead of redirecting to `/Account/Login` (that MVC route does not exist on this API and previously caused **302 → 404** in browsers). JWT Bearer (including `access_token` cookie) is the default challenge scheme.
@@ -77,7 +80,7 @@ These values are defined in `MustGraduationPlatform.Infrastructure/Persistence/D
 4. Set **`Jwt__Issuer`** / **`Jwt__Audience`** if you override defaults.
 5. Set **`Cors__AllowedOrigins__0`** (and `__1`, etc.) to your Angular production URL(s).
 6. Student file uploads write to **`wwwroot/uploads`** on the server; keep that folder writable and included in deployments so files are not lost on publish.
-7. Configure **SMTP** in the panel or via env vars (`Smtp__Host`, `Smtp__User`, `Smtp__Password`, `Smtp__From`) for student activation emails.
+7. Configure **Brevo** (recommended) via env vars **`Brevo__ApiKey`**, **`Brevo__FromEmail`**, **`Brevo__FromName`**, or **SMTP** (`Smtp__Host`, `Smtp__User`, `Smtp__Password`, `Smtp__From`) if `Brevo__ApiKey` is not set. **Brevo takes precedence** over SMTP when both are present.
 8. **One-click publish folder (FTP / manual upload):** from the `backend` folder run **`publish-for-monsterasp.bat`** (double-click) or **`publish-for-monsterasp.ps1`**. Each run **deletes** the previous `backend/publish` folder, then builds **Release** framework-dependent output there. Upload that folder’s contents to MonsterASP (or zip and deploy).  
    Alternatively use **Web Deploy** from Visual Studio with a `.publishSettings` profile from the panel.
 9. After deployment, run **`dotnet ef database update`** against the hosted database (from a machine that can reach the server), or run migrations as part of your pipeline.

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using MustGraduationPlatform.Application.Abstractions;
 using MustGraduationPlatform.Infrastructure.Email;
 using MustGraduationPlatform.Infrastructure.Identity;
@@ -54,6 +55,7 @@ public static class DependencyInjection
 
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
         services.Configure<SmtpOptions>(configuration.GetSection(SmtpOptions.SectionName));
+        services.Configure<BrevoOptions>(configuration.GetSection(BrevoOptions.SectionName));
 
         services.AddSingleton<IFileStorage, WwwRootFileStorageService>();
 
@@ -74,10 +76,25 @@ public static class DependencyInjection
         services.AddScoped<IGraduationService, GraduationService>();
         services.AddScoped<IDoctorDashboardService, DoctorDashboardService>();
 
-        if (!string.IsNullOrWhiteSpace(configuration["Smtp:Host"]))
+        if (!string.IsNullOrWhiteSpace(configuration["Brevo:ApiKey"]))
+        {
+            services.AddHttpClient(BrevoEmailSender.HttpClientName, (sp, client) =>
+            {
+                client.BaseAddress = new Uri("https://api.brevo.com/");
+                var key = sp.GetRequiredService<IOptions<BrevoOptions>>().Value.ApiKey;
+                if (!string.IsNullOrWhiteSpace(key))
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("api-key", key);
+            });
+            services.AddScoped<IEmailSender, BrevoEmailSender>();
+        }
+        else if (!string.IsNullOrWhiteSpace(configuration["Smtp:Host"]))
+        {
             services.AddScoped<IEmailSender, SmtpEmailSender>();
+        }
         else
+        {
             services.AddScoped<IEmailSender, LoggingEmailSender>();
+        }
 
         return services;
     }
