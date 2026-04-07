@@ -180,12 +180,15 @@ export class AdminManagementComponent implements OnInit {
           ];
     } else if (this.type === 'ideas') {
       this.modalConfig.title = isEdit ? 'تعديل فكرة مشروع' : 'إضافة فكرة مشروع جديدة';
+      const statusOpts = ['Open', 'Reserved', 'Approved', 'Closed'] as const;
+      const raw = item?.status != null ? String(item.status).trim() : '';
+      const statusValue = (statusOpts as readonly string[]).includes(raw) ? raw : 'Open';
       this.modalConfig.fields = [
         { name: 'title', label: 'عنوان المشروع', type: 'text', value: item?.title },
         { name: 'category', label: 'التصنيف', type: 'text', value: item?.category },
         { name: 'description', label: 'الوصف', type: 'textarea', value: item?.description },
         { name: 'supervisorName', label: 'اسم المشرف', type: 'text', value: item?.supervisorName },
-        { name: 'status', label: 'الحالة', type: 'select', options: ['Open', 'Reserved', 'Approved', 'Closed'], value: item?.status }
+        { name: 'status', label: 'الحالة', type: 'select', options: [...statusOpts], value: statusValue }
       ];
     } else if (this.type === 'proposals') {
       if (isEdit) {
@@ -325,7 +328,23 @@ export class AdminManagementComponent implements OnInit {
         }
         break;
       }
-      case 'ideas': obs = this.ideaService.addIdea({ ...data, difficulty: 'Medium', requiredSkills: [], maxTeamSize: 4 }); break;
+      case 'ideas': {
+        const status =
+          data.status != null && String(data.status).trim() !== '' ? data.status : 'Open';
+        obs = this.ideaService.addIdea({
+          title: data.title,
+          description: data.description,
+          category: data.category,
+          supervisorName: data.supervisorName,
+          status,
+          difficulty: 'Medium',
+          requiredSkills: [],
+          maxTeamSize: 4,
+          isVisible: true,
+          displayOrder: 0
+        } as any);
+        break;
+      }
       case 'proposals':
         obs = this.projectSubmissionService.addSubmission({
           type: 'proposal',
@@ -433,7 +452,25 @@ export class AdminManagementComponent implements OnInit {
         }
         break;
       }
-      case 'ideas': obs = this.ideaService.updateIdea(this.editingItem.id, data); break;
+      case 'ideas': {
+        const item = this.editingItem;
+        const status =
+          data.status != null && String(data.status).trim() !== '' ? data.status : item.status;
+        obs = this.ideaService.updateIdea(item.id, {
+          title: data.title,
+          description: data.description,
+          category: data.category,
+          supervisorName: data.supervisorName,
+          status,
+          difficulty: item.difficulty ?? 'Medium',
+          requiredSkills: Array.isArray(item.requiredSkills) ? item.requiredSkills : [],
+          maxTeamSize: item.maxTeamSize ?? 4,
+          supervisorDoctorId: item.supervisorDoctorId ?? null,
+          isVisible: item.isVisible,
+          displayOrder: item.order ?? 0
+        } as any);
+        break;
+      }
       case 'proposals': obs = this.projectSubmissionService.updateStatus(this.editingItem.id, data.status); break;
       case 'contact': obs = this.contactService.updateMessageStatus(this.editingItem.id, data.status); break;
       case 'project1':

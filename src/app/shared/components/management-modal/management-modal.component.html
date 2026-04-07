@@ -11,23 +11,27 @@
         
         <input *ngIf="field.type === 'text'" 
                type="text" 
-               [id]="field.name" 
+               [id]="field.name"
+               [attr.name]="field.name"
                [(ngModel)]="formData[field.name]" 
                class="form-control" [placeholder]="'أدخل ' + field.label">
                
         <input *ngIf="field.type === 'date'" 
                type="date" 
-               [id]="field.name" 
+               [id]="field.name"
+               [attr.name]="field.name"
                [(ngModel)]="formData[field.name]" 
                class="form-control">
 
         <textarea *ngIf="field.type === 'textarea'" 
-                  [id]="field.name" 
+                  [id]="field.name"
+                  [attr.name]="field.name"
                   [(ngModel)]="formData[field.name]" 
                   class="form-control" rows="4" [placeholder]="'أدخل ' + field.label"></textarea>
                   
         <select *ngIf="field.type === 'select'" 
-                [id]="field.name" 
+                [id]="field.name"
+                [attr.name]="field.name"
                 [(ngModel)]="formData[field.name]" 
                 class="form-select">
           <option value="" disabled>اختر {{ field.label }}</option>
@@ -43,6 +47,7 @@
         <input *ngIf="field.type === 'image'"
                type="file"
                [id]="field.name"
+               [attr.name]="field.name"
                [accept]="field.accept || 'image/jpeg,image/png,image/webp,image/*'"
                class="form-control"
                (change)="onFileChange(field.name, $event)">
@@ -50,6 +55,7 @@
         <input *ngIf="field.type === 'pdf'"
                type="file"
                [id]="field.name"
+               [attr.name]="field.name"
                [accept]="field.accept || 'application/pdf,.pdf'"
                class="form-control"
                (change)="onFileChange(field.name, $event)">
