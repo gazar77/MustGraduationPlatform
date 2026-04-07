@@ -1,51 +1,53 @@
-<div class="news-list-container" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
+<div class="news-list-page" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
     <app-hero-banner [title]="langService.translate('news.list.title')"></app-hero-banner>
 
-    <div class="container mb-4 text-end" *ngIf="currentUser?.role === 'Admin'">
-        <button (click)="onAddNews()" class="btn btn-primary add-news-btn shadow-sm">
-            <i class="fas fa-plus me-2"></i>
-            {{ langService.translate('news.list.addNewsBtn') }}
-        </button>
-    </div>
+    <div class="news-list-container">
+        <div class="container mb-4 text-end" *ngIf="currentUser?.role === 'Admin'">
+            <button (click)="onAddNews()" class="btn btn-primary add-news-btn shadow-sm">
+                <i class="fas fa-plus me-2"></i>
+                {{ langService.translate('news.list.addNewsBtn') }}
+            </button>
+        </div>
 
-    <!-- Announcement Grid -->
-    <div class="news-grid">
-        <div class="news-card" *ngFor="let item of newsItems">
-            <div class="card-header">
-                <div class="date-badge">
-                    <span class="day">{{ item.publishDate | date:'dd' }}</span>
-                    <span class="month">{{ item.publishDate | date:'MMM' }}</span>
+        <!-- Announcement Grid -->
+        <div class="news-grid">
+            <div class="news-card" *ngFor="let item of newsItems">
+                <div class="card-header">
+                    <div class="date-badge">
+                        <span class="day">{{ item.publishDate | date:'dd' }}</span>
+                        <span class="month">{{ item.publishDate | date:'MMM' }}</span>
+                    </div>
+                    <div class="category-tag" [ngClass]="item.category.toLowerCase()">
+                        {{ getCategoryTranslation(item.category) }}
+                    </div>
                 </div>
-                <div class="category-tag" [ngClass]="item.category.toLowerCase()">
-                    {{ getCategoryTranslation(item.category) }}
-                </div>
-            </div>
 
-            <div class="card-body">
-                <div class="news-thumb mb-3" *ngIf="item.imagePath">
-                    <img [src]="newsImageUrl(item)" [alt]="item.title" class="img-fluid rounded shadow-sm" loading="lazy">
+                <div class="card-body">
+                    <div class="news-thumb mb-3" *ngIf="item.imagePath">
+                        <img [src]="newsImageUrl(item)" [alt]="item.title" class="img-fluid rounded shadow-sm" loading="lazy">
+                    </div>
+                    <h3 class="news-title">{{ item.title }}</h3>
+                    <p class="news-excerpt">{{ item.content }}</p>
                 </div>
-                <h3 class="news-title">{{ item.title }}</h3>
-                <p class="news-excerpt">{{ item.content }}</p>
-            </div>
 
-            <div class="card-footer">
-                <div class="author-info">
-                    <i class="fas fa-user-edit"></i>
-                    <span>{{ langService.translate('news.list.authorPrefix') }} {{ item.author }}</span>
+                <div class="card-footer">
+                    <div class="author-info">
+                        <i class="fas fa-user-edit"></i>
+                        <span>{{ langService.translate('news.list.authorPrefix') }} {{ item.author }}</span>
+                    </div>
+                    <button class="details-link">
+                        {{ langService.translate('news.list.detailsBtn') }}
+                        <i class="fas" [ngClass]="(langService.currentLang$ | async) === 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'"></i>
+                    </button>
                 </div>
-                <button class="details-link">
-                    {{ langService.translate('news.list.detailsBtn') }}
-                    <i class="fas" [ngClass]="(langService.currentLang$ | async) === 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'"></i>
-                </button>
             </div>
         </div>
-    </div>
 
-    <!-- Empty State -->
-    <div class="empty-state" *ngIf="newsItems.length === 0">
-        <i class="fas fa-calendar-times"></i>
-        <h3>{{ langService.translate('news.list.emptyTitle') }}</h3>
-        <p>{{ langService.translate('news.list.emptyText') }}</p>
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="newsItems.length === 0">
+            <i class="fas fa-calendar-times"></i>
+            <h3>{{ langService.translate('news.list.emptyTitle') }}</h3>
+            <p>{{ langService.translate('news.list.emptyText') }}</p>
+        </div>
     </div>
 </div>
