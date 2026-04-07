@@ -18,7 +18,7 @@ export class HeroBannerComponent implements OnInit {
   /** Primary hero pills (excludes the three submission routes — those live under Portal Services). */
   @Input() mainQuickLinks: { labelKey: string, url: string }[] = [
     { labelKey: 'home', url: '/dashboard' },
-    { labelKey: 'ideas', url: '/ideas/list' },
+    { labelKey: 'ideas', url: '/ideas' },
     { labelKey: 'register', url: '/ideas/register' },
     { labelKey: 'templates', url: '/templates' },
     { labelKey: 'news', url: '/news/list' },
