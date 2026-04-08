@@ -19,12 +19,11 @@ $must-green: var(--secondary-color);
   max-width: 100%;
 }
 
-// Viewport shows ~7 pills; scroll horizontally for the rest (no vertical scroll)
+// Viewport shows ~5.5 pills; scroll horizontally for the rest (no vertical scroll)
 .hero-quick-nav-scroll {
   $pill-gap: 8px;
-  $pills-visible: 7;
-  // ~avg chip width incl. padding + gap between 7 items
-  max-width: min(100%, calc(#{$pills-visible} * 132px + (#{$pills-visible} - 1) * #{$pill-gap}));
+  $pill-w: 132px;
+  max-width: min(100%, calc(5.5 * #{$pill-w} + 5 * #{$pill-gap}));
   margin: 0 auto;
   overflow-x: auto;
   overflow-y: hidden;
@@ -56,7 +55,8 @@ $must-green: var(--secondary-color);
 
   @media (min-width: 1200px) {
     $pill-gap-lg: 10px;
-    max-width: min(100%, calc(#{$pills-visible} * 138px + (#{$pills-visible} - 1) * #{$pill-gap-lg}));
+    $pill-w-lg: 138px;
+    max-width: min(100%, calc(5.5 * #{$pill-w-lg} + 5 * #{$pill-gap-lg}));
   }
 }
 
