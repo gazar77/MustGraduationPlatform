@@ -26,9 +26,13 @@ $must-green: var(--secondary-color);
   gap: 8px;
   width: 100%;
   max-width: 100%;
+  // Let clicks pass through flex gaps and the dropdown padding reserve below the pills
+  // (hero-content z-index can sit above page content; dead area must not block search, etc.)
+  pointer-events: none;
 }
 
 .hero-quick-nav-scroll-btn {
+  pointer-events: auto;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -88,6 +92,8 @@ $dropdown-reserve: 230px;
   touch-action: pan-x;
   padding: 4px 2px calc(10px + #{$dropdown-reserve});
   scrollbar-width: none;
+  // Padding-bottom reserve must not capture clicks over content below the hero
+  pointer-events: none;
 
   &::-webkit-scrollbar {
     display: none;
@@ -111,6 +117,7 @@ $dropdown-reserve: 230px;
   min-width: 100%;
   margin: 0 auto;
   padding: 0 2px;
+  pointer-events: auto;
 
   @media (min-width: 1200px) {
     gap: 10px;
