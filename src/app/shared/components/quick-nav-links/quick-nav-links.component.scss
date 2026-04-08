@@ -19,19 +19,58 @@ $must-green: var(--secondary-color);
   max-width: 100%;
 }
 
+// Viewport shows ~7 pills; scroll horizontally for the rest (no vertical scroll)
+.hero-quick-nav-scroll {
+  $pill-gap: 8px;
+  $pills-visible: 7;
+  // ~avg chip width incl. padding + gap between 7 items
+  max-width: min(100%, calc(#{$pills-visible} * 132px + (#{$pills-visible} - 1) * #{$pill-gap}));
+  margin: 0 auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  padding: 4px 2px 10px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.45) rgba(2, 37, 97, 0.55);
+
+  &::-webkit-scrollbar {
+    height: 7px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(2, 37, 97, 0.5);
+    border-radius: 999px;
+    margin: 0 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.28));
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.55);
+  }
+
+  @media (min-width: 1200px) {
+    $pill-gap-lg: 10px;
+    max-width: min(100%, calc(#{$pills-visible} * 138px + (#{$pills-visible} - 1) * #{$pill-gap-lg}));
+  }
+}
+
 .hero-quick-nav {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 8px;
-  max-width: 100%;
+  width: max-content;
+  min-width: 100%;
   margin: 0 auto;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  padding: 2px 4px 6px;
+  padding: 0 2px;
 
   @media (min-width: 1200px) {
     gap: 10px;

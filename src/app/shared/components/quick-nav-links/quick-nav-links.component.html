@@ -1,6 +1,7 @@
 <div class="quick-nav-root" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
   <div class="hero-nav-pill-shell">
-    <nav class="hero-quick-nav" aria-label="Quick links">
+    <div class="hero-quick-nav-scroll" tabindex="0">
+      <nav class="hero-quick-nav" aria-label="Quick links">
       <a routerLink="/dashboard"
          routerLinkActive="active"
          [routerLinkActiveOptions]="{ exact: true }"
@@ -93,5 +94,6 @@
         {{ langService.translate('nav.contact') }}
       </a>
     </nav>
+    </div>
   </div>
 </div>
