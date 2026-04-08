@@ -1,101 +1,97 @@
 <div class="quick-nav-root" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
   <div class="hero-nav-pill-shell">
     <nav class="hero-quick-nav" aria-label="Quick links">
-      <div class="hero-quick-nav__row hero-quick-nav__row--primary">
-        <a routerLink="/dashboard"
-           routerLinkActive="active"
-           [routerLinkActiveOptions]="{ exact: true }"
-           class="nav-pill">
-          {{ langService.translate('nav.home') }}
-        </a>
+      <a routerLink="/dashboard"
+         routerLinkActive="active"
+         [routerLinkActiveOptions]="{ exact: true }"
+         class="nav-pill">
+        {{ langService.translate('nav.home') }}
+      </a>
 
-        <div #portalDropdown
-             class="hero-nav-dropdown"
-             [class.is-open]="portalMenuOpen">
-          <button type="button"
-                  class="nav-pill nav-pill-dropdown-trigger"
-                  (click)="togglePortalMenu($event)"
-                  [attr.aria-expanded]="portalMenuOpen"
-                  aria-haspopup="true"
-                  [attr.aria-controls]="'hero-portal-submenu'">
-            {{ langService.translate('nav.portalServices') }}
-            <i class="fas fa-chevron-down hero-dropdown-chevron" aria-hidden="true"></i>
-          </button>
-          <ul id="hero-portal-submenu" class="hero-dropdown-panel" role="menu">
-            <li *ngFor="let link of portalLinks" role="none">
-              <a [routerLink]="link.url"
-                 role="menuitem"
-                 class="hero-dropdown-link"
-                 (click)="closePortalMenu()">
-                {{ langService.translate('nav.' + link.labelKey) }}
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        <a routerLink="/ideas"
-           routerLinkActive="active"
-           [routerLinkActiveOptions]="{ exact: false }"
-           class="nav-pill">
-          {{ langService.translate('nav.ideas') }}
-        </a>
-
-        <a routerLink="/ideas/register"
-           routerLinkActive="active"
-           class="nav-pill">
-          {{ langService.translate('nav.ideaRegister') }}
-        </a>
-
-        <a routerLink="/submission/proposal"
-           routerLinkActive="active"
-           class="nav-pill">
-          {{ langService.translate('nav.submission') }}
-        </a>
-
-        <div #resourcesDropdown
-             class="hero-nav-dropdown"
-             [class.is-open]="resourcesMenuOpen">
-          <button type="button"
-                  class="nav-pill nav-pill-dropdown-trigger"
-                  (click)="toggleResourcesMenu($event)"
-                  [attr.aria-expanded]="resourcesMenuOpen"
-                  aria-haspopup="true"
-                  [attr.aria-controls]="'hero-resources-submenu'">
-            {{ langService.translate('nav.resources') }}
-            <i class="fas fa-chevron-down hero-dropdown-chevron" aria-hidden="true"></i>
-          </button>
-          <ul id="hero-resources-submenu" class="hero-dropdown-panel" role="menu">
-            <li *ngFor="let link of resourceLinks" role="none">
-              <a [routerLink]="link.url"
-                 role="menuitem"
-                 class="hero-dropdown-link"
-                 (click)="closeResourcesMenu()">
-                {{ langService.translate('nav.' + link.labelKey) }}
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        <a routerLink="/news/list"
-           routerLinkActive="active"
-           class="nav-pill">
-          {{ langService.translate('nav.news') }}
-        </a>
-
-        <a routerLink="/events/calendar"
-           routerLinkActive="active"
-           class="nav-pill">
-          {{ langService.translate('nav.events') }}
-        </a>
+      <div #portalDropdown
+           class="hero-nav-dropdown"
+           [class.is-open]="portalMenuOpen">
+        <button type="button"
+                class="nav-pill nav-pill-dropdown-trigger"
+                (click)="togglePortalMenu($event)"
+                [attr.aria-expanded]="portalMenuOpen"
+                aria-haspopup="true"
+                [attr.aria-controls]="'hero-portal-submenu'">
+          {{ langService.translate('nav.portalServices') }}
+          <i class="fas fa-chevron-down hero-dropdown-chevron" aria-hidden="true"></i>
+        </button>
+        <ul id="hero-portal-submenu" class="hero-dropdown-panel" role="menu">
+          <li *ngFor="let link of portalLinks" role="none">
+            <a [routerLink]="link.url"
+               role="menuitem"
+               class="hero-dropdown-link"
+               (click)="closePortalMenu()">
+              {{ langService.translate('nav.' + link.labelKey) }}
+            </a>
+          </li>
+        </ul>
       </div>
 
-      <div class="hero-quick-nav__row hero-quick-nav__row--contact">
-        <a routerLink="/contact"
-           routerLinkActive="active"
-           class="nav-pill">
-          {{ langService.translate('nav.contact') }}
-        </a>
+      <a routerLink="/ideas"
+         routerLinkActive="active"
+         [routerLinkActiveOptions]="{ exact: false }"
+         class="nav-pill">
+        {{ langService.translate('nav.ideas') }}
+      </a>
+
+      <a routerLink="/ideas/register"
+         routerLinkActive="active"
+         class="nav-pill">
+        {{ langService.translate('nav.ideaRegister') }}
+      </a>
+
+      <a routerLink="/submission/proposal"
+         routerLinkActive="active"
+         class="nav-pill">
+        {{ langService.translate('nav.submission') }}
+      </a>
+
+      <div #resourcesDropdown
+           class="hero-nav-dropdown"
+           [class.is-open]="resourcesMenuOpen">
+        <button type="button"
+                class="nav-pill nav-pill-dropdown-trigger"
+                (click)="toggleResourcesMenu($event)"
+                [attr.aria-expanded]="resourcesMenuOpen"
+                aria-haspopup="true"
+                [attr.aria-controls]="'hero-resources-submenu'">
+          {{ langService.translate('nav.resources') }}
+          <i class="fas fa-chevron-down hero-dropdown-chevron" aria-hidden="true"></i>
+        </button>
+        <ul id="hero-resources-submenu" class="hero-dropdown-panel" role="menu">
+          <li *ngFor="let link of resourceLinks" role="none">
+            <a [routerLink]="link.url"
+               role="menuitem"
+               class="hero-dropdown-link"
+               (click)="closeResourcesMenu()">
+              {{ langService.translate('nav.' + link.labelKey) }}
+            </a>
+          </li>
+        </ul>
       </div>
+
+      <a routerLink="/news/list"
+         routerLinkActive="active"
+         class="nav-pill">
+        {{ langService.translate('nav.news') }}
+      </a>
+
+      <a routerLink="/events/calendar"
+         routerLinkActive="active"
+         class="nav-pill">
+        {{ langService.translate('nav.events') }}
+      </a>
+
+      <a routerLink="/contact"
+         routerLinkActive="active"
+         class="nav-pill">
+        {{ langService.translate('nav.contact') }}
+      </a>
     </nav>
   </div>
 </div>
