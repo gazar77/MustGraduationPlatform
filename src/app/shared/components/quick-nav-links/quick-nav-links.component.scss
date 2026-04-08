@@ -19,12 +19,66 @@ $must-green: var(--secondary-color);
   max-width: 100%;
 }
 
+.hero-quick-nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.hero-quick-nav-scroll-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: $text-white;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.3);
+    color: $must-green;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+
+  .hero-quick-nav-scroll-icon {
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  @media (max-width: 768px) {
+    min-width: 36px;
+    min-height: 36px;
+
+    .hero-quick-nav-scroll-icon {
+      font-size: 12px;
+    }
+  }
+}
+
 // Viewport shows ~5.5 pills; scroll horizontally. overflow-y must not clip dropdown panels.
 $dropdown-reserve: 230px;
 
 .hero-quick-nav-scroll {
   $pill-gap: 8px;
   $pill-w: 132px;
+  flex: 1 1 auto;
+  min-width: 0;
   max-width: min(100%, calc(5.5 * #{$pill-w} + 5 * #{$pill-gap}));
   margin: 0 auto;
   margin-bottom: -#{$dropdown-reserve};
@@ -33,27 +87,10 @@ $dropdown-reserve: 230px;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x;
   padding: 4px 2px calc(10px + #{$dropdown-reserve});
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.45) rgba(2, 37, 97, 0.55);
+  scrollbar-width: none;
 
   &::-webkit-scrollbar {
-    height: 7px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: rgba(2, 37, 97, 0.5);
-    border-radius: 999px;
-    margin: 0 4px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.28));
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.55);
+    display: none;
   }
 
   @media (min-width: 1200px) {
