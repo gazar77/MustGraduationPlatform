@@ -155,7 +155,8 @@ export class LanguageService {
           successMsg: 'Project idea registered successfully!',
           exportPdf: 'Download PDF',
           exportWord: 'Download Word',
-          exportBusy: 'Please wait…'
+          exportBusy: 'Please wait…',
+          exportHint: 'Save a copy of this form'
         },
         detail: {
           reserveBtn: 'Reserve this idea',
@@ -474,7 +475,8 @@ export class LanguageService {
           successMsg: 'تم تسجيل فكرة المشروع بنجاح!',
           exportPdf: 'تحميل PDF',
           exportWord: 'تحميل Word',
-          exportBusy: 'يرجى الانتظار…'
+          exportBusy: 'يرجى الانتظار…',
+          exportHint: 'احفظ نسخة من هذا النموذج'
         },
         detail: {
           reserveBtn: 'حجز هذه الفكرة',

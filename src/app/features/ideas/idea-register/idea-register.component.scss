@@ -219,6 +219,60 @@ $bg-light: #f6f8fa;
   }
 }
 
+.doc-actions {
+  .idea-export-actions {
+    margin-top: 2rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid $border-col;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .idea-export-hint {
+    font-weight: 500;
+  }
+}
+
+.export-doc-btn {
+  font-weight: 700;
+  font-size: 15px;
+  padding: 0.65rem 1.35rem;
+  border-radius: 8px;
+  min-width: 170px;
+  border: none;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+
+  &:hover:not([disabled]) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.22);
+    filter: brightness(1.05);
+    color: #fff;
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(31, 165, 107, 0.45);
+    outline-offset: 2px;
+  }
+
+  &[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  &--pdf {
+    background: linear-gradient(180deg, #3d4756 0%, #2d3748 100%);
+  }
+
+  &--word {
+    background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
+  }
+}
+
 // Signatures
 .signature-section {
   margin-top: 60px;
