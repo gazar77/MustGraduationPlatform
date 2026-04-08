@@ -225,7 +225,7 @@ $header-height: 105px;
           top: 100%;
           left: 0;
           min-width: 260px;
-          background: linear-gradient(180deg, #ffffff 0%, #f3f4f6 100%);
+          background: $nav-panel-navy;
           border-radius: 12px;
           border: 1px solid rgba(0, 0, 0, 0.08);
           opacity: 0;
