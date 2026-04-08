@@ -1,7 +1,3 @@
-// Match header / footer MUST navy (see header.component.scss & footer.component.scss)
-$must-navy: #022561;
-$must-navy-deep: #011a40;
-$must-navy-mid: #142446;
 $text-white: #ffffff;
 $must-green: var(--secondary-color);
 
@@ -10,12 +6,13 @@ $must-green: var(--secondary-color);
 }
 
 .hero-nav-pill-shell {
-  background: linear-gradient(180deg, lighten($must-navy, 4%) 0%, $must-navy 45%, $must-navy-deep 100%);
+  background: rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border-radius: 999px;
   padding: 10px 18px;
-  box-shadow:
-    0 10px 28px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
   display: inline-block;
   max-width: 100%;
 }
@@ -36,10 +33,10 @@ $must-green: var(--secondary-color);
 }
 
 .nav-pill {
-  background: rgba($must-navy-mid, 0.55);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 50px;
   padding: 10px 22px;
   color: $text-white;
@@ -47,22 +44,25 @@ $must-green: var(--secondary-color);
   font-size: 15px;
   font-weight: 700;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
   white-space: nowrap;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.22);
+    background: rgba(0, 0, 0, 0.62);
     border-color: rgba(255, 255, 255, 0.22);
     transform: translateY(-1px);
     color: $text-white;
     text-decoration: none;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
   }
 
   &.active {
-    background: #dce1e8;
+    background: rgba(255, 255, 255, 0.28);
     color: #0f1419;
-    border-color: rgba(255, 255, 255, 0.35);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 
   @media (max-width: 768px) {
