@@ -66,7 +66,7 @@ export const Footer: React.FC<FooterProps> = ({ darkMode }) => {
               </p>
               
               <div className="social-links">
-                <a href="https://www.facebook.com/mustuni" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="fab fa-facebook-f"></i></a>
+                <a href="https://web.facebook.com/share/g/1CM9qwydeA/" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="fab fa-facebook-f"></i></a>
                 <a href="https://twitter.com/must_uni" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="fab fa-twitter"></i></a>
                 <a href="https://www.instagram.com/must_uni" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="fab fa-instagram"></i></a>
                 <a href="https://www.linkedin.com/school/mustuni/" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="fab fa-linkedin-in"></i></a>

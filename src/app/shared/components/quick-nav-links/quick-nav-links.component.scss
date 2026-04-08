@@ -1,16 +1,21 @@
+// Match header / footer MUST navy (see header.component.scss & footer.component.scss)
+$must-navy: #022561;
+$must-navy-deep: #011a40;
+$must-navy-mid: #142446;
 $text-white: #ffffff;
+$must-green: var(--secondary-color);
 
 .quick-nav-root {
   max-width: 100%;
 }
 
 .hero-nav-pill-shell {
-  background: linear-gradient(180deg, #006df1 0%, #1370e2 45%, #004196 100%);
+  background: linear-gradient(180deg, lighten($must-navy, 4%) 0%, $must-navy 45%, $must-navy-deep 100%);
   border-radius: 999px;
   padding: 10px 18px;
   box-shadow:
-    0 10px 30px rgba(34, 115, 165, 0.897),
-    inset 0 1px 0 rgba(38, 36, 192, 0.664);
+    0 10px 28px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   display: inline-block;
   max-width: 100%;
 }
@@ -31,10 +36,10 @@ $text-white: #ffffff;
 }
 
 .nav-pill {
-  background: rgba(14, 47, 196, 0.788);
+  background: rgba($must-navy-mid, 0.55);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(33, 15, 194, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 50px;
   padding: 10px 22px;
   color: $text-white;
@@ -42,22 +47,22 @@ $text-white: #ffffff;
   font-size: 15px;
   font-weight: 700;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   white-space: nowrap;
 
   &:hover {
-    background: rgb(11, 14, 177);
-    border-color: rgb(16, 13, 209);
+    background: rgba(0, 0, 0, 0.22);
+    border-color: rgba(255, 255, 255, 0.22);
     transform: translateY(-1px);
     color: $text-white;
     text-decoration: none;
   }
 
   &.active {
-    background: rgba(255, 255, 255, 0.92);
-    color: #1a1d21;
-    border-color: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    background: #dce1e8;
+    color: #0f1419;
+    border-color: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
   }
 
   @media (max-width: 768px) {
@@ -151,7 +156,7 @@ $text-white: #ffffff;
   transition: background 0.15s ease, color 0.15s ease;
 
   &:hover {
-    background: #2563eb;
+    background: $must-green;
     color: #fff;
   }
 }
