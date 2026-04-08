@@ -1,7 +1,5 @@
 // Colors to exact match MUST screenshot
-$must-blue: #022561; // Static official MUST blue, does not change with theme
-$left-panel-bg: rgba(20, 36, 70, 0.95);
-$right-panel-bg: rgba(28, 48, 90, 0.95);
+$must-blue: #022561; // Static official MUST blue — solid navy for all header dropdowns
 $must-green: var(--secondary-color);
 $text-white: #ffffff;
 $header-height: 105px;
@@ -126,7 +124,7 @@ $header-height: 105px;
             /* Left Vertical Panel */
             .mega-left-panel {
               width: 280px;
-              background-color: $left-panel-bg;
+              background-color: $must-blue;
               padding: 20px 0;
 
               .left-panel-list {
@@ -162,7 +160,7 @@ $header-height: 105px;
                     top: -15px; 
                     left: 100%;
                     width: 320px; 
-                    background-color: $right-panel-bg;
+                    background-color: $must-blue;
                     padding: 20px 30px;
                     box-shadow: 4px 4px 20px rgba(0,0,0,0.35); // Re-apply shadow directly onto the floating child
                     z-index: 105; // Ensure it floats above nearby sections
@@ -225,9 +223,9 @@ $header-height: 105px;
           top: 100%;
           left: 0;
           min-width: 260px;
-          background: $nav-panel-navy;
+          background: $must-blue;
           border-radius: 12px;
-          border: 1px solid rgba(0, 0, 0, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.12);
           opacity: 0;
           visibility: hidden;
           transition: opacity 0.2s ease, visibility 0.2s ease;
@@ -248,15 +246,14 @@ $header-height: 105px;
               .simple-dropdown-link {
                 display: block;
                 padding: 12px 22px;
-                color: #2d3748;
+                color: $text-white;
                 font-size: 15px;
                 font-weight: 600;
                 text-decoration: none;
-                transition: background 0.15s ease, color 0.15s ease;
+                transition: color 0.15s ease;
 
                 &:hover {
-                  background: #2563eb;
-                  color: #ffffff;
+                  color: $must-green;
                 }
               }
             }
