@@ -19,17 +19,20 @@ $must-green: var(--secondary-color);
   max-width: 100%;
 }
 
-// Viewport shows ~5.5 pills; scroll horizontally for the rest (no vertical scroll)
+// Viewport shows ~5.5 pills; scroll horizontally. overflow-y must not clip dropdown panels.
+$dropdown-reserve: 230px;
+
 .hero-quick-nav-scroll {
   $pill-gap: 8px;
   $pill-w: 132px;
   max-width: min(100%, calc(5.5 * #{$pill-w} + 5 * #{$pill-gap}));
   margin: 0 auto;
+  margin-bottom: -#{$dropdown-reserve};
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: visible;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x;
-  padding: 4px 2px 10px;
+  padding: 4px 2px calc(10px + #{$dropdown-reserve});
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.45) rgba(2, 37, 97, 0.55);
 
@@ -161,7 +164,7 @@ $must-green: var(--secondary-color);
   visibility: hidden;
   pointer-events: none;
   transition: opacity 0.2s ease, visibility 0.2s ease;
-  z-index: 30;
+  z-index: 100;
 
   .quick-nav-root[dir="rtl"] & {
     left: auto;
