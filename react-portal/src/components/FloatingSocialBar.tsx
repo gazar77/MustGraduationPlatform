@@ -3,7 +3,7 @@ export function FloatingSocialBar() {
 const socialLinks = [
   { icon: 'fab fa-linkedin-in', href: 'https://eg.linkedin.com/school/misr-university-for-science-and-technology/', label: 'LinkedIn', color: '#1f3769' },
   { icon: 'fab fa-facebook-f', href: 'https://web.facebook.com/share/g/1CM9qwydeA/', label: 'Facebook', color: '#1f3769' },
-  { icon: 'fab fa-instagram', href: 'https://www.instagram.com/must_university/', label: 'Instagram', color: '#1f3769' },
+  { icon: 'fab fa-instagram', href: 'https://www.instagram.com/mustuni/', label: 'Instagram', color: '#1f3769' },
   { icon: 'fab fa-x-twitter', href: 'https://twitter.com/must_university', label: 'X (Twitter)', color: '#1f3769' },
   { icon: 'fab fa-whatsapp', href: 'https://chat.whatsapp.com/BdekmLTYMbR9M9ibkl703w', label: 'WhatsApp', color: '#25D366' },
 ];
