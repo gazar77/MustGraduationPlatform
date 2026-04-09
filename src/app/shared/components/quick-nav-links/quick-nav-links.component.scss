@@ -200,11 +200,10 @@ $dropdown-reserve: 230px;
   padding: 6px 0;
   list-style: none;
   text-align: start;
-  background-color: $must-blue;
-  color: $text-white;
+  background: $must-blue;
   border-radius: 12px;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -238,20 +237,13 @@ $dropdown-reserve: 230px;
 .hero-dropdown-link {
   display: block;
   padding: 12px 20px;
-  color: $text-white;
+  color: rgba(255, 255, 255, 0.95);
   text-decoration: none;
   font-weight: 600;
   font-size: 15px;
+  transition: color 0.15s ease;
 
-  &:hover,
-  &:focus-visible {
-    color: $text-white;
-    text-decoration: none;
-    background-color: transparent;
-  }
-
-  &:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.45);
-    outline-offset: -2px;
+  &:hover {
+    color: $must-green;
   }
 }
