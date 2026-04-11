@@ -71,8 +71,8 @@ export class AuthService {
   }
 
   private fetchCurrentUser(): Observable<User | null> {
-    return this.http.get<any>(`${this.apiUrl}/me`).pipe(
-      map(dto => this.mapUser(dto)),
+    return this.http.get<any | null>(`${this.apiUrl}/me`).pipe(
+      map(dto => (dto == null ? null : this.mapUser(dto))),
       tap(user => this.currentUserSubject.next(user)),
       catchError(() => {
         this.currentUserSubject.next(null);

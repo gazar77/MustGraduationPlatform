@@ -9,7 +9,7 @@
         <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="auth-form">
             <div class="form-group">
                 <label for="email">البريد الإلكتروني الجامعي</label>
-                <input type="email" id="email" formControlName="email" placeholder="example@must.edu.eg" [readonly]="codeSent">
+                <input type="email" id="email" formControlName="email" placeholder="example@must.edu.eg" autocomplete="email" [readonly]="codeSent">
                 <div *ngIf="f['email'].touched && f['email'].errors" class="error-msg">
                     <small *ngIf="f['email'].errors['required']">البريد الإلكتروني مطلوب</small>
                     <small *ngIf="f['email'].errors['email']">برجاء إدخال بريد إلكتروني صحيح</small>
@@ -18,7 +18,7 @@
 
             <div class="form-group">
                 <label for="fullName">الاسم بالكامل</label>
-                <input type="text" id="fullName" formControlName="fullName" placeholder="أدخل اسمك بالكامل">
+                <input type="text" id="fullName" formControlName="fullName" placeholder="أدخل اسمك بالكامل" autocomplete="name">
                 <div *ngIf="f['fullName'].touched && f['fullName'].errors" class="error-msg">
                     <small *ngIf="f['fullName'].errors['required']">الاسم مطلوب</small>
                 </div>
@@ -26,7 +26,7 @@
 
             <div class="form-group">
                 <label for="departmentId">القسم</label>
-                <select id="departmentId" formControlName="departmentId">
+                <select id="departmentId" formControlName="departmentId" autocomplete="off">
                     <option value="">اختر القسم</option>
                     <option *ngFor="let dept of departments" [value]="dept.id">{{ dept.code }} — {{ dept.nameAr }}</option>
                 </select>
@@ -37,7 +37,7 @@
 
             <div class="form-group">
                 <label for="password">كلمة المرور</label>
-                <input type="password" id="password" formControlName="password" placeholder="********">
+                <input type="password" id="password" formControlName="password" placeholder="********" autocomplete="new-password">
                 <div *ngIf="f['password'].touched && f['password'].errors" class="error-msg">
                     <small *ngIf="f['password'].errors['required']">كلمة المرور مطلوبة</small>
                     <small *ngIf="f['password'].errors['minlength']">يجب ألا تقل كلمة المرور عن 6 أحرف</small>

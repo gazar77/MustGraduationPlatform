@@ -45,11 +45,14 @@ public class AuthController : ControllerBase
         => Ok(await _auth.RegisterStudentAsync(request, ct));
 
     [HttpGet("me")]
-    [Authorize]
-    public async Task<ActionResult<UserDto>> Me(CancellationToken ct)
+    [AllowAnonymous]
+    public async Task<ActionResult<UserDto?>> Me(CancellationToken ct)
     {
+        if (User.Identity?.IsAuthenticated != true)
+            return Ok((UserDto?)null);
+
         var user = await _auth.GetCurrentUserAsync(User, ct);
-        return user is null ? Unauthorized() : Ok(user);
+        return Ok(user);
     }
 
     [HttpPost("logout")]
