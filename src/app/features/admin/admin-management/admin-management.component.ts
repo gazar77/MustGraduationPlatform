@@ -8,7 +8,6 @@ import { ContactService } from '../../../core/services/contact.service';
 import { ProjectSubmissionService } from '../../../core/services/project-submission.service';
 import { DashboardService } from '../../../core/services/dashboard.service';
 import { IdeaCategoryService } from '../../../core/services/idea-category.service';
-import { AuthService } from '../../../core/services/auth.service';
 import { environment } from '../../../../environments/environment';
 import { of, Observable } from 'rxjs';
 
@@ -44,8 +43,7 @@ export class AdminManagementComponent implements OnInit {
     private contactService: ContactService,
     private projectSubmissionService: ProjectSubmissionService,
     private dashboardService: DashboardService,
-    private ideaCategoryService: IdeaCategoryService,
-    private authService: AuthService
+    private ideaCategoryService: IdeaCategoryService
   ) {}
 
   ngOnInit(): void {
@@ -144,7 +142,7 @@ export class AdminManagementComponent implements OnInit {
     this.showTableStatus = ['news', 'event', 'template', 'ideas'].includes(this.type);
     this.showAddButton = !['proposals', 'contact', 'project1', 'project2'].includes(this.type);
     if (this.type === 'news' || this.type === 'event') {
-      this.showAddButton = this.authService.currentUserValue?.role === 'Admin';
+      this.showAddButton = false;
     }
   }
 

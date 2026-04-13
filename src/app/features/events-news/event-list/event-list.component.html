@@ -3,13 +3,6 @@
 
   <section class="events-section">
     <div class="container">
-      <div class="mb-4 text-end" *ngIf="canAddEvent()">
-        <button (click)="onAddEvent()" class="btn btn-primary shadow-sm">
-          <i class="fas fa-plus me-2"></i>
-          {{ langService.translate('events.list.addEventBtn') || 'إضافة فعالية' }}
-        </button>
-      </div>
-
       <div class="events-carousel-shell" *ngIf="events.length > 0">
         <button type="button"
                 class="carousel-nav carousel-nav--prev"

@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { News } from '../../../core/models/news.model';
-import { AuthService } from '../../../core/services/auth.service';
-import { User } from '../../../core/models/user.model';
 import { LanguageService } from '../../../core/services/language.service';
 import { NewsService } from '../../../core/services/news.service';
 import { fileUrlToAbsolute } from '../../../core/utils/api-url.util';
@@ -13,13 +11,11 @@ import { fileUrlToAbsolute } from '../../../core/utils/api-url.util';
 })
 export class NewsListComponent implements OnInit {
   newsItems: News[] = [];
-  currentUser: User | null = null;
   carouselStart = 0;
   readonly pageSize = 3;
 
   constructor(
     private newsService: NewsService,
-    private authService: AuthService,
     public langService: LanguageService
   ) { }
 
@@ -27,10 +23,6 @@ export class NewsListComponent implements OnInit {
     this.newsService.getVisibleNews().subscribe(news => {
       this.newsItems = news;
       this.carouselStart = 0;
-    });
-
-    this.authService.currentUser$.subscribe(user => {
-      this.currentUser = user;
     });
   }
 
@@ -60,32 +52,5 @@ export class NewsListComponent implements OnInit {
 
   newsImageUrl(item: News): string {
     return fileUrlToAbsolute(item.imagePath);
-  }
-
-  /** Only Admin may add from this page; SuperAdmin uses /admin/manage/news. */
-  canAddNews(): boolean {
-    return this.currentUser?.role === 'Admin';
-  }
-
-  onAddNews(): void {
-    const titlePrompt = this.langService.translate('news.list.prompts.newTitle');
-    const contentPrompt = this.langService.translate('news.list.prompts.newContent');
-
-    const title = prompt(titlePrompt);
-    const content = prompt(contentPrompt);
-    if (title && content) {
-      this.newsService.addNews({
-        id: 0,
-        title,
-        content,
-        publishDate: new Date(),
-        author: this.currentUser?.name || 'Admin',
-        category: 'Announcement',
-        isVisible: true,
-        order: 0
-      }).subscribe(() => {
-        this.newsService.getNews().subscribe(news => this.newsItems = news);
-      });
-    }
   }
 }
