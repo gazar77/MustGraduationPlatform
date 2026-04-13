@@ -27,13 +27,14 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  userType: 'Admin' | 'Student' | null = null;
+  userType: 'Admin' | 'SuperAdmin' | 'Student' | null = null;
   step: 'Identify' | 'AdminLogin' | 'StudentLogin' = 'Identify';
 
   ngOnInit(): void {
     if (this.authService.currentUserValue) {
       const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
-      if (this.authService.currentUserValue.role === 'Admin') {
+      const role = this.authService.currentUserValue.role;
+      if (role === 'Admin' || role === 'SuperAdmin') {
         this.router.navigateByUrl('/admin');
       } else {
         this.router.navigateByUrl(returnUrl);
@@ -53,9 +54,9 @@ export class LoginComponent implements OnInit {
     if (this.step === 'Identify') {
       this.authService.identify(this.f['email'].value).subscribe({
         next: (res) => {
-          this.userType = res.userType as any;
+          this.userType = (res.userType as LoginComponent['userType']) ?? null;
           if (res.exists) {
-            if (res.userType === 'Admin') {
+            if (res.userType === 'Admin' || res.userType === 'SuperAdmin') {
               this.step = 'AdminLogin';
               this.f['password'].setValidators([Validators.required]);
               this.f['password'].updateValueAndValidity();

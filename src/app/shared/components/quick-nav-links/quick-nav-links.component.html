@@ -26,6 +26,19 @@
             {{ langService.translate('nav.home') }}
           </a>
 
+          <a routerLink="/ideas"
+             routerLinkActive="active"
+             [routerLinkActiveOptions]="{ exact: false }"
+             class="nav-pill">
+            {{ langService.translate('nav.ideas') }}
+          </a>
+
+          <a routerLink="/ideas/register"
+             routerLinkActive="active"
+             class="nav-pill">
+            {{ langService.translate('nav.ideaRegister') }}
+          </a>
+
           <div #submissionDropdown
                class="hero-nav-dropdown"
                [class.is-open]="submissionMenuOpen">
@@ -49,19 +62,6 @@
               </li>
             </ul>
           </div>
-
-          <a routerLink="/ideas"
-             routerLinkActive="active"
-             [routerLinkActiveOptions]="{ exact: false }"
-             class="nav-pill">
-            {{ langService.translate('nav.ideas') }}
-          </a>
-
-          <a routerLink="/ideas/register"
-             routerLinkActive="active"
-             class="nav-pill">
-            {{ langService.translate('nav.ideaRegister') }}
-          </a>
 
           <div #resourcesDropdown
                class="hero-nav-dropdown"
