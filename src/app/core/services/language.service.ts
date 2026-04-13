@@ -168,7 +168,7 @@ export class LanguageService {
           facultyCollegesEn: 'College of Information Technology',
           facultyAr: 'جامعة مصر للعلوم والتكنولوجيا',
           facultyCollegesAr: 'كلية تكنولوجيا المعلومات',
-          docTitle: 'استمارة تسجيل مشروع التخرج',
+          docTitle: 'Graduation Project Registration Form',
           studentNamesHeading: 'Project team students:',
           notesTitle: 'Important notes:',
           notesItem1:
