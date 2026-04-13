@@ -11,6 +11,8 @@ import { DashboardService } from '../../../core/services/dashboard.service';
 import { IdeaCategoryService } from '../../../core/services/idea-category.service';
 import { environment } from '../../../../environments/environment';
 import { of, Observable } from 'rxjs';
+import { LanguageService } from '../../../core/services/language.service';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-admin-management',
@@ -45,7 +47,8 @@ export class AdminManagementComponent implements OnInit {
     private contactService: ContactService,
     private projectSubmissionService: ProjectSubmissionService,
     private dashboardService: DashboardService,
-    private ideaCategoryService: IdeaCategoryService
+    private ideaCategoryService: IdeaCategoryService,
+    private langService: LanguageService
   ) {}
 
   ngOnInit(): void {
@@ -724,31 +727,157 @@ export class AdminManagementComponent implements OnInit {
     } catch {
       return;
     }
-    const { jsPDF } = await import('jspdf');
-    const pdf = new jsPDF();
-    let y = 14;
-    const add = (text: string) => {
-      pdf.text(text, 10, y);
-      y += 7;
-    };
-    add('Graduation Project Registration / استمارة تسجيل مشروع التخرج');
-    y += 4;
-    add(`Academic year: ${String(data['academicYear'] ?? '')}`);
-    add(`Semester: ${String(data['semester'] ?? '')}`);
-    add(`Department: ${String(data['department'] ?? '')}`);
-    add(`Title (EN): ${String(data['titleEn'] ?? '')}`);
-    add(`Title (AR): ${String(data['titleAr'] ?? '')}`);
-    add(`Category: ${String(data['category'] ?? '')}`);
-    add(`Supervisor: ${String(data['supervisorName'] ?? '')}`);
-    add(`Assistant supervisor: ${String(data['assistantSupervisorName'] ?? '')}`);
-    add(`External org: ${String(data['externalOrg'] ?? '')}`);
-    y += 4;
-    add('Students:');
+
+    const t = (key: string) => this.langService.translate(key);
+    const host = typeof window !== 'undefined' ? window.location.origin : '';
+    const logoSrc = `${host}/assets/must-colored-logo.png`;
+    const dir = document.documentElement.dir === 'rtl' ? 'rtl' : 'ltr';
+    const lang = document.documentElement.lang || 'ar';
+
     const students = (data['students'] as Array<Record<string, string>>) || [];
-    students.forEach((s, i) => {
-      add(`${i + 1}. ${s['studentName'] ?? ''} — ID: ${s['universityId'] ?? ''} — ${s['mobileNumber'] ?? ''}`);
-    });
-    pdf.save(`idea-registration-${this.editingItem.id}.pdf`);
+    const studentRows = students
+      .map(
+        (s, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td><input type="text" readonly value="${this.escapeAttr(String(s['studentName'] ?? ''))}" /></td>
+        <td><input type="text" readonly value="${this.escapeAttr(String(s['universityId'] ?? ''))}" /></td>
+        <td><input type="text" readonly value="${this.escapeAttr(String(s['mobileNumber'] ?? ''))}" /></td>
+      </tr>`
+      )
+      .join('');
+
+    const html = `
+<div class="document-wrapper page-wrapper" style="min-height:auto;padding:0;margin:0;background:#fff;">
+  <div class="paper must-pdf-paper" dir="${dir}" lang="${lang}">
+    <header class="header">
+      <div class="header-block right-block">
+        <div class="ar-main" dir="rtl" lang="ar">${this.escapeHtml(t('ideas.form.facultyArLine1'))}</div>
+        <div class="ar-sub" dir="rtl" lang="ar">${this.escapeHtml(t('ideas.form.facultyArLine2'))}</div>
+        <div class="ar-faculty" dir="rtl" lang="ar">${this.escapeHtml(t('ideas.form.facultyCollegesAr'))}</div>
+      </div>
+      <div class="logo-block">
+        <img crossorigin="anonymous" src="${logoSrc}" alt="MUST" />
+      </div>
+      <div class="header-block left-block" dir="ltr">
+        <div class="en-main">${this.escapeHtml(t('ideas.form.facultyEnLine1'))}</div>
+        <div class="en-sub">${this.escapeHtml(t('ideas.form.facultyEnLine2'))}</div>
+        <div class="en-faculty">${this.escapeHtml(t('ideas.form.facultyCollegesEn'))}</div>
+      </div>
+    </header>
+    <div class="header-line" role="presentation"></div>
+    <section class="title-section">
+      <h1 class="main-title" dir="rtl" lang="ar">${this.escapeHtml(t('ideas.form.docTitle'))}</h1>
+    </section>
+
+    <div class="section-heading">${this.escapeHtml(t('ideas.form.section2'))}</div>
+    <section class="fields-section">
+      ${this.fieldRowHtml(t('ideas.form.titleAr'), String(data['titleAr'] ?? ''), 'rtl')}
+      ${this.fieldRowHtml(t('ideas.form.titleEn'), String(data['titleEn'] ?? ''), 'ltr')}
+      ${this.fieldRowHtml(t('ideas.form.category'), String(data['category'] ?? ''))}
+      ${this.fieldRowHtml(t('ideas.form.supervisorName'), String(data['supervisorName'] ?? ''))}
+      ${this.fieldRowHtml(t('ideas.form.assistantSupervisorName'), String(data['assistantSupervisorName'] ?? ''))}
+      ${this.fieldRowHtml(t('ideas.form.externalOrg'), String(data['externalOrg'] ?? ''))}
+    </section>
+
+    <div class="section-heading">${this.escapeHtml(t('ideas.form.section3'))}</div>
+    <div class="field-row only-label">
+      <label>${this.escapeHtml(t('ideas.form.studentNamesHeading'))}</label>
+    </div>
+    <section class="table-section">
+      <table class="idea-pdf-table" dir="${dir}">
+        <thead>
+          <tr>
+            <th class="col-no">${this.escapeHtml(t('ideas.form.colIndex'))}</th>
+            <th class="col-name">${this.escapeHtml(t('ideas.form.colStudentName'))}</th>
+            <th class="col-id">${this.escapeHtml(t('ideas.form.colUniversityId'))}</th>
+            <th class="col-phone">${this.escapeHtml(t('ideas.form.colMobile'))}</th>
+          </tr>
+        </thead>
+        <tbody>${studentRows}</tbody>
+      </table>
+    </section>
+
+    <section class="signatures">
+      <div>${this.escapeHtml(t('ideas.form.sigSupervisor'))}</div>
+      <div>${this.escapeHtml(t('ideas.form.sigHeads'))}</div>
+      <div>${this.escapeHtml(t('ideas.form.sigViceDean'))}</div>
+      <div>${this.escapeHtml(t('ideas.form.sigDean'))}</div>
+    </section>
+  </div>
+</div>`;
+
+    const wrapper = document.createElement('div');
+    wrapper.id = 'admin-idea-pdf-export-temp';
+    wrapper.style.cssText =
+      'position:fixed;left:-9999px;top:0;z-index:-9999;width:794px;pointer-events:none;background:#fff;';
+    wrapper.innerHTML = html;
+    document.body.appendChild(wrapper);
+
+    try {
+      const logo = wrapper.querySelector('img');
+      if (logo) {
+        await logo.decode().catch(() => undefined);
+      }
+      if (document.fonts?.ready) {
+        await document.fonts.ready;
+      }
+
+      const paper = wrapper.querySelector('.must-pdf-paper') as HTMLElement | null;
+      if (!paper) return;
+
+      const canvas = await html2canvas(paper, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff'
+      });
+
+      const { jsPDF } = await import('jspdf');
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const imgData = canvas.toDataURL('image/png');
+      const cw = canvas.width;
+      const ch = canvas.height;
+      const aspect = cw / ch;
+      let imgW = pageWidth;
+      let imgH = imgW / aspect;
+      if (imgH > pageHeight) {
+        imgH = pageHeight;
+        imgW = imgH * aspect;
+      }
+      const x = (pageWidth - imgW) / 2;
+      pdf.addImage(imgData, 'PNG', x, 0, imgW, imgH);
+      pdf.save(`idea-registration-${this.editingItem.id}.pdf`);
+    } catch (e) {
+      console.error(e);
+      alert('تعذر إنشاء ملف PDF. حاول مرة أخرى.');
+    } finally {
+      wrapper.remove();
+    }
+  }
+
+  private escapeAttr(s: string): string {
+    return String(s ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;');
+  }
+
+  private escapeHtml(s: string): string {
+    return String(s ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  private fieldRowHtml(label: string, value: string, inputDir?: 'rtl' | 'ltr'): string {
+    const dirAttr = inputDir ? ` dir="${inputDir}"` : '';
+    return `<div class="field-row">
+      <label>${this.escapeHtml(label)}</label>
+      <input type="text" readonly value="${this.escapeAttr(value)}"${dirAttr} />
+    </div>`;
   }
 
   openUploadedProjectFile(): void {
