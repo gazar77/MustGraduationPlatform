@@ -322,26 +322,12 @@ $header-height: 105px;
       }
     }
 
-    /* Admin: Control panel — distinct navy pill (matches design) */
+    /* Control panel: same pill treatment as Logout (.btn-auth), keep icon + label */
     .control-panel-nav-link {
       display: inline-flex;
       align-items: center;
       gap: 0.45rem;
-      padding: 0.5rem 1rem;
-      border-radius: 9px;
-      background: #1e2b58;
-      color: #fff;
-      font-weight: 700;
-      font-size: 0.875rem;
-      font-family: inherit;
-      text-decoration: none;
       white-space: nowrap;
-      transition: opacity 0.15s ease, transform 0.15s ease;
-
-      &:hover {
-        opacity: 0.92;
-        color: #fff;
-      }
 
       i {
         font-size: 0.95rem;

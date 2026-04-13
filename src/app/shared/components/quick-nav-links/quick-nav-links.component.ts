@@ -21,9 +21,9 @@ import { LanguageService } from '../../../core/services/language.service';
 })
 export class QuickNavLinksComponent implements AfterViewInit, OnDestroy {
   readonly submissionLinks: { labelKey: string; url: string }[] = [
+    { labelKey: 'proposalMenu', url: '/submission/proposal' },
     { labelKey: 'req1', url: '/submission/project-registration-1' },
-    { labelKey: 'req2', url: '/submission/project-registration-2' },
-    { labelKey: 'proposalMenu', url: '/submission/proposal' }
+    { labelKey: 'req2', url: '/submission/project-registration-2' }
   ];
 
   readonly resourceLinks: { labelKey: string; url: string }[] = [

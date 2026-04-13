@@ -116,4 +116,9 @@ export class HeaderComponent implements OnDestroy {
   toggleLanguage(): void {
     this.languageService.toggleLanguage();
   }
+
+  /** Admin area — show for both Admin and SuperAdmin (same as admin routes). */
+  canAccessControlPanel(role: string | undefined | null): boolean {
+    return role === 'Admin' || role === 'SuperAdmin';
+  }
 }

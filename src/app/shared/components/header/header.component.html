@@ -153,10 +153,10 @@
         {{ (languageService.currentLang$ | async) === 'en' ? 'ع' : 'EN' }}
       </button>
 
-      <!-- Admin: Control panel -->
-      <a *ngIf="(authService.currentUser$ | async)?.role === 'Admin'"
+      <!-- Admin: Control panel (Admin + SuperAdmin) -->
+      <a *ngIf="canAccessControlPanel((authService.currentUser$ | async)?.role)"
          routerLink="/admin"
-         class="control-panel-nav-link"
+         class="btn-auth control-panel-nav-link ms-2"
          (click)="closeMenus()"
          [title]="languageService.translate('nav.controlPanel')">
         <i class="fas fa-sliders-h" aria-hidden="true"></i>
