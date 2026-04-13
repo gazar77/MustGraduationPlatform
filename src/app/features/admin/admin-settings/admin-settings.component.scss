@@ -37,6 +37,15 @@ $row-hover: #fafafa;
     min-width: 0;
   }
 
+  &__upload {
+    flex-shrink: 0;
+    cursor: pointer;
+    &.disabled {
+      pointer-events: none;
+      opacity: 0.6;
+    }
+  }
+
   &__actions {
     display: flex;
     gap: 0.35rem;

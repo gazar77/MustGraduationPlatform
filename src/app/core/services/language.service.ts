@@ -402,7 +402,7 @@ export class LanguageService {
         copyright: 'جميع الحقوق محفوظة @ جامعة مصر للعلوم والتكنولوجيا 2025'
       },
       dashboard: {
-        heroTitle: 'منصة مشروع التخرج',
+        heroTitle: 'منصة مشاريع التخرج',
         stats: {
           ideas: 'أفكار المشاريع المتاحة',
           reserved: 'مشاريع محجوزة',

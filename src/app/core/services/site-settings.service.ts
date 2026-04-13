@@ -25,6 +25,13 @@ export class SiteSettingsService {
     return this.http.put<{ key: string; value: string }>(`${this.apiUrl}/${encodeURIComponent(key)}`, { value });
   }
 
+  /** Upload hero image to API wwwroot/uploads; response path is /uploads/... */
+  uploadHeroBannerImage(file: File): Observable<{ url: string }> {
+    const fd = new FormData();
+    fd.append('file', file, file.name);
+    return this.http.post<{ url: string }>(`${this.apiUrl}/hero-banner/upload`, fd);
+  }
+
   /** DB may store JSON-encoded strings (e.g. `"2026-04-30T23:59:59Z"`). */
   parseStoredValue(raw: string): string {
     if (raw == null || raw === '') {

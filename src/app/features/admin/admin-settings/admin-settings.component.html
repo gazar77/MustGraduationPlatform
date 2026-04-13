@@ -37,14 +37,19 @@
   <section *ngIf="!loading && !error" class="admin-settings__hero" aria-labelledby="hero-slider-heading">
     <div class="categories-section-header">
       <h3 id="hero-slider-heading" class="categories-section-header__title">صور خلفية الهيرو</h3>
-      <p class="categories-section-header__subtitle">مسارات الصور التي تظهر كخلفية دوّارة في أعلى الصفحات. يجب أن تبدأ بـ /assets/ أو /uploads/ (من 1 إلى 20 صورة).</p>
+      <p class="categories-section-header__subtitle">ارفع الصور من جهازك — تُحفظ على الخادم تحت <code>/uploads/</code> وتُعرض في الهيرو. يمكنك تعديل المسار يدوياً إن لزم. من 1 إلى 20 صورة.</p>
     </div>
 
     <div class="categories-panel">
       <div class="hero-urls-list">
         <div class="hero-url-row" *ngFor="let url of heroImageUrls; let i = index">
           <span class="hero-url-row__index">{{ i + 1 }}</span>
-          <input type="text" class="form-control categories-panel__input hero-url-row__input" [(ngModel)]="heroImageUrls[i]" [name]="'heroUrl' + i" placeholder="/assets/example.jpeg" [attr.aria-label]="'مسار الصورة رقم ' + (i + 1)">
+          <input type="text" class="form-control categories-panel__input hero-url-row__input" [(ngModel)]="heroImageUrls[i]" [name]="'heroUrl' + i" placeholder="/uploads/hero/..." [attr.aria-label]="'مسار الصورة رقم ' + (i + 1)">
+          <label class="btn btn-sm btn-outline-primary mb-0 hero-url-row__upload" [class.disabled]="heroUploadingIndex === i">
+            <i class="fas fa-upload" aria-hidden="true"></i>
+            رفع
+            <input type="file" class="d-none" accept="image/jpeg,image/png,image/webp,image/gif" [disabled]="heroUploadingIndex === i" (change)="onHeroFileSelected(i, $event)">
+          </label>
           <div class="hero-url-row__actions">
             <button type="button" class="btn btn-sm btn-outline-secondary" (click)="moveHeroUp(i)" [disabled]="i === 0" title="أعلى">
               <i class="fas fa-arrow-up" aria-hidden="true"></i>

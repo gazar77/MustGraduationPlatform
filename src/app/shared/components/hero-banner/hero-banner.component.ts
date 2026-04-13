@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { LanguageService } from '../../../core/services/language.service';
 import { SiteSettingsService } from '../../../core/services/site-settings.service';
 import { DEFAULT_HERO_BANNER_IMAGES, HERO_BANNER_BG_IMAGES_KEY } from '../../../core/constants/hero-banner-settings';
+import { fileUrlToAbsolute } from '../../../core/utils/api-url.util';
 import { QuickNavLinksComponent } from '../quick-nav-links/quick-nav-links.component';
 
 @Component({
@@ -84,6 +85,7 @@ export class HeroBannerComponent implements OnInit, OnDestroy {
   get currentBgImage(): string {
     const imgs = this.displayImages.length > 0 ? this.displayImages : DEFAULT_HERO_BANNER_IMAGES;
     const i = this.currentSlideIndex % imgs.length;
-    return imgs[i];
+    const raw = imgs[i];
+    return raw.startsWith('/uploads/') ? fileUrlToAbsolute(raw) : raw;
   }
 }

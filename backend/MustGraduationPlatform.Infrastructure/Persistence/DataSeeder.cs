@@ -214,21 +214,6 @@ public static class DataSeeder
             await db.SaveChangesAsync(ct);
         }
 
-        if (!await db.SiteSettings.AnyAsync(s => s.Key == SiteSettingKeys.HeroBannerBgImages, ct))
-        {
-            var heroPaths = new[]
-            {
-                "/assets/h1.jpeg", "/assets/h2.jpeg", "/assets/h3.jpeg", "/assets/h4.jpeg",
-                "/assets/h5.jpeg", "/assets/h6.jpeg", "/assets/h7.jpeg", "/assets/h8.jpeg"
-            };
-            db.SiteSettings.Add(new SiteSetting
-            {
-                Key = SiteSettingKeys.HeroBannerBgImages,
-                Value = JsonSerializer.Serialize(heroPaths)
-            });
-            await db.SaveChangesAsync(ct);
-        }
-
         if (!await db.DashboardActivities.AnyAsync(ct))
         {
             db.DashboardActivities.Add(new DashboardActivity

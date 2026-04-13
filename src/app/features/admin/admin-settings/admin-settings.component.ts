@@ -30,6 +30,7 @@ export class AdminSettingsComponent implements OnInit {
 
   heroImageUrls: string[] = [];
   savingHero = false;
+  heroUploadingIndex: number | null = null;
 
   constructor(
     private siteSettingsService: SiteSettingsService,
@@ -167,7 +168,32 @@ export class AdminSettingsComponent implements OnInit {
   }
 
   addHeroImageRow(): void {
-    this.heroImageUrls = [...this.heroImageUrls, '/assets/'];
+    this.heroImageUrls = [...this.heroImageUrls, ''];
+  }
+
+  onHeroFileSelected(index: number, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+    this.heroUploadingIndex = index;
+    this.siteSettingsService.uploadHeroBannerImage(file).subscribe({
+      next: (res) => {
+        const next = [...this.heroImageUrls];
+        next[index] = res.url;
+        this.heroImageUrls = next;
+        this.heroUploadingIndex = null;
+        this.message = 'تم رفع الصورة إلى الخادم.';
+      },
+      error: (err: unknown) => {
+        this.heroUploadingIndex = null;
+        const msg =
+          err instanceof HttpErrorResponse && err.error?.message
+            ? err.error.message
+            : 'فشل رفع الصورة';
+        this.message = msg;
+      }
+    });
   }
 
   removeHeroImageAt(index: number): void {
