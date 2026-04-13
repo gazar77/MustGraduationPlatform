@@ -22,12 +22,16 @@ $bg-light: #f6f8fa;
   border-radius: 8px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.03);
   padding: 50px 60px;
-  font-family: 'Inter', -apple-system, sans-serif;
+  font-family: 'Inter', 'Segoe UI', Tahoma, Arial, sans-serif;
   color: $text-dark;
 
   @media (max-width: 768px) {
     padding: 30px 20px;
   }
+}
+
+.official-document--rtl {
+  font-family: 'Segoe UI', Tahoma, 'Arial', sans-serif;
 }
 
 .doc-header {
@@ -62,6 +66,71 @@ $bg-light: #f6f8fa;
     background: linear-gradient(90deg, transparent 0%, $must-blue 20%, $must-blue 80%, transparent 100%);
     margin: 25px auto;
     width: 60%;
+  }
+}
+
+.doc-header--bilingual {
+  .doc-header__brand {
+    margin-bottom: 1rem;
+  }
+
+  .doc-header__logo {
+    object-fit: contain;
+  }
+
+  .doc-header__lines {
+    margin-bottom: 1.25rem;
+  }
+
+  .doc-header__line {
+    margin: 0.15rem 0;
+    font-weight: 700;
+    color: $must-blue;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+
+    &--en {
+      text-transform: uppercase;
+    }
+
+    &--ar {
+      font-size: 1.05rem;
+      line-height: 1.5;
+    }
+
+    &.muted {
+      font-weight: 600;
+      color: #4a5568;
+      font-size: 0.88rem;
+    }
+  }
+
+  .doc-main-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: $must-green;
+    margin: 1rem 0 0.75rem;
+    line-height: 1.35;
+  }
+
+  .doc-sub-line {
+    margin: 0.35rem 0;
+    font-size: 0.95rem;
+    color: #2d3748;
+    font-weight: 600;
+
+    &--dept {
+      font-weight: 600;
+      color: #1a365d;
+    }
+  }
+}
+
+.signature-grid {
+  .signature-title {
+    font-size: 0.8rem;
+    line-height: 1.35;
+    min-height: 2.5rem;
   }
 }
 

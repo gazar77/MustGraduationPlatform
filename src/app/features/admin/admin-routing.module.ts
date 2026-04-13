@@ -20,6 +20,7 @@ const routes: Routes = [
       { path: 'manage/templates', component: AdminManagementComponent, data: { type: 'template' } },
       { path: 'manage/tutorials', component: AdminManagementComponent, data: { type: 'tutorialDocs' } },
       { path: 'manage/proposals', component: AdminManagementComponent, data: { type: 'proposals' } },
+      { path: 'manage/idea-registrations', component: AdminManagementComponent, data: { type: 'ideaRegistrations' } },
       { path: 'manage/contact', component: AdminManagementComponent, data: { type: 'contact' } },
       { path: 'manage/project1', component: AdminManagementComponent, data: { type: 'project1' } },
       { path: 'manage/project2', component: AdminManagementComponent, data: { type: 'project2' } }

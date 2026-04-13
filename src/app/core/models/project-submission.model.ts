@@ -1,6 +1,6 @@
 export interface ProjectSubmission {
   id: number;
-  type: 'proposal' | 'project1' | 'project2';
+  type: 'proposal' | 'idea_registration' | 'project1' | 'project2';
   studentName?: string;
   email?: string;
   projectNumber?: string;

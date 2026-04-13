@@ -90,7 +90,7 @@ public class ProjectSubmissionService : IProjectSubmissionService
 
         var e = new ProjectSubmission
         {
-            Type = "proposal",
+            Type = "idea_registration",
             StudentName = leaderName,
             Email = studentEmail,
             ProjectNumber = null,

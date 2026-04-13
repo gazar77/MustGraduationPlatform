@@ -68,6 +68,17 @@ export class AdminManagementComponent implements OnInit {
         ];
         this.projectSubmissionService.getSubmissions('proposal').subscribe(res => this.items = res);
         break;
+      case 'ideaRegistrations':
+        this.title = 'إدارة استمارات تسجيل المشاريع';
+        this.columns = [
+          { key: 'projectTitle', label: 'عنوان المشروع' },
+          { key: 'teamLeaderName', label: 'قائد الفريق' },
+          { key: 'supervisorName', label: 'المشرف' },
+          { key: 'submissionDate', label: 'التاريخ' },
+          { key: 'status', label: 'الحالة' }
+        ];
+        this.projectSubmissionService.getSubmissions('idea_registration').subscribe(res => this.items = res);
+        break;
       case 'contact':
         this.title = 'إدارة رسائل التواصل';
         this.columns = [
@@ -151,7 +162,7 @@ export class AdminManagementComponent implements OnInit {
         break;
     }
     this.showTableStatus = ['news', 'event', 'template', 'tutorialDocs', 'ideas'].includes(this.type);
-    this.showAddButton = !['proposals', 'contact', 'project1', 'project2'].includes(this.type);
+    this.showAddButton = !['proposals', 'ideaRegistrations', 'contact', 'project1', 'project2'].includes(this.type);
     if (this.type === 'news' || this.type === 'event') {
       this.showAddButton = false;
     }
@@ -161,13 +172,20 @@ export class AdminManagementComponent implements OnInit {
     return this.type === 'ideas';
   }
 
-  get showProposalPdfDownload(): boolean {
-    return this.modalConfig.isOpen && this.type === 'proposals' && !!this.editingItem?.registrationPayloadJson;
+  get showIdeaRegistrationPdfDownload(): boolean {
+    return this.modalConfig.isOpen && this.type === 'ideaRegistrations' && !!this.editingItem?.registrationPayloadJson;
   }
 
   get showProjectFileDownload(): boolean {
-    return this.modalConfig.isOpen && (this.type === 'project1' || this.type === 'project2') &&
-      !!this.editingItem?.fileUrl && this.editingItem?.fileName && this.editingItem.fileName !== '-';
+    if (!this.modalConfig.isOpen || !this.editingItem) return false;
+    const fn = this.editingItem.fileName;
+    const url = this.editingItem.fileUrl;
+    if (!fn || fn === '-' || !url) return false;
+    return (
+      this.type === 'project1' ||
+      this.type === 'project2' ||
+      this.type === 'proposals'
+    );
   }
 
   onAdd() {
@@ -270,6 +288,19 @@ export class AdminManagementComponent implements OnInit {
         { name: 'supervisorName', label: 'المشرف', type: 'readonly', value: item?.supervisorName },
         { name: 'fileName', label: 'الملف المرفق', type: 'readonly', value: item?.fileName },
         { name: 'notes', label: 'ملاحظات الإرسال', type: 'readonly', value: item?.notes },
+        { name: 'status', label: 'الحالة', type: 'select', options: ['Pending', 'Reviewed', 'Approved', 'Rejected'], value: item?.status || 'Pending' }
+      ];
+    } else if (this.type === 'ideaRegistrations') {
+      this.modalConfig.title = 'تفاصيل استمارة تسجيل المشروع';
+      this.modalConfig.fields = [
+        { name: 'projectNumber', label: 'رقم المشروع', type: 'readonly', value: item?.projectNumber },
+        { name: 'projectTitle', label: 'عنوان المشروع', type: 'readonly', value: item?.projectTitle },
+        { name: 'teamLeaderName', label: 'قائد الفريق', type: 'readonly', value: item?.teamLeaderName },
+        { name: 'supervisorName', label: 'المشرف', type: 'readonly', value: item?.supervisorName },
+        { name: 'studentName', label: 'اسم الطالب (المسجل)', type: 'readonly', value: item?.studentName },
+        { name: 'email', label: 'البريد', type: 'readonly', value: item?.email },
+        { name: 'fileName', label: 'المرفق', type: 'readonly', value: item?.fileName },
+        { name: 'notes', label: 'ملاحظات', type: 'readonly', value: item?.notes },
         { name: 'status', label: 'الحالة', type: 'select', options: ['Pending', 'Reviewed', 'Approved', 'Rejected'], value: item?.status || 'Pending' }
       ];
     } else if (this.type === 'contact') {
@@ -567,7 +598,10 @@ export class AdminManagementComponent implements OnInit {
         } as any);
         break;
       }
-      case 'proposals': obs = this.projectSubmissionService.updateStatus(this.editingItem.id, data.status); break;
+      case 'proposals':
+      case 'ideaRegistrations':
+        obs = this.projectSubmissionService.updateStatus(this.editingItem.id, data.status);
+        break;
       case 'contact': obs = this.contactService.updateMessageStatus(this.editingItem.id, data.status); break;
       case 'project1':
       case 'project2': obs = this.projectSubmissionService.updateStatus(this.editingItem.id, data.status); break;
@@ -593,7 +627,10 @@ export class AdminManagementComponent implements OnInit {
         case 'template': obs = this.templateService.deleteTemplate(item.id); break;
         case 'tutorialDocs': obs = this.tutorialDocumentService.deleteTutorial(item.id); break;
         case 'ideas': obs = this.ideaService.deleteIdea(item.id); break;
-        case 'proposals': obs = this.projectSubmissionService.deleteSubmission(item.id); break;
+        case 'proposals':
+        case 'ideaRegistrations':
+          obs = this.projectSubmissionService.deleteSubmission(item.id);
+          break;
         case 'contact': obs = this.contactService.deleteMessage(item.id); break;
         case 'project1':
         case 'project2': obs = this.projectSubmissionService.deleteSubmission(item.id); break;
@@ -630,6 +667,7 @@ export class AdminManagementComponent implements OnInit {
       case 'tutorialDocs': return 'Tutorial';
       case 'ideas': return 'Idea';
       case 'proposals': return 'Proposal';
+      case 'ideaRegistrations': return 'IdeaRegistration';
       case 'contact': return 'Contact';
       case 'project1':
       case 'project2': return 'Project';
@@ -645,6 +683,7 @@ export class AdminManagementComponent implements OnInit {
       case 'tutorialDocs': return 'درس تعليمي';
       case 'ideas': return 'مشروع';
       case 'proposals': return 'مقترح';
+      case 'ideaRegistrations': return 'استمارة تسجيل';
       case 'contact': return 'رسالة';
       case 'project1': return 'مشروع 1';
       case 'project2': return 'مشروع 2';
@@ -668,7 +707,7 @@ export class AdminManagementComponent implements OnInit {
       pdf.text(text, 10, y);
       y += 7;
     };
-    add('Graduation Project Registration');
+    add('Graduation Project Registration / استمارة تسجيل مشروع التخرج');
     y += 4;
     add(`Academic year: ${String(data['academicYear'] ?? '')}`);
     add(`Semester: ${String(data['semester'] ?? '')}`);

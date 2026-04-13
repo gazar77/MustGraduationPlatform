@@ -12,7 +12,7 @@ export class ProjectSubmissionService {
 
   constructor(private http: HttpClient) { }
 
-  getSubmissions(type?: 'proposal' | 'project1' | 'project2'): Observable<ProjectSubmission[]> {
+  getSubmissions(type?: 'proposal' | 'idea_registration' | 'project1' | 'project2'): Observable<ProjectSubmission[]> {
     const url = type ? `${this.apiUrl}?type=${type}` : this.apiUrl;
     return this.http.get<ProjectSubmission[]>(url).pipe(
       catchError(() => of([]))
@@ -36,7 +36,7 @@ export class ProjectSubmissionService {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
-  /** Idea registration form → manage proposals pipeline */
+  /** Idea registration form (stored as Type idea_registration). */
   submitIdeaRegistration(payload: {
     academicYear: string;
     semester: string;

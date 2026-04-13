@@ -3,6 +3,7 @@ namespace MustGraduationPlatform.Domain.Entities;
 public class ProjectSubmission
 {
     public int Id { get; set; }
+    /// <summary>Discriminator: proposal, idea_registration, project1, project2.</summary>
     public string Type { get; set; } = "proposal";
     public string? StudentName { get; set; }
     public string? Email { get; set; }
