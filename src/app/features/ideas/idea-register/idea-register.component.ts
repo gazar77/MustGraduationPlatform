@@ -9,12 +9,11 @@ import { SiteSettingsService } from '../../../core/services/site-settings.servic
 @Component({
     selector: 'app-idea-register',
     templateUrl: './idea-register.component.html',
-    styleUrls: ['./idea-register.component.scss'],
+    styleUrls: ['./idea-register.component.scss', './idea-register-print.scss'],
     standalone: false
 })
 export class IdeaRegisterComponent implements OnInit {
     registrationForm!: FormGroup;
-    exportBusy = false;
 
     constructor(
         private fb: FormBuilder,
@@ -135,68 +134,8 @@ export class IdeaRegisterComponent implements OnInit {
         }
     }
 
-    /** A4 width in CSS px at 96dpi — matches jsPDF A4 when scaled uniformly */
-    private static readonly pdfCaptureWidthPx = 794;
-
-    async exportPdf(): Promise<void> {
-        const el = document.getElementById('idea-register-document');
-        if (!el) return;
-        this.exportBusy = true;
-        try {
-            await document.fonts.ready;
-            const html2canvas = (await import('html2canvas')).default;
-            const { jsPDF } = await import('jspdf');
-            const wPx = IdeaRegisterComponent.pdfCaptureWidthPx;
-            const canvas = await html2canvas(el, {
-                scale: 2,
-                useCORS: true,
-                allowTaint: false,
-                logging: false,
-                backgroundColor: '#ffffff',
-                windowWidth: wPx,
-                onclone: (cloned) => {
-                    const root = cloned.getElementById('idea-register-document');
-                    root?.classList.add('pdf-one-page');
-                    if (root) {
-                        root.style.width = `${wPx}px`;
-                        root.style.maxWidth = `${wPx}px`;
-                        root.style.boxSizing = 'border-box';
-                    }
-                    const wrap = cloned.querySelector('.document-wrapper') as HTMLElement | null;
-                    if (wrap) {
-                        wrap.classList.remove('container', 'py-5');
-                        wrap.style.width = `${wPx}px`;
-                        wrap.style.maxWidth = `${wPx}px`;
-                        wrap.style.padding = '0';
-                        wrap.style.margin = '0 auto';
-                        wrap.style.boxSizing = 'border-box';
-                    }
-                    cloned.querySelectorAll('.no-print, .idea-export-actions').forEach((n) => n.remove());
-                }
-            });
-            const imgData = canvas.toDataURL('image/png', 1.0);
-            const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const pageHeight = pdf.internal.pageSize.getHeight();
-            const marginMm = 10;
-            const maxW = pageWidth - marginMm * 2;
-            const maxH = pageHeight - marginMm * 2;
-            const canvasRatio = canvas.width / canvas.height;
-            let imgW = maxW;
-            let imgH = imgW / canvasRatio;
-            if (imgH > maxH) {
-                imgH = maxH;
-                imgW = imgH * canvasRatio;
-            }
-            const x = (pageWidth - imgW) / 2;
-            const y = (pageHeight - imgH) / 2;
-            pdf.addImage(imgData, 'PNG', x, y, imgW, imgH);
-            pdf.save('graduation-project-registration.pdf');
-        } catch (e) {
-            console.error(e);
-            alert('PDF export failed.');
-        } finally {
-            this.exportBusy = false;
-        }
+    /** Opens the browser print dialog; user can print or save as PDF (same as reference Pdf.html). */
+    printPdf(): void {
+        window.print();
     }
 }

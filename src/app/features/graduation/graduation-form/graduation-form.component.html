@@ -9,8 +9,8 @@
         <p class="hint">ملاحظة: تأكد من تمكين خيار "رسومات الخلفية" في إعدادات الطباعة للحصول على أفضل نتيجة.</p>
     </div>
 
-    <div class="a4-container" *ngIf="!loading && !error">
-        <div class="a4-page shadow">
+    <div class="a4-container page-wrapper" *ngIf="!loading && !error">
+        <div class="a4-page shadow must-pdf-paper">
             <!-- Header -->
             <div class="form-header">
                 <div class="uni-info">

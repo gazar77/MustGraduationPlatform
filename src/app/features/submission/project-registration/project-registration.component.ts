@@ -13,13 +13,15 @@ export class ProjectRegistrationComponent implements OnInit {
   titleKey = '';
   instructionsKey = '';
   deadline = '2026-05-15';
-  selectedFile: File | null = null;
+  /** Up to 6 files for project registration phases */
+  selectedFiles: File[] = [];
+  readonly maxFiles = 6;
   registrationForm!: FormGroup;
 
   constructor(
     private fb: FormBuilder,
-    private route: ActivatedRoute, 
-    public langService: LanguageService, 
+    private route: ActivatedRoute,
+    public langService: LanguageService,
     private projectSubmissionService: ProjectSubmissionService
   ) {}
 
@@ -32,7 +34,7 @@ export class ProjectRegistrationComponent implements OnInit {
       notes: ['']
     });
 
-    this.route.data.subscribe(data => {
+    this.route.data.subscribe((data) => {
       const type = data['type'];
       if (type === 'reg1') {
         this.titleKey = 'submission.registration.reg1Title';
@@ -50,27 +52,42 @@ export class ProjectRegistrationComponent implements OnInit {
   ]);
   private static readonly maxBytes = 25 * 1024 * 1024;
 
-  onFileChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) {
-      this.selectedFile = null;
-      return;
-    }
+  private validateFile(file: File): boolean {
     const ext = '.' + (file.name.split('.').pop() || '').toLowerCase();
     if (!ProjectRegistrationComponent.allowedExt.has(ext) || file.size > ProjectRegistrationComponent.maxBytes) {
       const ar = typeof localStorage !== 'undefined' && localStorage.getItem('lang') === 'ar';
       alert(ar ? 'نوع الملف غير مسموح أو الحجم يتجاوز 25 ميجابايت.' : 'File type not allowed or file exceeds 25 MB.');
+      return false;
+    }
+    return true;
+  }
+
+  onFilesChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const picked = input.files;
+    if (!picked?.length) {
       input.value = '';
-      this.selectedFile = null;
       return;
     }
-    this.selectedFile = file;
+    const next: File[] = [...this.selectedFiles];
+    for (let i = 0; i < picked.length; i++) {
+      if (next.length >= this.maxFiles) break;
+      const file = picked.item(i)!;
+      if (next.some((f) => f.name === file.name && f.size === file.size)) continue;
+      if (!this.validateFile(file)) continue;
+      next.push(file);
+    }
+    this.selectedFiles = next;
+    input.value = '';
+  }
+
+  removeFile(index: number): void {
+    this.selectedFiles = this.selectedFiles.filter((_, i) => i !== index);
   }
 
   onSubmit(): void {
-    if (this.registrationForm.valid && this.selectedFile) {
-      this.route.data.subscribe(data => {
+    if (this.registrationForm.valid && this.selectedFiles.length > 0) {
+      this.route.data.subscribe((data) => {
         const type = data['type'] === 'reg1' ? 'project1' : 'project2';
         const v = this.registrationForm.value;
         const fd = new FormData();
@@ -81,11 +98,11 @@ export class ProjectRegistrationComponent implements OnInit {
         fd.append('projectTitle', v.projectTitle);
         fd.append('supervisorName', v.supervisorName);
         fd.append('notes', v.notes ?? '');
-        fd.append('file', this.selectedFile!, this.selectedFile!.name);
+        this.selectedFiles.forEach((f) => fd.append('Files', f, f.name));
         this.projectSubmissionService.addSubmissionWithFile(fd).subscribe({
           next: () => {
             alert(this.langService.translate('submission.registration.successMsg') + ' ' + this.langService.translate(this.titleKey));
-            this.selectedFile = null;
+            this.selectedFiles = [];
             this.registrationForm.reset();
           },
           error: () => {
@@ -94,7 +111,7 @@ export class ProjectRegistrationComponent implements OnInit {
         });
       });
     } else {
-        this.registrationForm.markAllAsTouched();
+      this.registrationForm.markAllAsTouched();
     }
   }
 }

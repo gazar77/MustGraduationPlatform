@@ -36,6 +36,11 @@ export class ProjectSubmissionService {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
+  /** Admin: ZIP of all uploaded files for a submission. */
+  downloadAllAttachmentsZip(id: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${id}/download-all`, { responseType: 'blob' });
+  }
+
   /** Idea registration form (stored as Type idea_registration). */
   submitIdeaRegistration(payload: {
     academicYear: string;

@@ -99,7 +99,28 @@ internal static class EntityMappers
         e.Notes,
         e.RegistrationPayloadJson,
         e.Status,
-        e.SubmissionDate);
+        e.SubmissionDate,
+        BuildSubmissionAttachmentsList(e));
+
+    internal static IReadOnlyList<SubmissionAttachmentDto>? BuildSubmissionAttachmentsList(ProjectSubmission e)
+    {
+        if (!string.IsNullOrWhiteSpace(e.AttachmentsJson))
+        {
+            try
+            {
+                var list = JsonSerializer.Deserialize<List<SubmissionAttachmentDto>>(e.AttachmentsJson, Json);
+                if (list is { Count: > 0 }) return list;
+            }
+            catch
+            {
+                // ignore
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(e.FileStoragePath) && !string.IsNullOrWhiteSpace(e.FileName) && e.FileName != "-")
+            return new[] { new SubmissionAttachmentDto(e.FileName, e.FileStoragePath) };
+        return null;
+    }
 
     public static ContactMessageDto ToDto(ContactMessage e) => new(
         e.Id,

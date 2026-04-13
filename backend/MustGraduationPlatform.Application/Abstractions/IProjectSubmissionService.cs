@@ -15,6 +15,15 @@ public interface IProjectSubmissionService
         string? contentType,
         CancellationToken ct = default);
 
+    /// <summary>Uploads multiple files (e.g. project registration 1/2, max 6).</summary>
+    Task<ProjectSubmissionDto> CreateWithFilesAsync(
+        ProjectSubmissionCreateDto dto,
+        IReadOnlyList<(Stream Stream, string OriginalName, string? ContentType)> files,
+        CancellationToken ct = default);
+
+    /// <summary>ZIP stream of all attachment files, or null if none on disk.</summary>
+    Task<Stream?> GetAttachmentsZipStreamAsync(int id, CancellationToken ct = default);
+
     Task<ProjectSubmissionDto?> UpdateStatusAsync(int id, ProjectSubmissionStatusUpdateDto dto, CancellationToken ct = default);
     Task<bool> DeleteAsync(int id, CancellationToken ct = default);
 

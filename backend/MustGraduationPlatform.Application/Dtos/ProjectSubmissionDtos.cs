@@ -1,5 +1,7 @@
 namespace MustGraduationPlatform.Application.Dtos;
 
+public record SubmissionAttachmentDto(string FileName, string FileUrl);
+
 public record ProjectSubmissionDto(
     int Id,
     string Type,
@@ -14,7 +16,8 @@ public record ProjectSubmissionDto(
     string Notes,
     string? RegistrationPayloadJson,
     string Status,
-    DateTime SubmissionDate);
+    DateTime SubmissionDate,
+    IReadOnlyList<SubmissionAttachmentDto>? Attachments);
 
 public record ProjectSubmissionCreateDto(
     string Type,

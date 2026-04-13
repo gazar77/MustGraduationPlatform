@@ -13,6 +13,8 @@ public class ProjectSubmission
     public string? TeamLeaderName { get; set; }
     public string FileName { get; set; } = string.Empty;
     public string? FileStoragePath { get; set; }
+    /// <summary>JSON array of { "fileName", "fileUrl" } for multi-file submissions (project1/project2).</summary>
+    public string? AttachmentsJson { get; set; }
     public string Notes { get; set; } = string.Empty;
     /// <summary>JSON payload for idea registration form (team, titles, etc.).</summary>
     public string? RegistrationPayloadJson { get; set; }

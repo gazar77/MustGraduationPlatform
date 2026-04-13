@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>استمارة تسجيل مشروع التخرج</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page-wrapper">
+    <div class="actions no-print">
+      <button onclick="window.print()">طباعة / حفظ PDF</button>
+      <button onclick="clearForm()">مسح البيانات</button>
+    </div>
+
+    <div class="paper" id="form-paper">
+      <header class="header">
+        <div class="header-block right-block">
+          <div class="ar-main">جامعة مصر</div>
+          <div class="ar-sub">للعلوم والتكنولوجيا</div>
+          <div class="ar-faculty">كلية تكنولوجيا المعلومات</div>
+        </div>
+
+        <div class="logo-block">
+          <img src="must-logo.png" alt="MUST Logo" />
+        </div>
+
+        <div class="header-block left-block" dir="ltr">
+          <div class="en-main">MISR UNIVERSITY</div>
+          <div class="en-sub">FOR SCIENCE &amp; TECHNOLOGY</div>
+          <div class="en-faculty">College of Information Technology</div>
+        </div>
+      </header>
+
+      <div class="header-line"></div>
+
+      <section class="title-section">
+        <div class="main-title">استمارة تسجيل مشروع التخرج</div>
+      </section>
+
+      <section class="fields-section">
+        <div class="field-row">
+          <label>عنوان المشروع باللغة العربية:</label>
+          <input type="text" />
+        </div>
+
+        <div class="field-row">
+          <label>عنوان المشروع باللغة الإنجليزية:</label>
+          <input type="text" />
+        </div>
+
+        <div class="field-row">
+          <label>مجال المشروع:</label>
+          <input type="text" />
+        </div>
+
+        <div class="field-row">
+          <label>اسم عضو هيئة التدريس المشرف على المشروع:</label>
+          <input type="text" />
+        </div>
+
+        <div class="field-row">
+          <label>اسم عضو الهيئة التدريسية المعاونة المشرف على المشروع:</label>
+          <input type="text" />
+        </div>
+
+        <div class="field-row">
+          <label>اسم الهيئة الخارجية الداعمة للمشروع (إن وجدت):</label>
+          <input type="text" />
+        </div>
+
+        <div class="field-row only-label">
+          <label>أسماء طلاب المشروع:</label>
+        </div>
+      </section>
+
+      <section class="table-section">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-no">م</th>
+              <th class="col-name">اسم الطالب</th>
+              <th class="col-id">الرقم الجامعي</th>
+              <th class="col-phone">الموبايل</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td><input type="text" /></td>
+              <td><input type="text" /></td>
+              <td><input type="text" /></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td><input type="text" /></td>
+              <td><input type="text" /></td>
+              <td><input type="text" /></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td><input type="text" /></td>
+              <td><input type="text" /></td>
+              <td><input type="text" /></td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td><input type="text" /></td>
+              <td><input type="text" /></td>
+              <td><input type="text" /></td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td><input type="text" /></td>
+              <td><input type="text" /></td>
+              <td><input type="text" /></td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td><input type="text" /></td>
+              <td><input type="text" /></td>
+              <td><input type="text" /></td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td><input type="text" /></td>
+              <td><input type="text" /></td>
+              <td><input type="text" /></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="notes-section">
+        <div class="notes-title">ملاحظات هامة:</div>
+        <textarea></textarea>
+        <div class="important-note">- لا يزيد عدد فريق المشروع الواحد عن 7 طلاب ولا يقل عن 5 طلاب</div>
+      </section>
+
+      <section class="signatures">
+        <div>المشرف على المشروع</div>
+        <div>رؤساء الأقسام</div>
+        <div>وكيل الكلية لشئون التعليم والطلاب</div>
+        <div>عميد الكلية</div>
+      </section>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

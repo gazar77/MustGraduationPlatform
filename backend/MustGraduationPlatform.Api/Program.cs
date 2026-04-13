@@ -22,7 +22,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.Configure<FormOptions>(o =>
 {
-    o.MultipartBodyLengthLimit = 26_214_400;
+    o.MultipartBodyLengthLimit = 160_000_000; // up to 6 × 25 MB project registration files
 });
 
 var jwt = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()

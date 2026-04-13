@@ -12,6 +12,7 @@ namespace MustGraduationPlatform.Api.Controllers.V1;
 [Authorize]
 public class ProjectSubmissionsController : ControllerBase
 {
+    private const int MaxProjectRegistrationFiles = 6;
     private readonly IProjectSubmissionService _submissions;
 
     public ProjectSubmissionsController(IProjectSubmissionService submissions)
@@ -40,13 +41,22 @@ public class ProjectSubmissionsController : ControllerBase
     [HttpPost("with-file")]
     [Consumes("multipart/form-data")]
     [Authorize(Roles = "Student,Admin,SuperAdmin")]
-    [RequestFormLimits(MultipartBodyLengthLimit = 26_214_400)]
+    [RequestFormLimits(MultipartBodyLengthLimit = 160_000_000)]
     public async Task<ActionResult<ProjectSubmissionDto>> CreateWithFile([FromForm] ProjectSubmissionFormModel model, CancellationToken ct)
     {
-        if (model.File is null || model.File.Length == 0)
-            return BadRequest(new { message = "File is required." });
+        var multi = model.Files?.Where(f => f is { Length: > 0 }).ToList() ?? new List<Microsoft.AspNetCore.Http.IFormFile>();
+        if (multi.Count == 0 && model.File is { Length: > 0 })
+            multi.Add(model.File);
 
-        await using var stream = model.File.OpenReadStream();
+        if (multi.Count == 0)
+            return BadRequest(new { message = "At least one file is required." });
+
+        var isProjectReg = model.Type is "project1" or "project2";
+        if (isProjectReg && multi.Count > MaxProjectRegistrationFiles)
+            return BadRequest(new { message = $"Maximum {MaxProjectRegistrationFiles} files allowed." });
+        if (!isProjectReg && multi.Count > 1)
+            return BadRequest(new { message = "Only one file is allowed for this submission type." });
+
         var dto = new ProjectSubmissionCreateDto(
             model.Type,
             model.StudentName,
@@ -55,9 +65,38 @@ public class ProjectSubmissionsController : ControllerBase
             model.ProjectTitle,
             model.SupervisorName,
             model.TeamLeaderName,
-            model.File.FileName,
+            multi[0].FileName,
             model.Notes ?? string.Empty);
-        return Ok(await _submissions.CreateWithFileAsync(dto, stream, model.File.FileName, model.File.ContentType, ct));
+
+        if (multi.Count == 1)
+        {
+            await using var stream = multi[0].OpenReadStream();
+            return Ok(await _submissions.CreateWithFileAsync(dto, stream, multi[0].FileName, multi[0].ContentType, ct));
+        }
+
+        var parts = new List<(Stream Stream, string OriginalName, string? ContentType)>();
+        foreach (var f in multi)
+            parts.Add((f.OpenReadStream(), f.FileName, f.ContentType));
+
+        try
+        {
+            return Ok(await _submissions.CreateWithFilesAsync(dto, parts, ct));
+        }
+        finally
+        {
+            foreach (var (s, _, _) in parts)
+                await s.DisposeAsync();
+        }
+    }
+
+    [HttpGet("{id:int}/download-all")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
+    public async Task<IActionResult> DownloadAll(int id, CancellationToken ct)
+    {
+        var stream = await _submissions.GetAttachmentsZipStreamAsync(id, ct);
+        if (stream is null)
+            return NotFound();
+        return File(stream, "application/zip", $"project-submission-{id}.zip");
     }
 
     [HttpPatch("{id:int}/status")]

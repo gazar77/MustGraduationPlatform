@@ -1,0 +1,328 @@
+/* Print / screen layout from reference pdf.css — scoped to idea registration */
+.registration-container {
+  background: #e9e9e9;
+}
+
+.document-wrapper.page-wrapper {
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.pdf-actions {
+  width: 794px;
+  max-width: 100%;
+  margin: 0 auto 15px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+
+  button {
+    border: 1px solid #777;
+    background: #fff;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+}
+
+.must-pdf-paper {
+  width: 794px;
+  max-width: 100%;
+  min-height: 1123px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 22px 40px 28px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.08);
+  font-family: 'Times New Roman', Tahoma, serif;
+  color: #000;
+  position: relative;
+  box-sizing: border-box;
+
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    direction: ltr;
+  }
+
+  .header-block {
+    width: 220px;
+  }
+
+  .right-block {
+    text-align: right;
+    direction: rtl;
+  }
+
+  .left-block {
+    text-align: left;
+  }
+
+  .logo-block {
+    width: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+    img {
+      max-width: 90px;
+      max-height: 90px;
+      object-fit: contain;
+    }
+  }
+
+  .en-main,
+  .ar-main {
+    font-size: 19px;
+    font-weight: bold;
+    line-height: 1.2;
+  }
+
+  .en-sub,
+  .ar-sub {
+    font-size: 13px;
+    line-height: 1.3;
+    margin-top: 2px;
+  }
+
+  .en-faculty,
+  .ar-faculty {
+    font-size: 16px;
+    margin-top: 5px;
+    color: #6da57d;
+    font-weight: 600;
+  }
+
+  .header-line {
+    margin-top: 8px;
+    height: 3px;
+    background: linear-gradient(to left, #73b58d 0%, #73b58d 35%, #546f97 35%, #546f97 100%);
+  }
+
+  .title-section {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 24px;
+  }
+
+  .main-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .fields-section {
+    margin-top: 10px;
+  }
+
+  .field-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+
+    label {
+      white-space: nowrap;
+      font-size: 20px;
+    }
+
+    input,
+    select {
+      flex: 1;
+      border: none;
+      border-bottom: 1px dotted #222;
+      outline: none;
+      font-size: 18px;
+      height: 32px;
+      background: transparent;
+      font-family: inherit;
+    }
+
+    select {
+      cursor: pointer;
+    }
+  }
+
+  .only-label {
+    margin-top: 8px;
+    margin-bottom: 10px;
+  }
+
+  .table-section {
+    margin-top: 8px;
+  }
+
+  table.idea-pdf-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+
+    th,
+    td {
+      border: 1px solid #444;
+      text-align: center;
+      height: 42px;
+      font-size: 18px;
+      padding: 0;
+    }
+
+    th {
+      font-weight: 700;
+      background: #f8f8f8;
+    }
+
+    .col-no {
+      width: 7%;
+    }
+
+    .col-name {
+      width: 43%;
+    }
+
+    .col-id {
+      width: 25%;
+    }
+
+    .col-phone {
+      width: 22%;
+    }
+
+    .col-action {
+      width: 8%;
+    }
+
+    td input {
+      width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+      padding: 0 8px;
+      font-size: 17px;
+      font-family: inherit;
+      text-align: center;
+      background: transparent;
+    }
+  }
+
+  .notes-section {
+    margin-top: 14px;
+  }
+
+  .notes-title {
+    font-size: 18px;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  .notes-item {
+    margin: 0 0 8px;
+    font-size: 17px;
+    line-height: 1.4;
+  }
+
+  .important-note {
+    margin-top: 12px;
+    font-size: 17px;
+  }
+
+  .signatures {
+    margin-top: 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 600;
+
+    > div {
+      text-align: center;
+      flex: 1;
+    }
+  }
+
+  .section-heading {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 18px 0 10px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 4px;
+  }
+
+  .error-msg {
+    font-size: 12px;
+    color: #b91c1c;
+    margin-top: 4px;
+  }
+}
+
+@media (max-width: 900px) {
+  .pdf-actions,
+  .must-pdf-paper {
+    width: 100%;
+  }
+
+  .must-pdf-paper {
+    padding: 18px;
+  }
+
+  .must-pdf-paper .header {
+    gap: 10px;
+  }
+
+  .must-pdf-paper .header-block {
+    width: 32%;
+  }
+
+  .must-pdf-paper .logo-block {
+    width: 80px;
+  }
+
+  .must-pdf-paper .logo-block img {
+    max-width: 70px;
+    max-height: 70px;
+  }
+
+  .must-pdf-paper .main-title {
+    font-size: 22px;
+  }
+
+  .must-pdf-paper .field-row label,
+  .must-pdf-paper .field-row input,
+  .must-pdf-paper .field-row select,
+  .must-pdf-paper table.idea-pdf-table th,
+  .must-pdf-paper table.idea-pdf-table td {
+    font-size: 14px;
+  }
+}
+
+@media print {
+  .no-print,
+  app-hero-banner {
+    display: none !important;
+  }
+
+  .registration-container,
+  .graduation-form-page {
+    background: #fff !important;
+  }
+
+  .document-wrapper.page-wrapper {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+
+  .must-pdf-paper {
+    width: 210mm !important;
+    min-height: 297mm !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    padding: 15mm 12mm 12mm !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+}

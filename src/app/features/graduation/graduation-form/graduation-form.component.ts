@@ -4,7 +4,7 @@ import { GraduationService } from '../../../core/services/graduation.service';
 @Component({
   selector: 'app-graduation-form',
   templateUrl: './graduation-form.component.html',
-  styleUrls: ['./graduation-form.component.scss']
+  styleUrls: ['./graduation-form.component.scss', '../../ideas/idea-register/idea-register-print.scss']
 })
 export class GraduationFormComponent implements OnInit {
   today: Date = new Date();

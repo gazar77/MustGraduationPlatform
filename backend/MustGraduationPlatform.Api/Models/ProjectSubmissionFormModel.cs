@@ -12,5 +12,8 @@ public class ProjectSubmissionFormModel
     public string? SupervisorName { get; set; }
     public string? TeamLeaderName { get; set; }
     public string? Notes { get; set; }
+    /// <summary>Single-file upload (proposal, legacy).</summary>
     public IFormFile? File { get; set; }
+    /// <summary>Multi-file upload (project1/project2), max 6.</summary>
+    public List<IFormFile>? Files { get; set; }
 }

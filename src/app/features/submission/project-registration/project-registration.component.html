@@ -37,20 +37,29 @@
                 </section>
 
                 <section class="upload-section mt-4">
-                    <div class="upload-box" [class.has-file]="selectedFile">
+                    <p class="upload-hint text-muted small mb-2">{{ langService.translate('submission.registration.multiUploadHint') }}</p>
+                    <div class="upload-box" [class.has-file]="selectedFiles.length > 0">
                         <label for="reg-file" class="upload-label">
-                            <i class="fas" [ngClass]="selectedFile ? 'fa-file-check' : 'fa-file-upload'"></i>
+                            <i class="fas" [ngClass]="selectedFiles.length ? 'fa-file-check' : 'fa-file-upload'"></i>
                             <div class="label-text">
-                                <span class="main-text">{{ selectedFile ? selectedFile.name : langService.translate('submission.registration.dragFile') }}</span>
+                                <span class="main-text">{{ langService.translate('submission.registration.dragFile') }}</span>
                                 <span class="sub-text">{{ langService.translate('submission.registration.supportedFiles') }}</span>
                             </div>
-                            <input type="file" id="reg-file" (change)="onFileChange($event)" hidden
+                            <input type="file" id="reg-file" (change)="onFilesChange($event)" hidden multiple
                                    accept=".pdf,.doc,.docx,.ppt,.pptx,.zip,.rar,.7z,.png,.jpg,.jpeg,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation">
                         </label>
-                        <button *ngIf="selectedFile" class="btn-remove" type="button" (click)="selectedFile = null">
-                            <i class="fas fa-times"></i>
-                        </button>
                     </div>
+                    <ul class="selected-files list-unstyled mt-3 mb-0" *ngIf="selectedFiles.length">
+                        <li *ngFor="let f of selectedFiles; let i = index" class="selected-files__row d-flex align-items-center justify-content-between gap-2 py-1 border-bottom">
+                            <span class="text-truncate"><i class="fas fa-paperclip me-2 text-secondary"></i>{{ f.name }}</span>
+                            <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeFile(i)" [attr.aria-label]="langService.translate('submission.registration.removeFile')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </li>
+                    </ul>
+                    <p class="small text-muted mt-2 mb-0" *ngIf="selectedFiles.length">
+                        <strong>{{ selectedFiles.length }}</strong> {{ langService.translate('submission.registration.filesSelectedSuffix') }}
+                    </p>
                 </section>
 
                 <section class="notes-section mt-4">
@@ -60,7 +69,7 @@
 
                 <footer class="card-footer mt-4">
                     <button type="button" class="btn btn-outline" routerLink="/dashboard">{{ langService.translate('submission.registration.cancel') }}</button>
-                    <button type="submit" class="btn btn-primary" [disabled]="registrationForm.invalid || !selectedFile">
+                    <button type="submit" class="btn btn-primary" [disabled]="registrationForm.invalid || selectedFiles.length === 0">
                         <i class="fas fa-paper-plane"></i>
                         {{ langService.translate('submission.registration.submitDocs') }}
                     </button>

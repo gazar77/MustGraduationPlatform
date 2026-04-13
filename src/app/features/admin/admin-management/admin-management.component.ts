@@ -95,10 +95,17 @@ export class AdminManagementComponent implements OnInit {
           { key: 'projectNumber', label: 'رقم المشروع' },
           { key: 'projectTitle', label: 'اسم المشروع' },
           { key: 'teamLeaderName', label: 'قائد الفريق' },
-          { key: 'fileName', label: 'اسم الملف' },
+          { key: 'attachmentCount', label: 'عدد الملفات' },
+          { key: 'fileName', label: 'ملخص الملفات' },
           { key: 'status', label: 'الحالة' }
         ];
-        this.projectSubmissionService.getSubmissions('project1').subscribe(res => this.items = res);
+        this.projectSubmissionService.getSubmissions('project1').subscribe((res) => {
+          this.items = res.map((r) => ({
+            ...r,
+            attachmentCount:
+              r.attachments?.length ?? (r.fileName && r.fileName !== '-' ? 1 : 0)
+          }));
+        });
         break;
       case 'project2':
         this.title = 'إدارة تسليمات المشروع 2';
@@ -106,10 +113,17 @@ export class AdminManagementComponent implements OnInit {
           { key: 'projectNumber', label: 'رقم المشروع' },
           { key: 'projectTitle', label: 'اسم المشروع' },
           { key: 'teamLeaderName', label: 'قائد الفريق' },
-          { key: 'fileName', label: 'اسم الملف' },
+          { key: 'attachmentCount', label: 'عدد الملفات' },
+          { key: 'fileName', label: 'ملخص الملفات' },
           { key: 'status', label: 'الحالة' }
         ];
-        this.projectSubmissionService.getSubmissions('project2').subscribe(res => this.items = res);
+        this.projectSubmissionService.getSubmissions('project2').subscribe((res) => {
+          this.items = res.map((r) => ({
+            ...r,
+            attachmentCount:
+              r.attachments?.length ?? (r.fileName && r.fileName !== '-' ? 1 : 0)
+          }));
+        });
         break;
       case 'news':
         this.title = 'إدارة الأخبار';
@@ -178,6 +192,10 @@ export class AdminManagementComponent implements OnInit {
 
   get showProjectFileDownload(): boolean {
     if (!this.modalConfig.isOpen || !this.editingItem) return false;
+    const atts = this.editingItem.attachments as Array<{ fileName: string; fileUrl: string }> | undefined;
+    if (Array.isArray(atts) && atts.length > 0) {
+      return this.type === 'project1' || this.type === 'project2' || this.type === 'proposals';
+    }
     const fn = this.editingItem.fileName;
     const url = this.editingItem.fileUrl;
     if (!fn || fn === '-' || !url) return false;
@@ -313,13 +331,19 @@ export class AdminManagementComponent implements OnInit {
         { name: 'status', label: 'حالة الرد', type: 'select', options: ['Pending', 'Reviewed', 'Accepted', 'Rejected'], value: item?.status || 'Pending' }
       ];
     } else if (this.type === 'project1' || this.type === 'project2') {
+      const attCount = Array.isArray(item?.attachments)
+        ? item.attachments.length
+        : item?.fileName && item?.fileName !== '-'
+          ? 1
+          : 0;
       this.modalConfig.title = 'تفاصيل التسليم';
       this.modalConfig.fields = [
         { name: 'projectNumber', label: 'رقم المشروع', type: 'readonly', value: item?.projectNumber },
         { name: 'projectTitle', label: 'اسم المشروع', type: 'readonly', value: item?.projectTitle },
         { name: 'teamLeaderName', label: 'اسم قائد الفريق', type: 'readonly', value: item?.teamLeaderName },
         { name: 'supervisorName', label: 'المشرف المتابع', type: 'readonly', value: item?.supervisorName },
-        { name: 'fileName', label: 'الملف المرفق', type: 'readonly', value: item?.fileName },
+        { name: 'attachmentCount', label: 'عدد الملفات المرفوعة', type: 'readonly', value: attCount },
+        { name: 'fileName', label: 'ملخص أسماء الملفات', type: 'readonly', value: item?.fileName },
         { name: 'notes', label: 'الملاحظات الإضافية', type: 'readonly', value: item?.notes },
         { name: 'status', label: 'تقييم التسليم', type: 'select', options: ['Pending', 'Reviewed', 'Accepted', 'Rejected'], value: item?.status || 'Pending' }
       ];
@@ -728,10 +752,28 @@ export class AdminManagementComponent implements OnInit {
   }
 
   openUploadedProjectFile(): void {
-    const url = this.resolveUploadUrl(this.editingItem?.fileUrl as string | undefined);
-    if (url) {
-      window.open(url, '_blank', 'noopener,noreferrer');
+    const id = this.editingItem?.id as number | undefined;
+    if (!id) return;
+    const hasZip =
+      this.type === 'project1' ||
+      this.type === 'project2' ||
+      this.type === 'proposals';
+    if (!hasZip) {
+      const url = this.resolveUploadUrl(this.editingItem?.fileUrl as string | undefined);
+      if (url) window.open(url, '_blank', 'noopener,noreferrer');
+      return;
     }
+    this.projectSubmissionService.downloadAllAttachmentsZip(id).subscribe({
+      next: (blob) => {
+        const u = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = u;
+        a.download = `project-submission-${id}.zip`;
+        a.click();
+        URL.revokeObjectURL(u);
+      },
+      error: () => alert('تعذر تحميل الملفات. تأكد من صلاحياتك واتصال الخادم.')
+    });
   }
 
   private resolveUploadUrl(path: string | null | undefined): string | null {
