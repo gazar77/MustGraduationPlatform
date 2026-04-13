@@ -1,4 +1,4 @@
-<div class="hero-banner" [class.compact]="compact" [style.backgroundImage]="compact ? 'none' : 'url(\'' + currentBgImage + '\')' " [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
+<div class="hero-banner" [class.compact]="compact" [style.backgroundImage]="compact ? 'none' : (currentBgImage ? 'url(\'' + currentBgImage + '\')' : 'none')" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
   <div class="overlay"></div>
 
   <div class="hero-content container">

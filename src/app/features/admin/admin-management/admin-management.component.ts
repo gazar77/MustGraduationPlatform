@@ -208,10 +208,20 @@ export class AdminManagementComponent implements OnInit {
     } else if (this.type === 'ideas') {
       this.modalConfig.title = isEdit ? 'تعديل فكرة مشروع' : 'إضافة فكرة مشروع جديدة';
       const catOpts = this.ideaCategoryOptions.length ? this.ideaCategoryOptions : ['—'];
+      const skillsJoined =
+        Array.isArray(item?.requiredSkills) && item.requiredSkills.length
+          ? item.requiredSkills.join(', ')
+          : '';
       this.modalConfig.fields = [
         { name: 'title', label: 'عنوان المشروع', type: 'text', value: item?.title },
         { name: 'category', label: 'التصنيف', type: 'select', options: catOpts, value: item?.category },
         { name: 'description', label: 'الوصف', type: 'textarea', value: item?.description },
+        {
+          name: 'requiredSkillsText',
+          label: 'المهارات المطلوبة (افصل بينها بفواصل أو أسطر)',
+          type: 'textarea',
+          value: skillsJoined
+        },
         { name: 'supervisorName', label: 'اسم المشرف', type: 'text', value: item?.supervisorName }
       ];
     } else if (this.type === 'proposals') {
@@ -246,6 +256,17 @@ export class AdminManagementComponent implements OnInit {
         { name: 'status', label: 'تقييم التسليم', type: 'select', options: ['Pending', 'Reviewed', 'Accepted', 'Rejected'], value: item?.status || 'Pending' }
       ];
     }
+  }
+
+  /** Comma or newline separated skills from the ideas modal textarea. */
+  private parseRequiredSkillsText(raw: unknown): string[] {
+    if (raw == null || typeof raw !== 'string') {
+      return [];
+    }
+    return raw
+      .split(/[\n,]+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
   }
 
   handleSave(data: any) {
@@ -348,7 +369,7 @@ export class AdminManagementComponent implements OnInit {
           supervisorName: data.supervisorName,
           status: 'Open',
           difficulty: 'Medium',
-          requiredSkills: [],
+          requiredSkills: this.parseRequiredSkillsText(data.requiredSkillsText),
           maxTeamSize: 4,
           isVisible: true,
           displayOrder: 0
@@ -459,7 +480,7 @@ export class AdminManagementComponent implements OnInit {
           supervisorName: data.supervisorName,
           status: item.status,
           difficulty: item.difficulty ?? 'Medium',
-          requiredSkills: Array.isArray(item.requiredSkills) ? item.requiredSkills : [],
+          requiredSkills: this.parseRequiredSkillsText(data.requiredSkillsText),
           maxTeamSize: item.maxTeamSize ?? 4,
           supervisorDoctorId: item.supervisorDoctorId ?? null,
           isVisible: item.isVisible,

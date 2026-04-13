@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LanguageService } from '../../../core/services/language.service';
 import { SiteSettingsService } from '../../../core/services/site-settings.service';
-import { DEFAULT_HERO_BANNER_IMAGES, HERO_BANNER_BG_IMAGES_KEY } from '../../../core/constants/hero-banner-settings';
+import { HERO_BANNER_BG_IMAGES_KEY } from '../../../core/constants/hero-banner-settings';
 import { fileUrlToAbsolute } from '../../../core/utils/api-url.util';
 import { QuickNavLinksComponent } from '../quick-nav-links/quick-nav-links.component';
 
@@ -21,8 +21,8 @@ export class HeroBannerComponent implements OnInit, OnDestroy {
   /** When set to a non-empty array, skips API and uses these paths only. */
   @Input() bgImages: string[] | null = null;
 
-  /** Resolved paths (from input override, API, or defaults). */
-  displayImages: string[] = [...DEFAULT_HERO_BANNER_IMAGES];
+  /** Resolved paths from input override or API (server-driven only). */
+  displayImages: string[] = [];
 
   currentSlideIndex = 0;
   private slideIntervalId: ReturnType<typeof setInterval> | null = null;
@@ -34,7 +34,7 @@ export class HeroBannerComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.bgImages && this.bgImages.length > 0) {
-      this.displayImages = [...this.bgImages];
+      this.displayImages = HeroBannerComponent.normalizeImagePaths(this.bgImages);
       this.startSlider();
       return;
     }
@@ -44,15 +44,11 @@ export class HeroBannerComponent implements OnInit, OnDestroy {
         const raw = this.siteSettingsService.parseStoredValue(res.value);
         try {
           const parsed = JSON.parse(raw) as unknown;
-          if (
-            Array.isArray(parsed) &&
-            parsed.length > 0 &&
-            parsed.every((x: unknown) => typeof x === 'string')
-          ) {
-            this.displayImages = parsed as string[];
+          if (Array.isArray(parsed) && parsed.every((x: unknown) => typeof x === 'string')) {
+            this.displayImages = HeroBannerComponent.normalizeImagePaths(parsed as string[]);
           }
         } catch {
-          /* keep defaults */
+          /* keep [] */
         }
         this.startSlider();
       },
@@ -64,6 +60,10 @@ export class HeroBannerComponent implements OnInit, OnDestroy {
     this.stopSlider();
   }
 
+  private static normalizeImagePaths(paths: string[]): string[] {
+    return paths.map((s) => s.trim()).filter(Boolean);
+  }
+
   private stopSlider(): void {
     if (this.slideIntervalId != null) {
       clearInterval(this.slideIntervalId);
@@ -73,17 +73,20 @@ export class HeroBannerComponent implements OnInit, OnDestroy {
 
   private startSlider(): void {
     this.stopSlider();
-    if (this.displayImages.length < 1) {
-      this.displayImages = [...DEFAULT_HERO_BANNER_IMAGES];
-    }
     const n = this.displayImages.length;
+    if (n < 1) {
+      return;
+    }
     this.slideIntervalId = setInterval(() => {
       this.currentSlideIndex = (this.currentSlideIndex + 1) % n;
     }, 5000);
   }
 
   get currentBgImage(): string {
-    const imgs = this.displayImages.length > 0 ? this.displayImages : DEFAULT_HERO_BANNER_IMAGES;
+    const imgs = this.displayImages;
+    if (imgs.length < 1) {
+      return '';
+    }
     const i = this.currentSlideIndex % imgs.length;
     const raw = imgs[i];
     return raw.startsWith('/uploads/') ? fileUrlToAbsolute(raw) : raw;

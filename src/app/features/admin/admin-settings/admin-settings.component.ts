@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SiteSettingsService } from '../../../core/services/site-settings.service';
 import { IdeaCategoryService, IdeaCategory } from '../../../core/services/idea-category.service';
-import { DEFAULT_HERO_BANNER_IMAGES, HERO_BANNER_BG_IMAGES_KEY } from '../../../core/constants/hero-banner-settings';
+import { HERO_BANNER_BG_IMAGES_KEY } from '../../../core/constants/hero-banner-settings';
 
 interface SettingRow {
   key: string;
@@ -59,13 +59,13 @@ export class AdminSettingsComponent implements OnInit {
             ) {
               this.heroImageUrls = [...(parsed as string[])];
             } else {
-              this.heroImageUrls = [...DEFAULT_HERO_BANNER_IMAGES];
+              this.heroImageUrls = [];
             }
           } catch {
-            this.heroImageUrls = [...DEFAULT_HERO_BANNER_IMAGES];
+            this.heroImageUrls = [];
           }
         } else {
-          this.heroImageUrls = [...DEFAULT_HERO_BANNER_IMAGES];
+          this.heroImageUrls = [];
         }
 
         this.rows = list
