@@ -1,13 +1,6 @@
 <div class="dashboard-page" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
     <app-hero-banner></app-hero-banner>
 
-    <div class="container admin-control-panel-bar" *ngIf="(authService.currentUser$ | async)?.role === 'Admin'">
-        <a routerLink="/admin" class="control-panel-link">
-            <i class="fas fa-sliders-h" aria-hidden="true"></i>
-            <span>{{ langService.translate('nav.controlPanel') }}</span>
-        </a>
-    </div>
-
     <!-- ========== STATS SECTION ========== -->
     <section class="stats-section" *ngIf="stats$ | async as stats">
         <div class="container">

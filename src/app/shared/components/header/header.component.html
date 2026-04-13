@@ -153,6 +153,16 @@
         {{ (languageService.currentLang$ | async) === 'en' ? 'ع' : 'EN' }}
       </button>
 
+      <!-- Admin: Control panel -->
+      <a *ngIf="(authService.currentUser$ | async)?.role === 'Admin'"
+         routerLink="/admin"
+         class="control-panel-nav-link"
+         (click)="closeMenus()"
+         [title]="languageService.translate('nav.controlPanel')">
+        <i class="fas fa-sliders-h" aria-hidden="true"></i>
+        <span class="control-panel-nav-link__label">{{ languageService.translate('nav.controlPanel') }}</span>
+      </a>
+
       <!-- Auth Action Button -->
       <ng-container *ngIf="authService.currentUser$ | async as user; else loginButton">
         <a *ngIf="user.role === 'Admin'" routerLink="/doctor" class="btn-auth ms-2 text-decoration-none d-inline-flex align-items-center gap-1"

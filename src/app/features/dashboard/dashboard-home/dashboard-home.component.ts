@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { LanguageService } from '../../../core/services/language.service';
-import { AuthService } from '../../../core/services/auth.service';
 import { NewsService } from '../../../core/services/news.service';
 import { IdeaService } from '../../../core/services/idea.service';
 import { DashboardService } from '../../../core/services/dashboard.service';
@@ -31,7 +30,6 @@ export class DashboardHomeComponent implements OnInit, OnDestroy {
 
   constructor(
     public langService: LanguageService,
-    public authService: AuthService,
     private newsService: NewsService,
     private ideaService: IdeaService,
     private dashboardService: DashboardService
