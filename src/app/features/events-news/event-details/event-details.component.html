@@ -3,7 +3,6 @@
     <section class="hero-section" [style.background-image]="'url(' + eventHeroImage(event) + ')'">
         <div class="overlay"></div>
         <div class="hero-content">
-            <span class="category-badge">{{ getCategoryTranslation(event.category) }}</span>
             <h1 class="event-title">{{ event.title }}</h1>
             <div class="quick-meta">
                 <span class="meta-item"><i class="fas fa-calendar-alt"></i> {{ event.date | date:'fullDate' }}</span>

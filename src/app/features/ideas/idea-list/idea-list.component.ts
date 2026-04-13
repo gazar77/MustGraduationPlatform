@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { IdeaService } from '../../../core/services/idea.service';
+import { IdeaCategoryService } from '../../../core/services/idea-category.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { Idea, ProjectCategory } from '../../../core/models/idea.model';
+import { Idea } from '../../../core/models/idea.model';
 import { User } from '../../../core/models/user.model';
 import { LanguageService } from '../../../core/services/language.service';
 
@@ -17,26 +18,20 @@ export class IdeaListComponent implements OnInit {
   selectedCategory: string = '';
   currentUser: User | null = null;
 
-  categories: ProjectCategory[] = [
-    'تطوير مواقع ويب',
-    'تطوير تطبيقات موبايل',
-    'الذكاء الاصطناعي',
-    'تعلم الآلة',
-    'الرؤية الحاسوبية',
-    'الأمن السيبراني',
-    'الشبكات والحوسبة السحابية',
-    'تحليل البيانات',
-    'إنترنت الأشياء',
-    'معالجة اللغة الطبيعية'
-  ];
+  categories: string[] = [];
 
   constructor(
-    private ideaService: IdeaService, 
+    private ideaService: IdeaService,
+    private ideaCategoryService: IdeaCategoryService,
     private authService: AuthService,
     public langService: LanguageService
   ) { }
 
   ngOnInit(): void {
+    this.ideaCategoryService.getVisible().subscribe(cats => {
+      this.categories = cats.map(c => c.name);
+    });
+
     this.ideaService.getVisibleIdeas().subscribe(ideas => {
       this.allIdeas = ideas;
       this.filteredIdeas = ideas;

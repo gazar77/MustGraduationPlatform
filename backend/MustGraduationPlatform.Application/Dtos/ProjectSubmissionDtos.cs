@@ -12,6 +12,7 @@ public record ProjectSubmissionDto(
     string FileName,
     string? FileUrl,
     string Notes,
+    string? RegistrationPayloadJson,
     string Status,
     DateTime SubmissionDate);
 

@@ -14,9 +14,11 @@ import { fileUrlToAbsolute } from '../../../core/utils/api-url.util';
 export class EventListComponent implements OnInit {
   events: Event[] = [];
   currentUser: User | null = null;
+  carouselStart = 0;
+  readonly pageSize = 3;
 
   constructor(
-    private eventService: EventService, 
+    private eventService: EventService,
     private authService: AuthService,
     public langService: LanguageService
   ) { }
@@ -24,6 +26,7 @@ export class EventListComponent implements OnInit {
   ngOnInit(): void {
     this.eventService.getVisibleEvents().subscribe(events => {
       this.events = events;
+      this.carouselStart = 0;
     });
 
     this.authService.currentUser$.subscribe(user => {
@@ -31,18 +34,39 @@ export class EventListComponent implements OnInit {
     });
   }
 
-  getCategoryTranslation(category: string): string {
-    return this.langService.translate(`events.list.category.${category}`) || category;
+  get visibleEvents(): Event[] {
+    return this.events.slice(this.carouselStart, this.carouselStart + this.pageSize);
+  }
+
+  get canSlidePrev(): boolean {
+    return this.carouselStart > 0;
+  }
+
+  get canSlideNext(): boolean {
+    return this.carouselStart + this.pageSize < this.events.length;
+  }
+
+  slidePrev(): void {
+    if (this.canSlidePrev) this.carouselStart--;
+  }
+
+  slideNext(): void {
+    if (this.canSlideNext) this.carouselStart++;
   }
 
   eventImageUrl(ev: Event): string {
     return fileUrlToAbsolute(ev.image);
   }
 
+  isAdminUser(): boolean {
+    const r = this.currentUser?.role;
+    return r === 'Admin' || r === 'SuperAdmin';
+  }
+
   onAddEvent(): void {
     const titlePrompt = this.langService.translate('events.list.prompts.newTitle');
     const descPrompt = this.langService.translate('events.list.prompts.newDesc');
-    
+
     const title = prompt(titlePrompt);
     const description = prompt(descPrompt);
     if (title && description) {
@@ -54,7 +78,7 @@ export class EventListComponent implements OnInit {
         time: '09:00 AM',
         location: this.langService.translate('events.list.defaultLoc'),
         image: 'assets/must_discussion_1.png',
-        category: 'academic',
+        category: '',
         isVisible: true,
         order: 0
       }).subscribe(() => {

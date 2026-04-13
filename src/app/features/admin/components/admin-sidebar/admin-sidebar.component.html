@@ -65,6 +65,9 @@
   </nav>
 
   <div class="sidebar-footer">
+    <a routerLink="/dashboard" class="sidebar-home-link" *ngIf="!isCollapsed">
+      <i class="fas fa-home"></i> الرئيسية
+    </a>
     <button (click)="logout()">
       <i class="fas fa-sign-out-alt"></i> <span *ngIf="!isCollapsed">تسجيل الخروج</span>
     </button>

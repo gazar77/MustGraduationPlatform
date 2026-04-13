@@ -1,33 +1,57 @@
 <div class="events-page" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
-  <app-hero-banner [title]="langService.translate('events.list.title')"></app-hero-banner>
+  <app-hero-banner></app-hero-banner>
 
-  <!-- Events Grid Section -->
   <section class="events-section">
     <div class="container">
-      <div class="events-grid">
-        <article class="event-card" *ngFor="let event of events">
-          <div class="event-image">
-            <img [src]="eventImageUrl(event)" [alt]="event.title">
-            <span class="category-badge" [ngClass]="event.category">{{ getCategoryTranslation(event.category) }}</span>
-          </div>
-          <div class="event-content">
-            <div class="event-meta">
-               <span class="meta-item"><i class="fas fa-calendar-alt"></i> {{ event.date }}</span>
-               <span class="meta-item"><i class="fas fa-clock"></i> {{ event.time }}</span>
+      <div class="mb-4 text-end" *ngIf="isAdminUser()">
+        <button (click)="onAddEvent()" class="btn btn-primary shadow-sm">
+          <i class="fas fa-plus me-2"></i>
+          {{ langService.translate('events.list.addEventBtn') || 'إضافة فعالية' }}
+        </button>
+      </div>
+
+      <div class="events-carousel-shell" *ngIf="events.length > 0">
+        <button type="button"
+                class="carousel-nav carousel-nav--prev"
+                (click)="slidePrev()"
+                [disabled]="!canSlidePrev"
+                aria-label="Previous">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+
+        <div class="events-grid events-grid--carousel">
+          <article class="event-card" *ngFor="let event of visibleEvents">
+            <div class="event-image">
+              <img [src]="eventImageUrl(event)" [alt]="event.title">
             </div>
-            <h3 class="event-title">{{ event.title }}</h3>
-            <p class="event-desc">{{ event.description }}</p>
-            <div class="event-footer">
-               <span class="location"><i class="fas fa-map-marker-alt"></i> {{ event.location }}</span>
-               <button class="btn btn-outline" [routerLink]="['/events/details', event.id]">{{ langService.translate('events.list.detailsBtn') }}</button>
+            <div class="event-content">
+              <div class="event-meta">
+                <span class="meta-item"><i class="fas fa-calendar-alt"></i> {{ event.date }}</span>
+                <span class="meta-item"><i class="fas fa-clock"></i> {{ event.time }}</span>
+              </div>
+              <h3 class="event-title">{{ event.title }}</h3>
+              <p class="event-desc">{{ event.description }}</p>
+              <div class="event-footer">
+                <span class="location"><i class="fas fa-map-marker-alt"></i> {{ event.location }}</span>
+                <button class="btn btn-outline" [routerLink]="['/events/details', event.id]">{{ langService.translate('events.list.detailsBtn') }}</button>
+              </div>
             </div>
-          </div>
-        </article>
-    <div *ngIf="events.length === 0" class="no-results container py-5 text-center">
-      <i class="fas fa-calendar-times mb-3" style="font-size: 3rem; color: #ccc;"></i>
-      <h3>{{ langService.translate('events.list.noEvents') || 'لا توجد فعاليات حالياً' }}</h3>
-      <p>{{ langService.translate('events.list.checkLater') || 'برجاء مراجعة الصفحة لاحقاً أو إضافة فعاليات من لوحة التحكم.' }}</p>
-    </div>
+          </article>
+        </div>
+
+        <button type="button"
+                class="carousel-nav carousel-nav--next"
+                (click)="slideNext()"
+                [disabled]="!canSlideNext"
+                aria-label="Next">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+
+      <div *ngIf="events.length === 0" class="no-results container py-5 text-center">
+        <i class="fas fa-calendar-times mb-3" style="font-size: 3rem; color: #ccc;"></i>
+        <h3>{{ langService.translate('events.list.noEvents') || 'لا توجد فعاليات حالياً' }}</h3>
+        <p>{{ langService.translate('events.list.checkLater') || 'برجاء مراجعة الصفحة لاحقاً أو إضافة فعاليات من لوحة التحكم.' }}</p>
       </div>
     </div>
   </section>

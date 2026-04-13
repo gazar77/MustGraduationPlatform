@@ -3,6 +3,9 @@
         [title]="title" 
         [items]="items" 
         [columns]="columns"
+        [showStatus]="showTableStatus"
+        [showAddButton]="showAddButton"
+        [ideaOpenClosedToggle]="ideaOpenClosedToggle"
         (add)="onAdd()"
         (edit)="onEdit($event)"
         (toggleStatus)="onStatusToggle($event)"
@@ -14,7 +17,11 @@
         [isOpen]="modalConfig.isOpen" 
         [title]="modalConfig.title" 
         [fields]="modalConfig.fields"
+        [showPdfDownload]="showProposalPdfDownload"
+        [showFileDownload]="showProjectFileDownload"
         (close)="modalConfig.isOpen = false"
-        (save)="handleSave($event)">
+        (save)="handleSave($event)"
+        (downloadPdf)="downloadIdeaRegistrationPdf()"
+        (downloadFile)="openUploadedProjectFile()">
     </app-management-modal>
 </div>

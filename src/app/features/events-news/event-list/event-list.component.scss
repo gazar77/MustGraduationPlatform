@@ -35,10 +35,38 @@
     padding-bottom: 5rem;
   }
 
+  .events-carousel-shell {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .carousel-nav {
+    flex: 0 0 44px;
+    align-self: center;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background: var(--bg-card);
+    color: var(--primary-color);
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+  }
+
   .events-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 2rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .events-grid--carousel {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .event-card {
@@ -70,36 +98,6 @@
         height: 100%;
         object-fit: cover;
         transition: transform 0.5s ease;
-      }
-
-      .category-badge {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        padding: 0.4rem 0.8rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        backdrop-filter: blur(8px);
-        color: #fff;
-        z-index: 2;
-
-        &.academic {
-          background: rgba(59, 130, 246, 0.8);
-          border: 1px solid rgba(59, 130, 246, 0.3);
-        }
-        &.workshop {
-          background: rgba(16, 185, 129, 0.8);
-          border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-        &.social {
-          background: rgba(245, 158, 11, 0.8);
-          border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-        &.competition {
-          background: rgba(139, 92, 246, 0.8);
-          border: 1px solid rgba(139, 92, 246, 0.3);
-        }
       }
 
       &::after {
@@ -195,4 +193,13 @@
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 992px) {
+  .events-grid--carousel {
+    grid-template-columns: 1fr;
+  }
+  .carousel-nav {
+    display: none;
+  }
 }

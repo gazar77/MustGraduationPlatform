@@ -10,6 +10,9 @@ export class ManagementTableComponent {
   @Input() items: any[] = [];
   @Input() columns: { key: string, label: string }[] = [];
   @Input() showStatus: boolean = true;
+  @Input() showAddButton: boolean = true;
+  /** When true, status switch uses idea `status === 'Open'` instead of `isVisible`. */
+  @Input() ideaOpenClosedToggle = false;
   
   @Output() delete = new EventEmitter<any>();
   @Output() edit = new EventEmitter<any>();

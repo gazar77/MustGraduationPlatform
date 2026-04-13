@@ -57,6 +57,25 @@
 .sidebar-footer {
   padding: 20px;
   border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .sidebar-home-link {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+    color: #ecf0f1;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    &:hover {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+    }
+  }
 
   button {
     width: 100%;

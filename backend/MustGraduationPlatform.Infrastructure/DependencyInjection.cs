@@ -64,6 +64,7 @@ public static class DependencyInjection
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IIdeaService, IdeaService>();
+        services.AddScoped<IIdeaCategoryService, IdeaCategoryService>();
         services.AddScoped<INewsService, NewsService>();
         services.AddScoped<IEventService, EventService>();
         services.AddScoped<ITemplateService, TemplateService>();

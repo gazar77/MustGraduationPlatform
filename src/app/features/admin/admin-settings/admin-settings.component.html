@@ -9,7 +9,7 @@
 
   <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
-  <div *ngIf="!loading && !error" class="table-responsive">
+  <div *ngIf="!loading && !error" class="table-responsive mb-5">
     <table class="table table-bordered align-middle">
       <thead class="table-light">
         <tr>
@@ -32,5 +32,58 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <h3 class="mb-3">تصنيفات أفكار المشاريع</h3>
+  <p class="text-muted small">تُستخدم في صفحة إدارة الأفكار وفلتر صفحة أفكار المشاريع.</p>
+
+  <div *ngIf="loadingCategories" class="text-center py-3">
+    <div class="spinner-border spinner-border-sm text-primary"></div>
+  </div>
+
+  <div *ngIf="!loadingCategories" class="card mb-4">
+    <div class="card-body">
+      <div class="row g-2 align-items-end mb-3">
+        <div class="col-md-6">
+          <label class="form-label">اسم التصنيف</label>
+          <input type="text" class="form-control" [(ngModel)]="newCategoryName" placeholder="مثال: تطوير ويب">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">الترتيب</label>
+          <input type="number" class="form-control" [(ngModel)]="newCategoryOrder">
+        </div>
+        <div class="col-md-3">
+          <button type="button" class="btn btn-primary w-100" (click)="addCategory()" [disabled]="savingCategory || !newCategoryName.trim()">
+            إضافة تصنيف
+          </button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>الاسم</th>
+              <th style="width: 120px">الترتيب</th>
+              <th style="width: 140px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cat of categories">
+              <td>
+                <input type="text" class="form-control form-control-sm" [(ngModel)]="cat.name">
+              </td>
+              <td>
+                <input type="number" class="form-control form-control-sm" [(ngModel)]="cat.sortOrder">
+              </td>
+              <td class="text-nowrap">
+                <button type="button" class="btn btn-sm btn-outline-primary me-1" (click)="updateCategory(cat)">حفظ</button>
+                <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeCategory(cat)">حذف</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>

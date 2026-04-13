@@ -14,9 +14,11 @@ import { fileUrlToAbsolute } from '../../../core/utils/api-url.util';
 export class NewsListComponent implements OnInit {
   newsItems: News[] = [];
   currentUser: User | null = null;
+  carouselStart = 0;
+  readonly pageSize = 3;
 
   constructor(
-    private newsService: NewsService, 
+    private newsService: NewsService,
     private authService: AuthService,
     public langService: LanguageService
   ) { }
@@ -24,6 +26,7 @@ export class NewsListComponent implements OnInit {
   ngOnInit(): void {
     this.newsService.getVisibleNews().subscribe(news => {
       this.newsItems = news;
+      this.carouselStart = 0;
     });
 
     this.authService.currentUser$.subscribe(user => {
@@ -31,18 +34,43 @@ export class NewsListComponent implements OnInit {
     });
   }
 
-  getCategoryTranslation(category: string): string {
-    return this.langService.translate(`news.list.category.${category}`) || category;
+  get visibleNews(): News[] {
+    return this.newsItems.slice(this.carouselStart, this.carouselStart + this.pageSize);
+  }
+
+  get canSlidePrev(): boolean {
+    return this.carouselStart > 0;
+  }
+
+  get canSlideNext(): boolean {
+    return this.carouselStart + this.pageSize < this.newsItems.length;
+  }
+
+  slidePrev(): void {
+    if (this.canSlidePrev) {
+      this.carouselStart--;
+    }
+  }
+
+  slideNext(): void {
+    if (this.canSlideNext) {
+      this.carouselStart++;
+    }
   }
 
   newsImageUrl(item: News): string {
     return fileUrlToAbsolute(item.imagePath);
   }
 
+  isAdminUser(): boolean {
+    const r = this.currentUser?.role;
+    return r === 'Admin' || r === 'SuperAdmin';
+  }
+
   onAddNews(): void {
     const titlePrompt = this.langService.translate('news.list.prompts.newTitle');
     const contentPrompt = this.langService.translate('news.list.prompts.newContent');
-    
+
     const title = prompt(titlePrompt);
     const content = prompt(contentPrompt);
     if (title && content) {
@@ -56,7 +84,6 @@ export class NewsListComponent implements OnInit {
         isVisible: true,
         order: 0
       }).subscribe(() => {
-        // Refresh list
         this.newsService.getNews().subscribe(news => this.newsItems = news);
       });
     }

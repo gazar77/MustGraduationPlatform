@@ -17,4 +17,7 @@ public interface IProjectSubmissionService
 
     Task<ProjectSubmissionDto?> UpdateStatusAsync(int id, ProjectSubmissionStatusUpdateDto dto, CancellationToken ct = default);
     Task<bool> DeleteAsync(int id, CancellationToken ct = default);
+
+    /// <summary>Creates a proposal-type submission from the idea registration form (no file upload).</summary>
+    Task<ProjectSubmissionDto> CreateIdeaRegistrationAsync(IdeaRegistrationSubmitDto dto, string? studentEmail, CancellationToken ct = default);
 }

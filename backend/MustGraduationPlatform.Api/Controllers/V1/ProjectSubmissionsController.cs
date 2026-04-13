@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MustGraduationPlatform.Application.Abstractions;
 using MustGraduationPlatform.Application.Dtos;
 using MustGraduationPlatform.Api.Models;
+using System.Security.Claims;
 
 namespace MustGraduationPlatform.Api.Controllers.V1;
 
@@ -19,18 +20,26 @@ public class ProjectSubmissionsController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<IReadOnlyList<ProjectSubmissionDto>>> Get([FromQuery] string? type, CancellationToken ct)
         => Ok(await _submissions.GetAsync(type, ct));
 
+    [HttpPost("idea-registration")]
+    [Authorize(Roles = "Student,Admin,SuperAdmin")]
+    public async Task<ActionResult<ProjectSubmissionDto>> CreateIdeaRegistration([FromBody] IdeaRegistrationSubmitDto dto, CancellationToken ct)
+    {
+        var email = User.FindFirstValue(ClaimTypes.Email);
+        return Ok(await _submissions.CreateIdeaRegistrationAsync(dto, email, ct));
+    }
+
     [HttpPost]
-    [Authorize(Roles = "Student,Admin")]
+    [Authorize(Roles = "Student,Admin,SuperAdmin")]
     public async Task<ActionResult<ProjectSubmissionDto>> Create([FromBody] ProjectSubmissionCreateDto dto, CancellationToken ct)
         => Ok(await _submissions.CreateAsync(dto, ct));
 
     [HttpPost("with-file")]
     [Consumes("multipart/form-data")]
-    [Authorize(Roles = "Student,Admin")]
+    [Authorize(Roles = "Student,Admin,SuperAdmin")]
     [RequestFormLimits(MultipartBodyLengthLimit = 26_214_400)]
     public async Task<ActionResult<ProjectSubmissionDto>> CreateWithFile([FromForm] ProjectSubmissionFormModel model, CancellationToken ct)
     {
@@ -52,7 +61,7 @@ public class ProjectSubmissionsController : ControllerBase
     }
 
     [HttpPatch("{id:int}/status")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<ProjectSubmissionDto>> UpdateStatus(int id, [FromBody] ProjectSubmissionStatusUpdateDto dto, CancellationToken ct)
     {
         var r = await _submissions.UpdateStatusAsync(id, dto, ct);
@@ -60,7 +69,7 @@ public class ProjectSubmissionsController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<IActionResult> Delete(int id, CancellationToken ct)
         => await _submissions.DeleteAsync(id, ct) ? NoContent() : NotFound();
 }

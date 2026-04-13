@@ -13,6 +13,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     }
 
     public DbSet<Department> Departments => Set<Department>();
+    public DbSet<IdeaCategory> IdeaCategories => Set<IdeaCategory>();
     public DbSet<Idea> Ideas => Set<Idea>();
     public DbSet<NewsArticle> NewsArticles => Set<NewsArticle>();
     public DbSet<CalendarEvent> CalendarEvents => Set<CalendarEvent>();

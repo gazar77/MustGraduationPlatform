@@ -23,7 +23,8 @@ export class RegisterComponent implements OnInit {
     private router: Router
   ) {
     this.registerForm = this.fb.group({
-      fullName: ['', [Validators.required]],
+      firstName: ['', [Validators.required]],
+      lastName: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       departmentId: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],
@@ -37,7 +38,10 @@ export class RegisterComponent implements OnInit {
 
   loadDepartments(): void {
     this.authService.getDepartments().subscribe({
-      next: (data) => this.departments = data,
+      next: (data) => {
+        this.departments = (data || []).filter((d: { code?: string }) =>
+          String(d?.code || '').toUpperCase() !== 'AI');
+      },
       error: () => this.error = 'فشل تحميل الأقسام'
     });
   }

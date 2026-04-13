@@ -33,10 +33,6 @@ export class EventDetailsComponent implements OnInit {
     });
   }
 
-  getCategoryTranslation(category: string): string {
-    return this.langService.translate(`events.list.category.${category}`) || category;
-  }
-
   eventHeroImage(ev: Event): string {
     return fileUrlToAbsolute(ev.image);
   }

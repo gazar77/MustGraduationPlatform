@@ -26,24 +26,24 @@
             {{ langService.translate('nav.home') }}
           </a>
 
-          <div #portalDropdown
+          <div #submissionDropdown
                class="hero-nav-dropdown"
-               [class.is-open]="portalMenuOpen">
+               [class.is-open]="submissionMenuOpen">
             <button type="button"
                     class="nav-pill nav-pill-dropdown-trigger"
-                    (click)="togglePortalMenu($event)"
-                    [attr.aria-expanded]="portalMenuOpen"
+                    (click)="toggleSubmissionMenu($event)"
+                    [attr.aria-expanded]="submissionMenuOpen"
                     aria-haspopup="true"
-                    [attr.aria-controls]="'hero-portal-submenu'">
-              {{ langService.translate('nav.portalServices') }}
+                    [attr.aria-controls]="'hero-submission-submenu'">
+              {{ langService.translate('nav.submission') }}
               <i class="fas fa-chevron-down hero-dropdown-chevron" aria-hidden="true"></i>
             </button>
-            <ul id="hero-portal-submenu" class="hero-dropdown-panel" role="menu">
-              <li *ngFor="let link of portalLinks" role="none">
+            <ul id="hero-submission-submenu" class="hero-dropdown-panel" role="menu">
+              <li *ngFor="let link of submissionLinks" role="none">
                 <a [routerLink]="link.url"
                    role="menuitem"
                    class="hero-dropdown-link"
-                   (click)="closePortalMenu()">
+                   (click)="closeSubmissionMenu()">
                   {{ langService.translate('nav.' + link.labelKey) }}
                 </a>
               </li>
@@ -61,12 +61,6 @@
              routerLinkActive="active"
              class="nav-pill">
             {{ langService.translate('nav.ideaRegister') }}
-          </a>
-
-          <a routerLink="/submission/proposal"
-             routerLinkActive="active"
-             class="nav-pill">
-            {{ langService.translate('nav.submission') }}
           </a>
 
           <div #resourcesDropdown

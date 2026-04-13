@@ -20,7 +20,7 @@ public class EventService : IEventService
 
     public async Task<IReadOnlyList<EventDto>> GetVisibleAsync(CancellationToken ct = default)
     {
-        var list = await _db.CalendarEvents.Where(e => e.IsVisible).OrderBy(e => e.DisplayOrder).ToListAsync(ct);
+        var list = await _db.CalendarEvents.Where(e => e.IsVisible).OrderByDescending(e => e.Date).ThenBy(e => e.DisplayOrder).ToListAsync(ct);
         return list.Select(EntityMappers.ToDto).ToList();
     }
 

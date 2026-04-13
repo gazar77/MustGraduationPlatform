@@ -27,7 +27,7 @@ public class DashboardController : ControllerBase
         => Ok(await _dashboard.GetRecentActivitiesAsync(ct));
 
     [HttpPost("activities")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<ActivityDto>> AddActivity([FromBody] ActivityCreateDto dto, CancellationToken ct)
         => Ok(await _dashboard.AddActivityAsync(dto, ct));
 }

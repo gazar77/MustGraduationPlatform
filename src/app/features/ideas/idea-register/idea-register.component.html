@@ -1,10 +1,9 @@
 <div class="registration-container" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
     
-    <app-hero-banner 
-        title="Graduation Project Registration Form"
+    <app-hero-banner
         [breadcrumbs]="[
             { label: 'Home', url: '/dashboard' },
-            { label: 'Project Ideas', url: '/ideas' },
+            { label: 'Projects Ideas', url: '/ideas' },
             { label: 'Registration' }
         ]">
     </app-hero-banner>
@@ -46,7 +45,6 @@
                                 <option value="" disabled>Select</option>
                                 <option value="Information Systems">Information Systems</option>
                                 <option value="Computer Science">Computer Science</option>
-                                <option value="Artificial Intelligence">Artificial Intelligence</option>
                             </select>
                             <div class="error-msg" *ngIf="registrationForm.get('department')?.invalid && registrationForm.get('department')?.touched">Required</div>
                         </div>
@@ -172,16 +170,11 @@
                     <button type="button" class="btn btn-outline-secondary me-3 px-5 py-2" (click)="resetForm()">Reset</button>
                     <button type="submit" class="btn submit-btn px-5 py-2" [disabled]="registrationForm.invalid">Submit Registration</button>
 
-                    <div class="idea-export-actions">
-                        <p class="idea-export-hint small text-muted mb-3">{{ langService.translate('ideas.register.exportHint') }}</p>
+                    <div class="idea-export-actions no-print">
                         <div class="idea-export-buttons d-flex flex-wrap gap-3 justify-content-center align-items-center">
                             <button type="button" class="btn export-doc-btn export-doc-btn--pdf" (click)="exportPdf()" [disabled]="exportBusy">
                                 <i class="fas fa-file-pdf me-2" aria-hidden="true"></i>
                                 {{ langService.translate('ideas.register.exportPdf') }}
-                            </button>
-                            <button type="button" class="btn export-doc-btn export-doc-btn--word" (click)="exportWord()" [disabled]="exportBusy">
-                                <i class="fas fa-file-alt me-2" aria-hidden="true"></i>
-                                {{ langService.translate('ideas.register.exportWord') }}
                             </button>
                         </div>
                         <span class="text-muted small d-block mt-2" *ngIf="exportBusy">{{ langService.translate('ideas.register.exportBusy') }}</span>

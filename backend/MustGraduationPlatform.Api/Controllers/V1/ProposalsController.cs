@@ -18,12 +18,12 @@ public class ProposalsController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<IReadOnlyList<ProposalDto>>> GetAll(CancellationToken ct)
         => Ok(await _proposals.GetAllAsync(ct));
 
     [HttpGet("{id:int}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<ProposalDto>> GetById(int id, CancellationToken ct)
     {
         var r = await _proposals.GetByIdAsync(id, ct);
@@ -31,12 +31,12 @@ public class ProposalsController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Student,Admin")]
+    [Authorize(Roles = "Student,Admin,SuperAdmin")]
     public async Task<ActionResult<ProposalDto>> Create([FromBody] ProposalCreateDto dto, CancellationToken ct)
         => Ok(await _proposals.CreateAsync(dto, ct));
 
     [HttpPatch("{id:int}/status")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<ProposalDto>> UpdateStatus(int id, [FromBody] ProposalStatusUpdateDto dto, CancellationToken ct)
     {
         var r = await _proposals.UpdateStatusAsync(id, dto, ct);
@@ -44,7 +44,7 @@ public class ProposalsController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<IActionResult> Delete(int id, CancellationToken ct)
         => await _proposals.DeleteAsync(id, ct) ? NoContent() : NotFound();
 }

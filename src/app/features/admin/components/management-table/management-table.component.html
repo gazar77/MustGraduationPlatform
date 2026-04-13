@@ -7,7 +7,7 @@
                 <input type="text" placeholder="بحث باسم العنصر..." #searchInput (keyup)="0">
             </div>
         </div>
-        <button class="btn btn-primary" (click)="onAdd()">
+        <button *ngIf="showAddButton" class="btn btn-primary" (click)="onAdd()">
             <i class="fas fa-plus"></i> إضافة جديد
         </button>
     </div>
@@ -32,7 +32,12 @@
                         </ng-container>
                     </td>
                     <td *ngIf="showStatus">
-                        <label class="switch">
+                        <label class="switch" *ngIf="ideaOpenClosedToggle">
+                            <input type="checkbox" [checked]="item.status === 'Open'" (change)="toggleStatus.emit(item)">
+                            <span class="slider round"></span>
+                        </label>
+                        <span *ngIf="ideaOpenClosedToggle" class="small text-muted ms-2">{{ item.status === 'Open' ? 'مفتوح' : 'مغلق' }}</span>
+                        <label class="switch" *ngIf="!ideaOpenClosedToggle">
                             <input type="checkbox" [checked]="item.isVisible !== false" (change)="toggleStatus.emit(item)">
                             <span class="slider round"></span>
                         </label>

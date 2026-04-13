@@ -7,7 +7,7 @@ namespace MustGraduationPlatform.Api.Controllers.V1;
 
 [ApiController]
 [Route("api/v1/doctor")]
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin,SuperAdmin")]
 public class DoctorController : ControllerBase
 {
     private readonly IDoctorDashboardService _doctor;

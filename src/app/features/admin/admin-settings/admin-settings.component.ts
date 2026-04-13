@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SiteSettingsService } from '../../../core/services/site-settings.service';
+import { IdeaCategoryService, IdeaCategory } from '../../../core/services/idea-category.service';
 
 interface SettingRow {
   key: string;
@@ -20,10 +21,20 @@ export class AdminSettingsComponent implements OnInit {
   error: string | null = null;
   message: string | null = null;
 
-  constructor(private siteSettingsService: SiteSettingsService) {}
+  categories: IdeaCategory[] = [];
+  loadingCategories = true;
+  newCategoryName = '';
+  newCategoryOrder = 0;
+  savingCategory = false;
+
+  constructor(
+    private siteSettingsService: SiteSettingsService,
+    private ideaCategoryService: IdeaCategoryService
+  ) {}
 
   ngOnInit(): void {
     this.load();
+    this.loadCategories();
   }
 
   load(): void {
@@ -42,6 +53,19 @@ export class AdminSettingsComponent implements OnInit {
       error: (err: unknown) => {
         this.error = this.settingsLoadErrorMessage(err);
         this.loading = false;
+      }
+    });
+  }
+
+  loadCategories(): void {
+    this.loadingCategories = true;
+    this.ideaCategoryService.getAllForManage().subscribe({
+      next: (c) => {
+        this.categories = c;
+        this.loadingCategories = false;
+      },
+      error: () => {
+        this.loadingCategories = false;
       }
     });
   }
@@ -73,6 +97,45 @@ export class AdminSettingsComponent implements OnInit {
         row.saving = false;
         this.message = 'فشل الحفظ لـ ' + row.key;
       }
+    });
+  }
+
+  addCategory(): void {
+    const name = this.newCategoryName.trim();
+    if (!name) return;
+    this.savingCategory = true;
+    this.ideaCategoryService.create({ name, sortOrder: this.newCategoryOrder }).subscribe({
+      next: () => {
+        this.newCategoryName = '';
+        this.savingCategory = false;
+        this.message = 'تمت إضافة التصنيف';
+        this.loadCategories();
+      },
+      error: () => {
+        this.savingCategory = false;
+        this.message = 'فشل إضافة التصنيف';
+      }
+    });
+  }
+
+  updateCategory(cat: IdeaCategory): void {
+    this.ideaCategoryService.update(cat.id, { name: cat.name, sortOrder: cat.sortOrder }).subscribe({
+      next: () => {
+        this.message = 'تم حفظ التصنيف';
+        this.loadCategories();
+      },
+      error: () => (this.message = 'فشل الحفظ')
+    });
+  }
+
+  removeCategory(cat: IdeaCategory): void {
+    if (!confirm('حذف هذا التصنيف؟')) return;
+    this.ideaCategoryService.delete(cat.id).subscribe({
+      next: () => {
+        this.message = 'تم الحذف';
+        this.loadCategories();
+      },
+      error: () => (this.message = 'فشل الحذف')
     });
   }
 }

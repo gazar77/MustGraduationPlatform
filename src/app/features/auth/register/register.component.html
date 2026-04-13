@@ -17,10 +17,18 @@
             </div>
 
             <div class="form-group">
-                <label for="fullName">الاسم بالكامل</label>
-                <input type="text" id="fullName" formControlName="fullName" placeholder="أدخل اسمك بالكامل" autocomplete="name">
-                <div *ngIf="f['fullName'].touched && f['fullName'].errors" class="error-msg">
-                    <small *ngIf="f['fullName'].errors['required']">الاسم مطلوب</small>
+                <label for="firstName">الاسم الأول</label>
+                <input type="text" id="firstName" formControlName="firstName" placeholder="الاسم الأول" autocomplete="given-name">
+                <div *ngIf="f['firstName'].touched && f['firstName'].errors" class="error-msg">
+                    <small *ngIf="f['firstName'].errors['required']">الاسم الأول مطلوب</small>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="lastName">اسم العائلة</label>
+                <input type="text" id="lastName" formControlName="lastName" placeholder="اسم العائلة" autocomplete="family-name">
+                <div *ngIf="f['lastName'].touched && f['lastName'].errors" class="error-msg">
+                    <small *ngIf="f['lastName'].errors['required']">اسم العائلة مطلوب</small>
                 </div>
             </div>
 

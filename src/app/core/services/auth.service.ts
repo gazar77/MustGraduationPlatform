@@ -82,7 +82,9 @@ export class AuthService {
   }
 
   private mapUser(dto: any): User {
-    const role = dto?.role === 'Admin' ? 'Admin' : 'Student';
+    const r = dto?.role as string | undefined;
+    const role: User['role'] =
+      r === 'Admin' || r === 'SuperAdmin' ? (r as User['role']) : 'Student';
     return {
       id: String(dto.id),
       name: dto.name ?? '',

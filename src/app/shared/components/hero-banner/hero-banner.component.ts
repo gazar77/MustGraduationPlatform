@@ -12,7 +12,6 @@ import { QuickNavLinksComponent } from '../quick-nav-links/quick-nav-links.compo
   imports: [CommonModule, RouterModule, QuickNavLinksComponent]
 })
 export class HeroBannerComponent implements OnInit {
-  @Input() title: string | null = null;
   @Input() breadcrumbs: { label: string, url?: string }[] | null = null;
   @Input() compact: boolean = false;
 

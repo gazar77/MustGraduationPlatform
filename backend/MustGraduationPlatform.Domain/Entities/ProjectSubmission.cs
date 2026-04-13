@@ -13,6 +13,8 @@ public class ProjectSubmission
     public string FileName { get; set; } = string.Empty;
     public string? FileStoragePath { get; set; }
     public string Notes { get; set; } = string.Empty;
+    /// <summary>JSON payload for idea registration form (team, titles, etc.).</summary>
+    public string? RegistrationPayloadJson { get; set; }
     public string Status { get; set; } = "Pending";
     public DateTime SubmissionDate { get; set; }
 }

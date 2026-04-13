@@ -13,7 +13,8 @@ public record StudentLoginRequestDto(string Email, string Password);
 public record StudentRegisterRequestDto(
     string Email,
     string Password,
-    string FullName,
+    string FirstName,
+    string LastName,
     int DepartmentId,
     string ActivationCode);
 

@@ -21,7 +21,7 @@ export class LanguageService {
         life: 'Life at MUST',
         sdgs: 'SDGs',
         home: 'Home',
-        ideas: 'Project Ideas',
+        ideas: 'Projects Ideas',
         register: 'Register Idea',
         registration1: 'Project Registration 1',
         registration2: 'Project Registration 2',
@@ -55,7 +55,8 @@ export class LanguageService {
         ideaRegister: 'Idea Register',
         submission: 'Submission',
         resources: 'Resources',
-        tutorials: 'Tutorials'
+        tutorials: 'Tutorials',
+        proposalMenu: 'Proposal'
       },
       footer: {
         links: 'Links',
@@ -78,7 +79,7 @@ export class LanguageService {
         copyright: 'Copyright All Right Reserved @ MUST UNIVERSITY 2025'
       },
       dashboard: {
-        heroTitle: 'Graduation project platform',
+        heroTitle: 'Graduation Project Platform',
         stats: {
           ideas: 'Available Project Ideas',
           reserved: 'Reserved Projects',
@@ -87,7 +88,7 @@ export class LanguageService {
         },
         services: 'Portal Services',
         serviceCards: {
-          ideas: 'Project Ideas',
+          ideas: 'Projects Ideas',
           register: 'Register Idea',
           submission: 'Submit Proposal',
           req1: 'Project Submission 1',
@@ -107,7 +108,7 @@ export class LanguageService {
         }
       },
       ideas: {
-        title: 'Browse Graduation Project Ideas',
+        title: 'Browse Graduation Projects Ideas',
         subtitle: 'Explore ideas proposed by faculty members',
         searchPlaceholder: 'Search for project ideas...',
         filters: {
@@ -261,6 +262,7 @@ export class LanguageService {
           title: 'Graduation Projects Events',
           subtitle: 'Follow the latest conferences, workshops, and graduation project discussions in the Faculty of Computers and Information.',
           detailsBtn: 'Details',
+          addEventBtn: 'Add event',
           category: {
             academic: 'Academic',
             social: 'Social',
@@ -377,7 +379,8 @@ export class LanguageService {
         ideaRegister: 'تسجيل الفكرة',
         submission: 'التسليم',
         resources: 'الموارد',
-        tutorials: 'الدروس التعليمية'
+        tutorials: 'الدروس التعليمية',
+        proposalMenu: 'المقترح'
       },
       footer: {
         links: 'روابط هامة',
@@ -582,6 +585,7 @@ export class LanguageService {
           title: 'فعاليات مشاريع التخرج',
           subtitle: 'تابع أحدث المؤتمرات، ورش العمل، ومناقشات مشاريع التخرج في كلية الحاسبات والمعلومات.',
           detailsBtn: 'التفاصيل',
+          addEventBtn: 'إضافة فعالية',
           category: {
             academic: 'أكاديمي',
             social: 'اجتماعي',

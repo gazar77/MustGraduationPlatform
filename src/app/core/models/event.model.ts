@@ -7,7 +7,7 @@ export interface Event {
   time?: string;
   image?: string;
   organizer?: string;
-  category: 'academic' | 'social' | 'workshop' | 'competition';
+  category: string;
   isVisible: boolean;
   order?: number;
 }

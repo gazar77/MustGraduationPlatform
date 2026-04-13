@@ -6,6 +6,8 @@ namespace MustGraduationPlatform.Infrastructure.Services;
 
 internal static class EntityMappers
 {
+    public static IdeaCategoryDto ToDto(IdeaCategory e) => new(e.Id, e.Name, e.SortOrder);
+
     private static readonly JsonSerializerOptions Json = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
     public static IdeaDto ToDto(Idea e) => new(
@@ -85,6 +87,7 @@ internal static class EntityMappers
         e.FileName,
         e.FileStoragePath,
         e.Notes,
+        e.RegistrationPayloadJson,
         e.Status,
         e.SubmissionDate);
 

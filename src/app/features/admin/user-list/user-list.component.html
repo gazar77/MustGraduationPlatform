@@ -16,6 +16,7 @@
           <th>البريد</th>
           <th>الدور</th>
           <th>القسم</th>
+          <th *ngIf="isAdmin" style="width: 160px">إجراءات</th>
         </tr>
       </thead>
       <tbody>
@@ -24,6 +25,10 @@
           <td>{{ u.email }}</td>
           <td>{{ u.role }}</td>
           <td>{{ u.departmentCode || '—' }}</td>
+          <td *ngIf="isAdmin">
+            <button *ngIf="isSuperAdmin" type="button" class="btn btn-sm btn-outline-primary me-1" (click)="editUser(u)">تعديل</button>
+            <button *ngIf="canDelete(u)" type="button" class="btn btn-sm btn-outline-danger" (click)="deleteUser(u)">حذف</button>
+          </td>
         </tr>
       </tbody>
     </table>

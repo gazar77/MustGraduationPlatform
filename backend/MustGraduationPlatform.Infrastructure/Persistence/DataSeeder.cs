@@ -47,6 +47,25 @@ public static class DataSeeder
                 throw new InvalidOperationException(string.Join("; ", r.Errors.Select(e => e.Description)));
         }
 
+        if (await users.FindByEmailAsync("superadmin@must.edu.eg") is null)
+        {
+            var superAdmin = new ApplicationUser
+            {
+                Id = Guid.NewGuid(),
+                UserName = "superadmin@must.edu.eg",
+                Email = "superadmin@must.edu.eg",
+                NormalizedEmail = "SUPERADMIN@MUST.EDU.EG",
+                NormalizedUserName = "SUPERADMIN@MUST.EDU.EG",
+                EmailConfirmed = true,
+                FullName = "Super Admin",
+                UserRole = UserRole.SuperAdmin,
+                DepartmentId = null
+            };
+            var r = await users.CreateAsync(superAdmin, DefaultAdminPassword);
+            if (!r.Succeeded)
+                throw new InvalidOperationException(string.Join("; ", r.Errors.Select(e => e.Description)));
+        }
+
         if (await users.FindByEmailAsync("student@must.edu.eg") is null)
         {
             var student = new ApplicationUser
@@ -71,6 +90,29 @@ public static class DataSeeder
             db.SiteSettings.AddRange(
                 new SiteSetting { Key = "proposalDeadline", Value = "\"2026-04-30T23:59:59Z\"" },
                 new SiteSetting { Key = "academicYearLabel", Value = "\"2025 / 2026\"" });
+            await db.SaveChangesAsync(ct);
+        }
+
+        if (!await db.IdeaCategories.AnyAsync(ct))
+        {
+            var categoryNames = new[]
+            {
+                "تطوير مواقع ويب",
+                "تطوير تطبيقات موبايل",
+                "الذكاء الاصطناعي",
+                "تعلم الآلة",
+                "الرؤية الحاسوبية",
+                "الأمن السيبراني",
+                "الشبكات والحوسبة السحابية",
+                "تحليل البيانات",
+                "إنترنت الأشياء",
+                "معالجة اللغة الطبيعية"
+            };
+            for (var i = 0; i < categoryNames.Length; i++)
+            {
+                db.IdeaCategories.Add(new IdeaCategory { Name = categoryNames[i], SortOrder = i });
+            }
+
             await db.SaveChangesAsync(ct);
         }
 

@@ -12,6 +12,10 @@ export class ManagementModalComponent implements OnChanges {
   @Input() isOpen: boolean = false;
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<Record<string, unknown>>();
+  @Input() showPdfDownload = false;
+  @Output() downloadPdf = new EventEmitter<void>();
+  @Input() showFileDownload = false;
+  @Output() downloadFile = new EventEmitter<void>();
 
   formData: Record<string, unknown> = {};
   /** Selected files for `image` / `pdf` / `word` field names */

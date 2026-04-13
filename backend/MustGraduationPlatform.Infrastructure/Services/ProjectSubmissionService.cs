@@ -1,6 +1,8 @@
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using MustGraduationPlatform.Application.Abstractions;
 using MustGraduationPlatform.Application.Dtos;
+using MustGraduationPlatform.Application.Exceptions;
 using MustGraduationPlatform.Domain.Entities;
 using MustGraduationPlatform.Infrastructure.Persistence;
 using MustGraduationPlatform.Infrastructure.Storage;
@@ -63,6 +65,42 @@ public class ProjectSubmissionService : IProjectSubmissionService
             FileName = fileName,
             FileStoragePath = fileStorageUrl,
             Notes = dto.Notes,
+            RegistrationPayloadJson = null,
+            Status = "Pending",
+            SubmissionDate = DateTime.UtcNow
+        };
+        _db.ProjectSubmissions.Add(e);
+        await _db.SaveChangesAsync(ct);
+        return EntityMappers.ToDto(e);
+    }
+
+    public async Task<ProjectSubmissionDto> CreateIdeaRegistrationAsync(
+        IdeaRegistrationSubmitDto dto,
+        string? studentEmail,
+        CancellationToken ct = default)
+    {
+        var n = dto.Students.Count;
+        if (n is < 5 or > 7)
+            throw new AppException("VALIDATION_TEAM_SIZE", "Team must have between 5 and 7 students.");
+
+        var json = JsonSerializer.Serialize(dto, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+        var leader = dto.Students[0];
+        var leaderName = leader.StudentName.Trim();
+        var firstToken = leaderName.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? leaderName;
+
+        var e = new ProjectSubmission
+        {
+            Type = "proposal",
+            StudentName = leaderName,
+            Email = studentEmail,
+            ProjectNumber = null,
+            ProjectTitle = dto.TitleEn.Trim(),
+            SupervisorName = dto.SupervisorName.Trim(),
+            TeamLeaderName = firstToken,
+            FileName = "-",
+            FileStoragePath = null,
+            Notes = string.Empty,
+            RegistrationPayloadJson = json,
             Status = "Pending",
             SubmissionDate = DateTime.UtcNow
         };

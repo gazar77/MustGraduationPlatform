@@ -7,6 +7,6 @@ public class ContactMessage
     public string Email { get; set; } = string.Empty;
     public string Subject { get; set; } = string.Empty;
     public string Message { get; set; } = string.Empty;
-    public string Status { get; set; } = "New";
+    public string Status { get; set; } = "Pending";
     public DateTime SubmissionDate { get; set; }
 }

@@ -21,7 +21,7 @@ public class TemplatesController : ControllerBase
     }
 
     [HttpPost("with-file")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     [Consumes("multipart/form-data")]
     [RequestFormLimits(MultipartBodyLengthLimit = 26_214_400)]
     public async Task<ActionResult<TemplateDto>> CreateWithFile([FromForm] TemplateFormModel model, CancellationToken ct)
@@ -41,7 +41,7 @@ public class TemplatesController : ControllerBase
     }
 
     [HttpPut("{id:int}/with-file")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     [Consumes("multipart/form-data")]
     [RequestFormLimits(MultipartBodyLengthLimit = 26_214_400)]
     public async Task<ActionResult<TemplateDto>> UpdateWithFile(int id, [FromForm] TemplateFormModel model, CancellationToken ct)
@@ -67,7 +67,7 @@ public class TemplatesController : ControllerBase
         => Ok(await _templates.GetVisibleAsync(ct));
 
     [HttpGet("manage")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<IReadOnlyList<TemplateDto>>> GetAll(CancellationToken ct)
         => Ok(await _templates.GetAllAsync(ct));
 
@@ -130,12 +130,12 @@ public class TemplatesController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<TemplateDto>> Create([FromBody] TemplateCreateUpdateDto dto, CancellationToken ct)
         => Ok(await _templates.CreateAsync(dto, ct));
 
     [HttpPut("{id:int}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<TemplateDto>> Update(int id, [FromBody] TemplateCreateUpdateDto dto, CancellationToken ct)
     {
         var r = await _templates.UpdateAsync(id, dto, ct);
@@ -143,12 +143,12 @@ public class TemplatesController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<IActionResult> Delete(int id, CancellationToken ct)
         => await _templates.DeleteAsync(id, ct) ? NoContent() : NotFound();
 
     [HttpPost("{id:int}/toggle-visibility")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<TemplateDto>> Toggle(int id, CancellationToken ct)
     {
         var r = await _templates.ToggleVisibilityAsync(id, ct);

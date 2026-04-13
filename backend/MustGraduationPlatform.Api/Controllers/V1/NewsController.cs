@@ -18,7 +18,7 @@ public class NewsController : ControllerBase
     }
 
     [HttpPost("with-image")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     [Consumes("multipart/form-data")]
     [RequestFormLimits(MultipartBodyLengthLimit = 6_291_456)]
     public async Task<ActionResult<NewsDto>> CreateWithImage([FromForm] NewsFormModel model, CancellationToken ct)
@@ -38,7 +38,7 @@ public class NewsController : ControllerBase
     }
 
     [HttpPut("{id:int}/with-image")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     [Consumes("multipart/form-data")]
     [RequestFormLimits(MultipartBodyLengthLimit = 6_291_456)]
     public async Task<ActionResult<NewsDto>> UpdateWithImage(int id, [FromForm] NewsFormModel model, CancellationToken ct)
@@ -64,7 +64,7 @@ public class NewsController : ControllerBase
         => Ok(await _news.GetVisibleAsync(ct));
 
     [HttpGet("manage")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<IReadOnlyList<NewsDto>>> GetAll(CancellationToken ct)
         => Ok(await _news.GetAllAsync(ct));
 
@@ -80,12 +80,12 @@ public class NewsController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<NewsDto>> Create([FromBody] NewsCreateUpdateDto dto, CancellationToken ct)
         => Ok(await _news.CreateAsync(dto, ct));
 
     [HttpPut("{id:int}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<NewsDto>> Update(int id, [FromBody] NewsCreateUpdateDto dto, CancellationToken ct)
     {
         var r = await _news.UpdateAsync(id, dto, ct);
@@ -93,12 +93,12 @@ public class NewsController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<IActionResult> Delete(int id, CancellationToken ct)
         => await _news.DeleteAsync(id, ct) ? NoContent() : NotFound();
 
     [HttpPost("{id:int}/toggle-visibility")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<NewsDto>> Toggle(int id, CancellationToken ct)
     {
         var r = await _news.ToggleVisibilityAsync(id, ct);

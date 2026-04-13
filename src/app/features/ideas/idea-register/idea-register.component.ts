@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IdeaService } from '../../../core/services/idea.service';
+import { ProjectSubmissionService } from '../../../core/services/project-submission.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
 import { LanguageService } from '../../../core/services/language.service';
@@ -18,7 +18,7 @@ export class IdeaRegisterComponent implements OnInit {
 
     constructor(
         private fb: FormBuilder,
-        private ideaService: IdeaService,
+        private projectSubmissionService: ProjectSubmissionService,
         private authService: AuthService,
         private router: Router,
         public langService: LanguageService,
@@ -105,15 +105,23 @@ export class IdeaRegisterComponent implements OnInit {
             return;
         }
 
-        this.ideaService.submitStudentIdea({
-            title: formValue.titleEn + ' - ' + formValue.titleAr,
-            description: `Year: ${formValue.academicYear}, Term: ${formValue.semester}, Dept: ${formValue.department}`,
+        this.projectSubmissionService.submitIdeaRegistration({
+            academicYear: formValue.academicYear,
+            semester: formValue.semester,
+            department: formValue.department,
+            titleEn: formValue.titleEn,
+            titleAr: formValue.titleAr,
             category: formValue.category,
-            maxTeamSize: this.students.length,
-            supervisorName: formValue.supervisorName
-        }).subscribe(() => {
-            alert('Form submitted successfully!');
-            this.router.navigate(['/ideas']);
+            supervisorName: formValue.supervisorName,
+            assistantSupervisorName: formValue.assistantSupervisorName,
+            externalOrg: formValue.externalOrg || null,
+            students: (formValue.students as Array<{ studentName: string; universityId: string; mobileNumber: string }>)
+        }).subscribe({
+            next: () => {
+                alert('Form submitted successfully!');
+                this.router.navigate(['/ideas']);
+            },
+            error: () => alert('فشل إرسال الاستمارة. حاول مرة أخرى.')
         });
     }
 
@@ -134,7 +142,14 @@ export class IdeaRegisterComponent implements OnInit {
         try {
             const html2canvas = (await import('html2canvas')).default;
             const { jsPDF } = await import('jspdf');
-            const canvas = await html2canvas(el, { scale: 2, useCORS: true, logging: false });
+            const canvas = await html2canvas(el, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                onclone: (_doc, clone) => {
+                    clone.querySelectorAll('.no-print, .idea-export-actions').forEach(n => n.remove());
+                }
+            });
             const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
             const pageWidth = pdf.internal.pageSize.getWidth();
@@ -155,47 +170,6 @@ export class IdeaRegisterComponent implements OnInit {
         } catch (e) {
             console.error(e);
             alert('PDF export failed.');
-        } finally {
-            this.exportBusy = false;
-        }
-    }
-
-    async exportWord(): Promise<void> {
-        this.exportBusy = true;
-        try {
-            const { Document, Packer, Paragraph, TextRun, HeadingLevel } = await import('docx');
-            const { saveAs } = await import('file-saver');
-            const v = this.registrationForm.getRawValue() as Record<string, unknown>;
-            const students = (v['students'] as Array<{ studentName?: string; universityId?: string; mobileNumber?: string }>) || [];
-            const children = [
-                new Paragraph({ text: 'Graduation Project Registration', heading: HeadingLevel.TITLE }),
-                new Paragraph({ children: [new TextRun({ text: 'Academic Year: ', bold: true }), new TextRun(String(v['academicYear'] ?? ''))] }),
-                new Paragraph({ children: [new TextRun({ text: 'Semester: ', bold: true }), new TextRun(String(v['semester'] ?? ''))] }),
-                new Paragraph({ children: [new TextRun({ text: 'Department: ', bold: true }), new TextRun(String(v['department'] ?? ''))] }),
-                new Paragraph({ children: [new TextRun({ text: 'Project Title (English): ', bold: true }), new TextRun(String(v['titleEn'] ?? ''))] }),
-                new Paragraph({ children: [new TextRun({ text: 'Project Title (Arabic): ', bold: true }), new TextRun(String(v['titleAr'] ?? ''))] }),
-                new Paragraph({ children: [new TextRun({ text: 'Category: ', bold: true }), new TextRun(String(v['category'] ?? ''))] }),
-                new Paragraph({ children: [new TextRun({ text: 'Supervisor: ', bold: true }), new TextRun(String(v['supervisorName'] ?? ''))] }),
-                new Paragraph({ children: [new TextRun({ text: 'Assistant Supervisor: ', bold: true }), new TextRun(String(v['assistantSupervisorName'] ?? ''))] }),
-                new Paragraph({ children: [new TextRun({ text: 'External Organization: ', bold: true }), new TextRun(String(v['externalOrg'] ?? ''))] }),
-                new Paragraph({ text: 'Project Team Students', heading: HeadingLevel.HEADING_2 }),
-            ];
-            students.forEach((s, i) => {
-                children.push(
-                    new Paragraph({
-                        children: [
-                            new TextRun({ text: `${i + 1}. `, bold: true }),
-                            new TextRun(`${s.studentName ?? ''} — ID: ${s.universityId ?? ''} — Mobile: ${s.mobileNumber ?? ''}`),
-                        ],
-                    })
-                );
-            });
-            const doc = new Document({ sections: [{ children }] });
-            const blob = await Packer.toBlob(doc);
-            saveAs(blob, 'graduation-project-registration.docx');
-        } catch (e) {
-            console.error(e);
-            alert('Word export failed.');
         } finally {
             this.exportBusy = false;
         }

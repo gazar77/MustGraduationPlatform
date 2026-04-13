@@ -22,12 +22,12 @@ public class ContactController : ControllerBase
         => Ok(await _contact.CreateAsync(dto, ct));
 
     [HttpGet]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<IReadOnlyList<ContactMessageDto>>> GetAll(CancellationToken ct)
         => Ok(await _contact.GetAllAsync(ct));
 
     [HttpPatch("{id:int}/status")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<ContactMessageDto>> UpdateStatus(int id, [FromBody] ContactMessageStatusUpdateDto dto, CancellationToken ct)
     {
         var r = await _contact.UpdateStatusAsync(id, dto, ct);
@@ -35,7 +35,7 @@ public class ContactController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<IActionResult> Delete(int id, CancellationToken ct)
         => await _contact.DeleteAsync(id, ct) ? NoContent() : NotFound();
 }

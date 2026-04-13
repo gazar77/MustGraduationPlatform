@@ -26,7 +26,7 @@ public class IdeaService : IIdeaService
     public async Task<IReadOnlyList<IdeaDto>> GetVisibleAsync(CancellationToken ct = default)
     {
         var list = await _db.Ideas
-            .Where(i => i.IsVisible)
+            .Where(i => i.IsVisible && i.Status == "Open")
             .OrderBy(i => i.DisplayOrder)
             .ToListAsync(ct);
         return list.Select(EntityMappers.ToDto).ToList();
@@ -125,7 +125,7 @@ public class IdeaService : IIdeaService
     {
         var e = await _db.Ideas.FindAsync(new object[] { id }, ct);
         if (e is null) return null;
-        e.IsVisible = !e.IsVisible;
+        e.Status = string.Equals(e.Status, "Closed", StringComparison.OrdinalIgnoreCase) ? "Open" : "Closed";
         await _db.SaveChangesAsync(ct);
         return EntityMappers.ToDto(e);
     }

@@ -20,21 +20,22 @@ import { LanguageService } from '../../../core/services/language.service';
   imports: [CommonModule, RouterModule]
 })
 export class QuickNavLinksComponent implements AfterViewInit, OnDestroy {
-  readonly portalLinks: { labelKey: string, url: string }[] = [
+  readonly submissionLinks: { labelKey: string; url: string }[] = [
     { labelKey: 'req1', url: '/submission/project-registration-1' },
-    { labelKey: 'req2', url: '/submission/project-registration-2' }
+    { labelKey: 'req2', url: '/submission/project-registration-2' },
+    { labelKey: 'proposalMenu', url: '/submission/proposal' }
   ];
 
-  readonly resourceLinks: { labelKey: string, url: string }[] = [
+  readonly resourceLinks: { labelKey: string; url: string }[] = [
     { labelKey: 'tutorials', url: '/resources/tutorials' },
     { labelKey: 'templates', url: '/templates' }
   ];
 
-  @ViewChild('portalDropdown') portalDropdown?: ElementRef<HTMLElement>;
+  @ViewChild('submissionDropdown') submissionDropdown?: ElementRef<HTMLElement>;
   @ViewChild('resourcesDropdown') resourcesDropdown?: ElementRef<HTMLElement>;
   @ViewChild('scrollRegion') scrollRegion?: ElementRef<HTMLElement>;
 
-  portalMenuOpen = false;
+  submissionMenuOpen = false;
   resourcesMenuOpen = false;
 
   canScrollPrev = false;
@@ -96,12 +97,12 @@ export class QuickNavLinksComponent implements AfterViewInit, OnDestroy {
     this.canScrollNext = sl < max - epsilon;
   }
 
-  togglePortalMenu(event: MouseEvent): void {
+  toggleSubmissionMenu(event: MouseEvent): void {
     if (window.innerWidth < 992) {
       event.preventDefault();
       event.stopPropagation();
-      this.portalMenuOpen = !this.portalMenuOpen;
-      if (this.portalMenuOpen) {
+      this.submissionMenuOpen = !this.submissionMenuOpen;
+      if (this.submissionMenuOpen) {
         this.resourcesMenuOpen = false;
       }
     }
@@ -113,13 +114,13 @@ export class QuickNavLinksComponent implements AfterViewInit, OnDestroy {
       event.stopPropagation();
       this.resourcesMenuOpen = !this.resourcesMenuOpen;
       if (this.resourcesMenuOpen) {
-        this.portalMenuOpen = false;
+        this.submissionMenuOpen = false;
       }
     }
   }
 
-  closePortalMenu(): void {
-    this.portalMenuOpen = false;
+  closeSubmissionMenu(): void {
+    this.submissionMenuOpen = false;
   }
 
   closeResourcesMenu(): void {
@@ -130,10 +131,10 @@ export class QuickNavLinksComponent implements AfterViewInit, OnDestroy {
   onDocumentClick(event: MouseEvent): void {
     if (window.innerWidth >= 992) return;
     const t = event.target as Node;
-    const pr = this.portalDropdown?.nativeElement;
+    const sub = this.submissionDropdown?.nativeElement;
     const rs = this.resourcesDropdown?.nativeElement;
-    if (this.portalMenuOpen && pr && !pr.contains(t)) {
-      this.portalMenuOpen = false;
+    if (this.submissionMenuOpen && sub && !sub.contains(t)) {
+      this.submissionMenuOpen = false;
     }
     if (this.resourcesMenuOpen && rs && !rs.contains(t)) {
       this.resourcesMenuOpen = false;

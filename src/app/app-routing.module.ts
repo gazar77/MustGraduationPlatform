@@ -48,7 +48,7 @@ const routes: Routes = [
         path: 'doctor',
         loadChildren: () => import('./features/doctor/doctor.module').then(m => m.DoctorModule),
         canActivate: [AuthGuard],
-        data: { roles: ['Admin'] }
+        data: { roles: ['Admin', 'SuperAdmin'] }
       },
       {
         path: 'contact',
@@ -150,7 +150,7 @@ const routes: Routes = [
     path: 'admin',
     loadChildren: () => import('./features/admin/admin.module').then(m => m.AdminModule),
     canActivate: [AuthGuard],
-    data: { roles: ['Admin'] }
+    data: { roles: ['Admin', 'SuperAdmin'] }
   },
   { path: '**', redirectTo: 'auth/login' }
 ];

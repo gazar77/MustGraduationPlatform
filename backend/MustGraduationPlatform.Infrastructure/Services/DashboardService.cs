@@ -25,7 +25,7 @@ public class DashboardService : IDashboardService
         var approved = ideas.Count(i => i.Status == "Approved");
 
         var totalDoctors = await _db.Set<ApplicationUser>()
-            .CountAsync(u => u.UserRole == UserRole.Admin, ct);
+            .CountAsync(u => u.UserRole == UserRole.Admin || u.UserRole == UserRole.SuperAdmin, ct);
 
         var totalProposals = await _db.Proposals.CountAsync(ct);
 

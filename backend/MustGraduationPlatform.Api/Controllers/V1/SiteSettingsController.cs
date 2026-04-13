@@ -17,7 +17,7 @@ public class SiteSettingsController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<IReadOnlyList<SiteSettingDto>>> GetAll(CancellationToken ct)
         => Ok(await _settings.GetAllAsync(ct));
 
@@ -30,7 +30,7 @@ public class SiteSettingsController : ControllerBase
     }
 
     [HttpPut("{key}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<SiteSettingDto>> Upsert(string key, [FromBody] SiteSettingUpdateDto dto, CancellationToken ct)
         => Ok(await _settings.UpsertAsync(key, dto, ct));
 }

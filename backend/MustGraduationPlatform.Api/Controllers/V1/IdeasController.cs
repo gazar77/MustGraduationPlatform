@@ -25,13 +25,13 @@ public class IdeasController : ControllerBase
         => Ok(await _ideas.GetVisibleAsync(ct));
 
     [HttpGet("manage")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<IReadOnlyList<IdeaDto>>> GetAll(CancellationToken ct)
         => Ok(await _ideas.GetAllAsync(ct));
 
     /// <summary>Ideas where the current admin user's display name matches <see cref="Idea.SupervisorName"/> (faculty dashboard).</summary>
     [HttpGet("for-me")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<IReadOnlyList<IdeaDto>>> GetForMe(CancellationToken ct)
     {
         var me = await _auth.GetCurrentUserAsync(User, ct);
@@ -51,17 +51,17 @@ public class IdeasController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<IdeaDto>> Create([FromBody] IdeaCreateUpdateDto dto, CancellationToken ct)
         => Ok(await _ideas.CreateAsync(dto, ct));
 
     [HttpPost("student-submit")]
-    [Authorize(Roles = "Student,Admin")]
+    [Authorize(Roles = "Student,Admin,SuperAdmin")]
     public async Task<ActionResult<IdeaDto>> StudentSubmit([FromBody] IdeaStudentSubmitDto request, CancellationToken ct)
         => Ok(await _ideas.CreateStudentSubmissionAsync(request, ct));
 
     [HttpPut("{id:int}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<IdeaDto>> Update(int id, [FromBody] IdeaCreateUpdateDto dto, CancellationToken ct)
     {
         var r = await _ideas.UpdateAsync(id, dto, ct);
@@ -69,12 +69,12 @@ public class IdeasController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<IActionResult> Delete(int id, CancellationToken ct)
         => await _ideas.DeleteAsync(id, ct) ? NoContent() : NotFound();
 
     [HttpPost("{id:int}/toggle-visibility")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<ActionResult<IdeaDto>> ToggleVisibility(int id, CancellationToken ct)
     {
         var r = await _ideas.ToggleVisibilityAsync(id, ct);
@@ -82,7 +82,7 @@ public class IdeasController : ControllerBase
     }
 
     [HttpPost("{id:int}/reserve")]
-    [Authorize(Roles = "Student,Admin")]
+    [Authorize(Roles = "Student,Admin,SuperAdmin")]
     public async Task<ActionResult<IdeaDto>> Reserve(int id, CancellationToken ct)
     {
         try

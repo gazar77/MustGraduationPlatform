@@ -71,6 +71,8 @@
     </div>
     
     <div class="modal-footer">
+      <button *ngIf="showPdfDownload" type="button" class="btn btn-outline-primary" (click)="downloadPdf.emit()">تحميل PDF</button>
+      <button *ngIf="showFileDownload" type="button" class="btn btn-outline-secondary" (click)="downloadFile.emit()">تحميل الملف</button>
       <button class="btn btn-secondary" (click)="onClose()">إلغاء</button>
       <button class="btn btn-primary" (click)="onSave()">حفظ البيانات</button>
     </div>

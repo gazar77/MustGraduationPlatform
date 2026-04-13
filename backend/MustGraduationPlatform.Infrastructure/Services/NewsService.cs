@@ -20,7 +20,7 @@ public class NewsService : INewsService
 
     public async Task<IReadOnlyList<NewsDto>> GetVisibleAsync(CancellationToken ct = default)
     {
-        var list = await _db.NewsArticles.Where(n => n.IsVisible).OrderBy(n => n.DisplayOrder).ToListAsync(ct);
+        var list = await _db.NewsArticles.Where(n => n.IsVisible).OrderByDescending(n => n.PublishDate).ThenBy(n => n.DisplayOrder).ToListAsync(ct);
         return list.Select(EntityMappers.ToDto).ToList();
     }
 

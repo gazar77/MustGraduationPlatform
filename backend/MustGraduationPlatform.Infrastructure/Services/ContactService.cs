@@ -29,7 +29,7 @@ public class ContactService : IContactService
             Email = dto.Email,
             Subject = dto.Subject,
             Message = dto.Message,
-            Status = "New",
+            Status = "Pending",
             SubmissionDate = DateTime.UtcNow
         };
         _db.ContactMessages.Add(e);

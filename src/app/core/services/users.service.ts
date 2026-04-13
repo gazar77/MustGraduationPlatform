@@ -22,4 +22,12 @@ export class UsersService {
   getUsers(): Observable<UserListItem[]> {
     return this.http.get<UserListItem[]>(this.apiUrl);
   }
+
+  updateUser(id: string, body: { fullName?: string; role: string }): Observable<UserListItem> {
+    return this.http.patch<UserListItem>(`${this.apiUrl}/${id}`, body);
+  }
+
+  deleteUser(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }

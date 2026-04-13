@@ -6,8 +6,9 @@ import { TemplateService } from '../../../core/services/template.service';
 import { IdeaService } from '../../../core/services/idea.service';
 import { ContactService } from '../../../core/services/contact.service';
 import { ProjectSubmissionService } from '../../../core/services/project-submission.service';
-import { ProposalService } from '../../../core/services/proposal.service';
 import { DashboardService } from '../../../core/services/dashboard.service';
+import { IdeaCategoryService } from '../../../core/services/idea-category.service';
+import { environment } from '../../../../environments/environment';
 import { of, Observable } from 'rxjs';
 
 @Component({
@@ -28,16 +29,21 @@ export class AdminManagementComponent implements OnInit {
     fields: [] as any[]
   };
 
+  /** Show visibility / idea open toggle column */
+  showTableStatus = true;
+  showAddButton = true;
+  ideaCategoryOptions: string[] = [];
+
   constructor(
     private route: ActivatedRoute,
     private newsService: NewsService,
     private eventService: EventService,
     private templateService: TemplateService,
     private ideaService: IdeaService,
-    private proposalService: ProposalService,
     private contactService: ContactService,
     private projectSubmissionService: ProjectSubmissionService,
-    private dashboardService: DashboardService
+    private dashboardService: DashboardService,
+    private ideaCategoryService: IdeaCategoryService
   ) {}
 
   ngOnInit(): void {
@@ -93,7 +99,7 @@ export class AdminManagementComponent implements OnInit {
         this.projectSubmissionService.getSubmissions('project2').subscribe(res => this.items = res);
         break;
       case 'news':
-        this.title = 'إدارة الأخبار والتحديثات';
+        this.title = 'إدارة الأخبار';
         this.columns = [
           { key: 'title', label: 'العنوان' },
           { key: 'publishDate', label: 'التاريخ' },
@@ -127,9 +133,27 @@ export class AdminManagementComponent implements OnInit {
           { key: 'supervisorName', label: 'المشرف' },
           { key: 'status', label: 'الحالة' }
         ];
+        this.ideaCategoryService.getAllForManage().subscribe(c => {
+          this.ideaCategoryOptions = c.map(x => x.name);
+        });
         this.ideaService.getAllForManage().subscribe(res => this.items = res);
         break;
     }
+    this.showTableStatus = ['news', 'event', 'template', 'ideas'].includes(this.type);
+    this.showAddButton = !['proposals', 'contact', 'project1', 'project2'].includes(this.type);
+  }
+
+  get ideaOpenClosedToggle(): boolean {
+    return this.type === 'ideas';
+  }
+
+  get showProposalPdfDownload(): boolean {
+    return this.modalConfig.isOpen && this.type === 'proposals' && !!this.editingItem?.registrationPayloadJson;
+  }
+
+  get showProjectFileDownload(): boolean {
+    return this.modalConfig.isOpen && (this.type === 'project1' || this.type === 'project2') &&
+      !!this.editingItem?.fileUrl && this.editingItem?.fileName && this.editingItem.fileName !== '-';
   }
 
   onAdd() {
@@ -151,7 +175,6 @@ export class AdminManagementComponent implements OnInit {
       this.modalConfig.fields = [
         { name: 'title', label: 'العنوان', type: 'text', value: item?.title },
         { name: 'content', label: 'المحتوى', type: 'textarea', value: item?.content },
-        { name: 'category', label: 'التصنيف', type: 'select', options: ['Announcement', 'Event', 'Reminder'], value: item?.category },
         { name: 'coverImage', label: isEdit ? 'صورة الخبر (اختياري — لتحديث الصورة)' : 'صورة الخبر', type: 'image', value: null }
       ];
     } else if (this.type === 'event') {
@@ -161,7 +184,6 @@ export class AdminManagementComponent implements OnInit {
         { name: 'description', label: 'الوصف', type: 'textarea', value: item?.description },
         { name: 'date', label: 'التاريخ', type: 'date', value: item?.date },
         { name: 'location', label: 'المكان', type: 'text', value: item?.location },
-        { name: 'category', label: 'التصنيف', type: 'select', options: ['academic', 'social', 'workshop', 'competition'], value: item?.category },
         { name: 'coverImage', label: isEdit ? 'صورة الفعالية (اختياري)' : 'صورة الفعالية', type: 'image', value: null }
       ];
     } else if (this.type === 'template') {
@@ -180,35 +202,24 @@ export class AdminManagementComponent implements OnInit {
           ];
     } else if (this.type === 'ideas') {
       this.modalConfig.title = isEdit ? 'تعديل فكرة مشروع' : 'إضافة فكرة مشروع جديدة';
+      const catOpts = this.ideaCategoryOptions.length ? this.ideaCategoryOptions : ['—'];
       this.modalConfig.fields = [
         { name: 'title', label: 'عنوان المشروع', type: 'text', value: item?.title },
-        { name: 'category', label: 'التصنيف', type: 'text', value: item?.category },
+        { name: 'category', label: 'التصنيف', type: 'select', options: catOpts, value: item?.category },
         { name: 'description', label: 'الوصف', type: 'textarea', value: item?.description },
         { name: 'supervisorName', label: 'اسم المشرف', type: 'text', value: item?.supervisorName }
       ];
     } else if (this.type === 'proposals') {
-      if (isEdit) {
-        this.modalConfig.title = 'تفاصيل وتحديث المقترح';
-        this.modalConfig.fields = [
-          { name: 'projectNumber', label: 'رقم المشروع', type: 'readonly', value: item?.projectNumber },
-          { name: 'projectTitle', label: 'اسم المشروع', type: 'readonly', value: item?.projectTitle },
-          { name: 'teamLeaderName', label: 'اسم قائد الفريق', type: 'readonly', value: item?.teamLeaderName },
-          { name: 'supervisorName', label: 'المشرف المقترح', type: 'readonly', value: item?.supervisorName },
-          { name: 'fileName', label: 'الملف المرفق', type: 'readonly', value: item?.fileName },
-          { name: 'notes', label: 'ملاحظات الإرسال', type: 'readonly', value: item?.notes },
-          { name: 'status', label: 'الحالة', type: 'select', options: ['New', 'Pending', 'Reviewed', 'Accepted', 'Rejected'], value: item?.status || 'Pending' }
-        ];
-      } else {
-        this.modalConfig.title = 'إضافة تسليم مقترح';
-        this.modalConfig.fields = [
-          { name: 'projectNumber', label: 'رقم المشروع', type: 'text', value: '' },
-          { name: 'projectTitle', label: 'اسم المشروع', type: 'text', value: '' },
-          { name: 'teamLeaderName', label: 'قائد الفريق', type: 'text', value: '' },
-          { name: 'supervisorName', label: 'المشرف المقترح', type: 'text', value: '' },
-          { name: 'fileName', label: 'اسم الملف', type: 'text', value: '' },
-          { name: 'notes', label: 'ملاحظات', type: 'textarea', value: '' }
-        ];
-      }
+      this.modalConfig.title = 'تفاصيل وتحديث المقترح';
+      this.modalConfig.fields = [
+        { name: 'projectNumber', label: 'رقم المشروع', type: 'readonly', value: item?.projectNumber },
+        { name: 'projectTitle', label: 'عنوان المشروع', type: 'readonly', value: item?.projectTitle },
+        { name: 'teamLeaderName', label: 'الاسم الأول لقائد الفريق', type: 'readonly', value: item?.teamLeaderName },
+        { name: 'supervisorName', label: 'المشرف', type: 'readonly', value: item?.supervisorName },
+        { name: 'fileName', label: 'الملف المرفق', type: 'readonly', value: item?.fileName },
+        { name: 'notes', label: 'ملاحظات الإرسال', type: 'readonly', value: item?.notes },
+        { name: 'status', label: 'الحالة', type: 'select', options: ['Pending', 'Reviewed', 'Approved', 'Rejected'], value: item?.status || 'Pending' }
+      ];
     } else if (this.type === 'contact') {
       this.modalConfig.title = 'تفاصيل رسالة التواصل';
       this.modalConfig.fields = [
@@ -216,7 +227,7 @@ export class AdminManagementComponent implements OnInit {
         { name: 'email', label: 'البريد الإلكتروني', type: 'readonly', value: item?.email },
         { name: 'subject', label: 'الموضوع', type: 'readonly', value: item?.subject },
         { name: 'message', label: 'محتوى الرسالة', type: 'readonly', value: item?.message },
-        { name: 'status', label: 'حالة الرد', type: 'select', options: ['New', 'Pending', 'Reviewed', 'Accepted', 'Rejected'], value: item?.status || 'New' }
+        { name: 'status', label: 'حالة الرد', type: 'select', options: ['Pending', 'Reviewed', 'Accepted', 'Rejected'], value: item?.status || 'Pending' }
       ];
     } else if (this.type === 'project1' || this.type === 'project2') {
       this.modalConfig.title = 'تفاصيل التسليم';
@@ -227,7 +238,7 @@ export class AdminManagementComponent implements OnInit {
         { name: 'supervisorName', label: 'المشرف المتابع', type: 'readonly', value: item?.supervisorName },
         { name: 'fileName', label: 'الملف المرفق', type: 'readonly', value: item?.fileName },
         { name: 'notes', label: 'الملاحظات الإضافية', type: 'readonly', value: item?.notes },
-        { name: 'status', label: 'تقييم التسليم', type: 'select', options: ['New', 'Pending', 'Reviewed', 'Accepted', 'Rejected'], value: item?.status || 'New' }
+        { name: 'status', label: 'تقييم التسليم', type: 'select', options: ['Pending', 'Reviewed', 'Accepted', 'Rejected'], value: item?.status || 'Pending' }
       ];
     }
   }
@@ -250,7 +261,7 @@ export class AdminManagementComponent implements OnInit {
           fd.append('Title', data.title);
           fd.append('Content', String(data.content ?? ''));
           fd.append('Author', 'أدمن النظام');
-          fd.append('Category', data.category);
+          fd.append('Category', 'Announcement');
           fd.append('IsVisible', 'true');
           fd.append('DisplayOrder', '0');
           fd.append('Image', img, img.name);
@@ -261,7 +272,7 @@ export class AdminManagementComponent implements OnInit {
             title: data.title,
             content: data.content,
             author: 'أدمن النظام',
-            category: data.category,
+            category: 'Announcement',
             isVisible: true,
             publishDate: new Date(),
             order: 0,
@@ -280,7 +291,7 @@ export class AdminManagementComponent implements OnInit {
           fd.append('Time', '');
           fd.append('Location', data.location);
           fd.append('Organizer', '');
-          fd.append('Category', data.category);
+          fd.append('Category', '');
           fd.append('IsVisible', 'true');
           fd.append('DisplayOrder', '0');
           fd.append('Image', img, img.name);
@@ -292,7 +303,7 @@ export class AdminManagementComponent implements OnInit {
             description: data.description,
             date: data.date,
             location: data.location,
-            category: data.category,
+            category: '',
             isVisible: true,
             order: 0,
             displayOrder: 0
@@ -339,18 +350,6 @@ export class AdminManagementComponent implements OnInit {
         } as any);
         break;
       }
-      case 'proposals':
-        obs = this.projectSubmissionService.addSubmission({
-          type: 'proposal',
-          studentName: data.teamLeaderName,
-          teamLeaderName: data.teamLeaderName,
-          projectNumber: data.projectNumber,
-          projectTitle: data.projectTitle,
-          supervisorName: data.supervisorName,
-          notes: data.notes || '',
-          fileName: data.fileName || '-'
-        });
-        break;
     }
 
     obs?.subscribe(() => {
@@ -374,7 +373,7 @@ export class AdminManagementComponent implements OnInit {
           fd.append('Title', data.title);
           fd.append('Content', String(data.content ?? ''));
           fd.append('Author', String(data.author ?? this.editingItem.author));
-          fd.append('Category', data.category);
+          fd.append('Category', this.editingItem.category || 'Announcement');
           fd.append('IsVisible', String(this.editingItem.isVisible ?? true));
           fd.append('DisplayOrder', String(this.editingItem.order ?? 0));
           fd.append('Image', img, img.name);
@@ -384,7 +383,7 @@ export class AdminManagementComponent implements OnInit {
             title: data.title,
             content: data.content,
             author: data.author ?? this.editingItem.author,
-            category: data.category,
+            category: this.editingItem.category || 'Announcement',
             isVisible: this.editingItem.isVisible,
             order: this.editingItem.order,
             displayOrder: this.editingItem.order
@@ -402,7 +401,7 @@ export class AdminManagementComponent implements OnInit {
           fd.append('Time', this.editingItem.time ?? '');
           fd.append('Location', data.location);
           fd.append('Organizer', this.editingItem.organizer ?? '');
-          fd.append('Category', data.category);
+          fd.append('Category', this.editingItem.category ?? '');
           fd.append('IsVisible', String(this.editingItem.isVisible ?? true));
           fd.append('DisplayOrder', String(this.editingItem.order ?? 0));
           fd.append('Image', img, img.name);
@@ -413,7 +412,7 @@ export class AdminManagementComponent implements OnInit {
             description: data.description,
             date: data.date,
             location: data.location,
-            category: data.category,
+            category: this.editingItem.category ?? '',
             time: this.editingItem.time,
             organizer: this.editingItem.organizer,
             image: this.editingItem.image,
@@ -512,18 +511,6 @@ export class AdminManagementComponent implements OnInit {
       case 'event': obs = this.eventService.toggleVisibility(item.id); break;
       case 'template': obs = this.templateService.toggleVisibility(item.id); break;
       case 'ideas': obs = this.ideaService.toggleVisibility(item.id); break;
-      case 'proposals': 
-      case 'contact': 
-      case 'project1': 
-      case 'project2': 
-        const statuses = ['New', 'Pending', 'Reviewed', 'Accepted', 'Rejected'];
-        const currentIdx = statuses.indexOf(item.status);
-        const nextStatus: any = statuses[(currentIdx + 1) % statuses.length];
-        
-        if (this.type === 'proposals') obs = this.proposalService.updateProposalStatus(item.id, nextStatus);
-        else if (this.type === 'contact') obs = this.contactService.updateMessageStatus(item.id, nextStatus);
-        else obs = this.projectSubmissionService.updateStatus(item.id, nextStatus);
-        break;
     }
     obs?.subscribe(() => this.initView());
   }
@@ -554,5 +541,55 @@ export class AdminManagementComponent implements OnInit {
       case 'project2': return 'مشروع 2';
       default: return 'عنصر';
     }
+  }
+
+  async downloadIdeaRegistrationPdf(): Promise<void> {
+    const raw = this.editingItem?.registrationPayloadJson as string | undefined;
+    if (!raw) return;
+    let data: Record<string, unknown>;
+    try {
+      data = JSON.parse(raw) as Record<string, unknown>;
+    } catch {
+      return;
+    }
+    const { jsPDF } = await import('jspdf');
+    const pdf = new jsPDF();
+    let y = 14;
+    const add = (text: string) => {
+      pdf.text(text, 10, y);
+      y += 7;
+    };
+    add('Graduation Project Registration');
+    y += 4;
+    add(`Academic year: ${String(data['academicYear'] ?? '')}`);
+    add(`Semester: ${String(data['semester'] ?? '')}`);
+    add(`Department: ${String(data['department'] ?? '')}`);
+    add(`Title (EN): ${String(data['titleEn'] ?? '')}`);
+    add(`Title (AR): ${String(data['titleAr'] ?? '')}`);
+    add(`Category: ${String(data['category'] ?? '')}`);
+    add(`Supervisor: ${String(data['supervisorName'] ?? '')}`);
+    add(`Assistant supervisor: ${String(data['assistantSupervisorName'] ?? '')}`);
+    add(`External org: ${String(data['externalOrg'] ?? '')}`);
+    y += 4;
+    add('Students:');
+    const students = (data['students'] as Array<Record<string, string>>) || [];
+    students.forEach((s, i) => {
+      add(`${i + 1}. ${s['studentName'] ?? ''} — ID: ${s['universityId'] ?? ''} — ${s['mobileNumber'] ?? ''}`);
+    });
+    pdf.save(`idea-registration-${this.editingItem.id}.pdf`);
+  }
+
+  openUploadedProjectFile(): void {
+    const url = this.resolveUploadUrl(this.editingItem?.fileUrl as string | undefined);
+    if (url) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+  }
+
+  private resolveUploadUrl(path: string | null | undefined): string | null {
+    if (!path) return null;
+    if (path.startsWith('http')) return path;
+    const base = environment.apiUrl.replace(/\/api\/v1\/?$/, '');
+    return base + (path.startsWith('/') ? path : '/' + path);
   }
 }

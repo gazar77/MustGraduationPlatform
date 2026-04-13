@@ -71,7 +71,7 @@ public class AuthService : IAuthService
         var user = await _userManager.FindByEmailAsync(normalized)
                    ?? throw new AppException("AUTH_INVALID_CREDENTIALS", "Invalid credentials.");
 
-        if (user.UserRole != UserRole.Admin)
+        if (user.UserRole is not UserRole.Admin and not UserRole.SuperAdmin)
             throw new AppException("AUTH_NOT_ADMIN", "This account is not an administrator.");
 
         if (!await _userManager.CheckPasswordAsync(user, request.Password))
@@ -160,6 +160,7 @@ public class AuthService : IAuthService
         var dept = await _db.Departments.FindAsync(new object[] { request.DepartmentId }, ct)
                    ?? throw new AppException("VALIDATION_DEPARTMENT", "Invalid department.");
 
+        var fullName = $"{request.FirstName.Trim()} {request.LastName.Trim()}".Trim();
         var user = new ApplicationUser
         {
             Id = Guid.NewGuid(),
@@ -168,7 +169,7 @@ public class AuthService : IAuthService
             NormalizedUserName = normalized.ToUpperInvariant(),
             NormalizedEmail = normalized.ToUpperInvariant(),
             EmailConfirmed = true,
-            FullName = request.FullName,
+            FullName = fullName,
             UserRole = UserRole.Student,
             DepartmentId = dept.Id
         };

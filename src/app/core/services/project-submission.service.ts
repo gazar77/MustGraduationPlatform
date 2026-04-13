@@ -35,4 +35,20 @@ export class ProjectSubmissionService {
   deleteSubmission(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+  /** Idea registration form → manage proposals pipeline */
+  submitIdeaRegistration(payload: {
+    academicYear: string;
+    semester: string;
+    department: string;
+    titleEn: string;
+    titleAr: string;
+    category: string;
+    supervisorName: string;
+    assistantSupervisorName: string;
+    externalOrg?: string | null;
+    students: Array<{ studentName: string; universityId: string; mobileNumber: string }>;
+  }): Observable<ProjectSubmission> {
+    return this.http.post<ProjectSubmission>(`${this.apiUrl}/idea-registration`, payload);
+  }
 }
