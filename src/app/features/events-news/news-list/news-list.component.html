@@ -2,7 +2,7 @@
     <app-hero-banner></app-hero-banner>
 
     <div class="news-list-container">
-        <div class="container mb-4 text-end" *ngIf="isAdminUser()">
+        <div class="container mb-4 text-end" *ngIf="canAddNews()">
             <button (click)="onAddNews()" class="btn btn-primary add-news-btn shadow-sm">
                 <i class="fas fa-plus me-2"></i>
                 {{ langService.translate('news.list.addNewsBtn') }}

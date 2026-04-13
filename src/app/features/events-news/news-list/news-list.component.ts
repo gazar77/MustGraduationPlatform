@@ -62,9 +62,9 @@ export class NewsListComponent implements OnInit {
     return fileUrlToAbsolute(item.imagePath);
   }
 
-  isAdminUser(): boolean {
-    const r = this.currentUser?.role;
-    return r === 'Admin' || r === 'SuperAdmin';
+  /** Only Admin may add from this page; SuperAdmin uses /admin/manage/news. */
+  canAddNews(): boolean {
+    return this.currentUser?.role === 'Admin';
   }
 
   onAddNews(): void {
