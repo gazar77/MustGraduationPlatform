@@ -110,7 +110,7 @@ public class SiteSettingsService : ISiteSettingsService
             throw new AppException("VALIDATION_HERO_SLIDER", "مسار الصورة غير مسموح.");
 
         var lower = path.ToLowerInvariant();
-        if (!lower.StartsWith("/uploads/", StringComparison.Ordinal))
-            throw new AppException("VALIDATION_HERO_SLIDER", "مسار الصورة يجب أن يبدأ بـ /uploads/ (ملفات مرفوعة على الخادم).");
+        if (!lower.StartsWith("/uploads/", StringComparison.Ordinal) && !lower.StartsWith("/assets/", StringComparison.Ordinal))
+            throw new AppException("VALIDATION_HERO_SLIDER", "مسار الصورة يجب أن يبدأ بـ /uploads/ أو /assets/");
     }
 }

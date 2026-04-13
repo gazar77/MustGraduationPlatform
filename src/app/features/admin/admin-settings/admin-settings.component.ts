@@ -98,6 +98,33 @@ export class AdminSettingsComponent implements OnInit {
     });
   }
 
+  /** Matches server rules for hero paths: /uploads/ or /assets/, no traversal. */
+  private isHeroImagePathAllowed(path: string): boolean {
+    const p = path.trim();
+    if (!p || p.includes('..') || p.includes('\\') || p.includes(':')) {
+      return false;
+    }
+    const lower = p.toLowerCase();
+    return lower.startsWith('/uploads/') || lower.startsWith('/assets/');
+  }
+
+  private apiErrorMessage(err: unknown, fallback: string): string {
+    if (!(err instanceof HttpErrorResponse)) {
+      return fallback;
+    }
+    const body = err.error;
+    if (body && typeof body === 'object' && body !== null && 'message' in body) {
+      const m = (body as { message?: unknown }).message;
+      if (typeof m === 'string' && m.length > 0) {
+        return m;
+      }
+    }
+    if (typeof body === 'string' && body.length > 0) {
+      return body;
+    }
+    return fallback;
+  }
+
   private settingsLoadErrorMessage(err: unknown): string {
     if (err instanceof HttpErrorResponse) {
       if (err.status === 404) {
@@ -187,11 +214,7 @@ export class AdminSettingsComponent implements OnInit {
       },
       error: (err: unknown) => {
         this.heroUploadingIndex = null;
-        const msg =
-          err instanceof HttpErrorResponse && err.error?.message
-            ? err.error.message
-            : 'فشل رفع الصورة';
-        this.message = msg;
+        this.message = this.apiErrorMessage(err, 'فشل رفع الصورة');
       }
     });
   }
@@ -220,6 +243,13 @@ export class AdminSettingsComponent implements OnInit {
       this.message = 'أضف مساراً واحداً على الأقل للصور.';
       return;
     }
+    const invalid = urls.filter((u) => !this.isHeroImagePathAllowed(u));
+    if (invalid.length > 0) {
+      const sample = invalid.slice(0, 3).join('، ');
+      this.message =
+        'كل مسار يجب أن يبدأ بـ /uploads/ أو /assets/ دون أحرف غير مسموحة. تحقق من: ' + sample;
+      return;
+    }
     this.message = null;
     this.savingHero = true;
     const payload = JSON.stringify(urls);
@@ -238,11 +268,7 @@ export class AdminSettingsComponent implements OnInit {
       },
       error: (err: unknown) => {
         this.savingHero = false;
-        const msg =
-          err instanceof HttpErrorResponse && err.error?.message
-            ? err.error.message
-            : 'فشل حفظ صور الهيرو';
-        this.message = msg;
+        this.message = this.apiErrorMessage(err, 'فشل حفظ صور الهيرو');
       }
     });
   }
