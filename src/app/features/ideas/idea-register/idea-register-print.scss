@@ -8,24 +8,6 @@
   padding: 20px;
 }
 
-.pdf-actions {
-  width: 794px;
-  max-width: 100%;
-  margin: 0 auto 15px;
-  display: flex;
-  gap: 10px;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-
-  button {
-    border: 1px solid #777;
-    background: #fff;
-    padding: 8px 14px;
-    cursor: pointer;
-    font-size: 14px;
-  }
-}
-
 .must-pdf-paper {
   width: 794px;
   max-width: 100%;
@@ -231,13 +213,17 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    gap: 10px;
-    font-size: 18px;
+    gap: 6px;
+    flex-wrap: nowrap;
     font-weight: 600;
 
     > div {
+      flex: 1 1 0;
+      min-width: 0;
       text-align: center;
-      flex: 1;
+      white-space: nowrap;
+      font-size: 0.62rem;
+      line-height: 1.2;
     }
   }
 
@@ -257,7 +243,6 @@
 }
 
 @media (max-width: 900px) {
-  .pdf-actions,
   .must-pdf-paper {
     width: 100%;
   }
@@ -313,12 +298,23 @@
     max-width: none !important;
   }
 
+  .registration-container .container {
+    max-width: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
   .must-pdf-paper {
     width: 210mm !important;
     min-height: 297mm !important;
     margin: 0 !important;
     box-shadow: none !important;
     padding: 15mm 12mm 12mm !important;
+  }
+
+  .must-pdf-paper .signatures > div {
+    font-size: 6.5pt !important;
+    letter-spacing: -0.02em;
   }
 
   @page {

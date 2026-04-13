@@ -9,14 +9,6 @@
     </app-hero-banner>
 
     <div class="document-wrapper container py-5 page-wrapper">
-        <div class="pdf-actions no-print">
-            <button type="button" (click)="printPdf()">
-                {{ langService.translate('ideas.register.exportPdf') }}
-            </button>
-            <button type="button" (click)="resetForm()">
-                {{ langService.translate('ideas.form.reset') }}
-            </button>
-        </div>
 
         <div id="idea-register-document"
              class="paper must-pdf-paper"
@@ -93,13 +85,7 @@
 
                     <div class="field-row">
                         <label>{{ langService.translate('ideas.form.category') }} <span class="text-danger">*</span></label>
-                        <select formControlName="category">
-                            <option value="" disabled>{{ langService.translate('ideas.form.selectCategory') }}</option>
-                            <option value="AI">{{ langService.translate('ideas.register.categories.AI') }}</option>
-                            <option value="Web">{{ langService.translate('ideas.register.categories.Web') }}</option>
-                            <option value="Mobile">{{ langService.translate('ideas.register.categories.Mobile') }}</option>
-                            <option value="Cyber">{{ langService.translate('ideas.register.categories.Cyber') }}</option>
-                        </select>
+                        <input type="text" formControlName="category" [placeholder]="langService.translate('ideas.form.categoryPlaceholder')" />
                     </div>
                     <div class="error-msg" *ngIf="registrationForm.get('category')?.invalid && registrationForm.get('category')?.touched">{{ langService.translate('ideas.form.required') }}</div>
 

@@ -209,6 +209,7 @@ export class LanguageService {
           selectSemester: 'Select semester',
           selectDepartment: 'Select department',
           selectCategory: 'Select domain',
+          categoryPlaceholder: 'Enter project domain',
           minStudents: 'Minimum 5 students are required.',
           maxStudents: 'Maximum 7 students are allowed.'
         },
@@ -595,6 +596,7 @@ export class LanguageService {
           selectSemester: 'اختر الفصل الدراسي',
           selectDepartment: 'اختر القسم',
           selectCategory: 'اختر المجال',
+          categoryPlaceholder: 'أدخل مجال المشروع',
           minStudents: 'يجب ألا يقل عدد الطلاب عن 5.',
           maxStudents: 'يجب ألا يزيد عدد الطلاب عن 7.'
         },

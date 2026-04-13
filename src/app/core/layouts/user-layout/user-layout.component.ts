@@ -3,11 +3,11 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-user-layout',
   template: `
-    <app-header></app-header>
+    <app-header class="no-print"></app-header>
     <main class="content-area">
       <router-outlet></router-outlet>
     </main>
-    <app-footer></app-footer>
+    <app-footer class="no-print"></app-footer>
   `,
   styles: [`
     .content-area {
