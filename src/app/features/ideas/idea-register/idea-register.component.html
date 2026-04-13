@@ -36,18 +36,7 @@
             <div class="doc-solid-divider" role="presentation"></div>
 
             <div class="doc-title-block">
-                <h1 class="doc-main-title">{{ langService.translate('ideas.form.docTitle') }}</h1>
-                <p class="doc-sub-line doc-sub-line--year" *ngIf="(langService.currentLang$ | async) === 'ar'">
-                    {{ langService.translate('ideas.form.academicYearPrefix') }}
-                    <span class="doc-year-value">{{ registrationForm.get('academicYear')?.value || '........' }}</span>م
-                    {{ langService.translate('ideas.form.academicYearSeasons') }}
-                </p>
-                <p class="doc-sub-line doc-sub-line--year" *ngIf="(langService.currentLang$ | async) === 'en'">
-                    {{ langService.translate('ideas.form.academicYearPrefix') }}
-                    <span class="doc-year-value">{{ registrationForm.get('academicYear')?.value || '........' }}</span>
-                    {{ langService.translate('ideas.form.academicYearSeasons') }}
-                </p>
-                <p class="doc-sub-line doc-sub-line--dept">{{ langService.translate('ideas.form.departmentsLine') }}</p>
+                <h1 class="doc-main-title doc-main-title--form" dir="rtl" lang="ar">{{ langService.translate('ideas.form.docTitle') }}</h1>
             </div>
 
             <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="tpl-form" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">

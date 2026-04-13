@@ -159,27 +159,11 @@ $bg-light: #f6f8fa;
   color: $must-green;
   margin: 0 0 0.65rem;
   line-height: 1.35;
-}
 
-.doc-sub-line {
-  margin: 0.35rem 0;
-  font-size: 0.95rem;
-  color: #2d3748;
-  font-weight: 600;
-
-  &--year {
-    font-size: 0.92rem;
+  &--form {
+    font-family: 'Tajawal', 'Segoe UI', Tahoma, sans-serif;
+    margin-bottom: 0;
   }
-
-  &--dept {
-    color: #1a365d;
-    font-size: 0.9rem;
-  }
-}
-
-.doc-year-value {
-  font-weight: 800;
-  color: $must-blue;
 }
 
 /* Template form: dotted underline fields (official paper style) */
@@ -512,8 +496,14 @@ $bg-light: #f6f8fa;
 }
 
 /* Applied only to the html2canvas clone for a single-page PDF */
+/* Width matches A4 @ 96dpi (794px) so the raster matches A4 proportions (see exportPdf) */
 .official-document.pdf-one-page {
-  padding: 8px 10px !important;
+  width: 794px !important;
+  max-width: 794px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box !important;
+  padding: 10px 18px !important;
   box-shadow: none !important;
   border-radius: 0 !important;
   font-size: 10px;
@@ -559,12 +549,7 @@ $bg-light: #f6f8fa;
 
   .doc-main-title {
     font-size: 0.72rem !important;
-    margin: 0 0 2px !important;
-  }
-
-  .doc-sub-line {
-    font-size: 0.55rem !important;
-    margin: 0.1rem 0 !important;
+    margin: 0 !important;
   }
 
   .form-section {
