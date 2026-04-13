@@ -51,10 +51,10 @@ public class AuthService : IAuthService
 
     public async Task<IdentifyResponseDto> IdentifyAsync(IdentifyRequestDto request, CancellationToken ct = default)
     {
-        if (!MustEmailRules.IsValidMustEmail(request.Email))
-            throw new AppException("VALIDATION_EMAIL_DOMAIN", "Email must be a MUST address.");
+        if (!MustEmailRules.IsValidLoginIdentifier(request.Email))
+            throw new AppException("VALIDATION_EMAIL_DOMAIN", "Enter a full MUST email or the part before @must.edu.eg.");
 
-        var normalized = MustEmailRules.Normalize(request.Email);
+        var normalized = MustEmailRules.ResolveToMustEmail(request.Email);
         var user = await _userManager.FindByEmailAsync(normalized);
         if (user is null)
             return new IdentifyResponseDto(false, null);
@@ -64,10 +64,10 @@ public class AuthService : IAuthService
 
     public async Task<AuthSuccessDto> AdminLoginAsync(AdminLoginRequestDto request, CancellationToken ct = default)
     {
-        if (!MustEmailRules.IsValidMustEmail(request.Email))
-            throw new AppException("VALIDATION_EMAIL_DOMAIN", "Email must be a MUST address.");
+        if (!MustEmailRules.IsValidLoginIdentifier(request.Email))
+            throw new AppException("VALIDATION_EMAIL_DOMAIN", "Enter a full MUST email or the part before @must.edu.eg.");
 
-        var normalized = MustEmailRules.Normalize(request.Email);
+        var normalized = MustEmailRules.ResolveToMustEmail(request.Email);
         var user = await _userManager.FindByEmailAsync(normalized)
                    ?? throw new AppException("AUTH_INVALID_CREDENTIALS", "Invalid credentials.");
 
@@ -120,10 +120,10 @@ public class AuthService : IAuthService
 
     public async Task<AuthSuccessDto> StudentLoginAsync(StudentLoginRequestDto request, CancellationToken ct = default)
     {
-        if (!MustEmailRules.IsValidMustEmail(request.Email))
-            throw new AppException("VALIDATION_EMAIL_DOMAIN", "Email must be a MUST address.");
+        if (!MustEmailRules.IsValidLoginIdentifier(request.Email))
+            throw new AppException("VALIDATION_EMAIL_DOMAIN", "Enter a full MUST email or the part before @must.edu.eg.");
 
-        var normalized = MustEmailRules.Normalize(request.Email);
+        var normalized = MustEmailRules.ResolveToMustEmail(request.Email);
         var user = await _userManager.FindByEmailAsync(normalized)
                    ?? throw new AppException("AUTH_USER_NOT_FOUND", "User not found.");
 

@@ -9,6 +9,8 @@ export type ModalFieldType = 'text' | 'textarea' | 'select' | 'date' | 'readonly
 })
 export class ManagementModalComponent implements OnChanges {
   @Input() title: string = '';
+  /** Optional server/validation message shown above the footer */
+  @Input() errorMessage: string | null = null;
   @Input() isOpen: boolean = false;
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<Record<string, unknown>>();

@@ -10,7 +10,7 @@ public class IdentifyRequestValidator : AbstractValidator<IdentifyRequestDto>
     {
         RuleFor(x => x.Email)
             .NotEmpty()
-            .Must(MustEmailRules.IsValidMustEmail)
-            .WithMessage("VALIDATION_EMAIL_DOMAIN");
+            .Must(MustEmailRules.IsValidLoginIdentifier)
+            .WithMessage("VALIDATION_LOGIN_IDENTIFIER");
     }
 }

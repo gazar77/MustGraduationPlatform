@@ -26,12 +26,40 @@
           <td>{{ u.role }}</td>
           <td>{{ u.departmentCode || '—' }}</td>
           <td *ngIf="isAdmin">
-            <button *ngIf="isSuperAdmin" type="button" class="btn btn-sm btn-outline-primary me-1" (click)="editUser(u)">تعديل</button>
-            <button *ngIf="canDelete(u)" type="button" class="btn btn-sm btn-outline-danger" (click)="deleteUser(u)">حذف</button>
+            <button *ngIf="canEdit(u)" type="button" class="btn btn-sm btn-outline-primary me-1" (click)="openEditModal(u)">تعديل</button>
+            <button *ngIf="canDelete(u)" type="button" class="btn btn-sm btn-outline-danger" (click)="requestDelete(u)">حذف</button>
           </td>
         </tr>
       </tbody>
     </table>
     <p *ngIf="users.length === 0" class="text-muted">لا يوجد مستخدمون.</p>
+  </div>
+
+  <app-management-modal
+    [isOpen]="editModalOpen"
+    title="تعديل مستخدم"
+    [fields]="editModalFields"
+    [errorMessage]="saveError"
+    (close)="closeEditModal()"
+    (save)="onEditSave($event)">
+  </app-management-modal>
+
+  <div class="user-dialog-overlay" *ngIf="deleteConfirmUser" (click)="cancelDelete()">
+    <div class="user-dialog" (click)="$event.stopPropagation()">
+      <div class="user-dialog-header">
+        <h2>تأكيد الحذف</h2>
+        <button type="button" class="user-dialog-close" (click)="cancelDelete()" aria-label="إغلاق">&times;</button>
+      </div>
+      <div class="user-dialog-body">
+        <p>هل أنت متأكد من حذف المستخدم <strong>{{ deleteConfirmUser.email }}</strong>؟</p>
+        <div *ngIf="deleteError" class="alert alert-danger mb-0" role="alert">{{ deleteError }}</div>
+      </div>
+      <div class="user-dialog-footer">
+        <button type="button" class="btn btn-secondary" [disabled]="deleteLoading" (click)="cancelDelete()">إلغاء</button>
+        <button type="button" class="btn btn-danger" [disabled]="deleteLoading" (click)="confirmDelete()">
+          {{ deleteLoading ? 'جاري الحذف...' : 'حذف' }}
+        </button>
+      </div>
+    </div>
   </div>
 </div>

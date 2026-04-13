@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ModalFieldType } from '../../../shared/components/management-modal/management-modal.component';
 import { UsersService, UserListItem } from '../../../core/services/users.service';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -11,6 +12,21 @@ export class UserListComponent implements OnInit {
   users: UserListItem[] = [];
   loading = true;
   error: string | null = null;
+
+  editModalOpen = false;
+  saveError: string | null = null;
+  editingUser: UserListItem | null = null;
+  editModalFields: {
+    name: string;
+    label: string;
+    type: ModalFieldType;
+    options?: string[];
+    value?: unknown;
+  }[] = [];
+
+  deleteConfirmUser: UserListItem | null = null;
+  deleteError: string | null = null;
+  deleteLoading = false;
 
   constructor(
     private usersService: UsersService,
@@ -50,31 +66,74 @@ export class UserListComponent implements OnInit {
     return u.role === 'Student';
   }
 
-  editUser(u: UserListItem): void {
-    if (!this.isSuperAdmin) return;
-    const name = prompt('الاسم الكامل', u.name);
-    if (name === null) return;
-    const roleIn = prompt('الدور: Admin أو Student', u.role);
-    if (roleIn === null) return;
-    const role = roleIn.trim();
+  canEdit(u: UserListItem): boolean {
+    return this.isSuperAdmin && u.role !== 'SuperAdmin';
+  }
+
+  openEditModal(u: UserListItem): void {
+    if (!this.canEdit(u)) return;
+    this.editingUser = u;
+    this.saveError = null;
+    this.editModalOpen = true;
+    const roleValue = u.role === 'Admin' || u.role === 'Student' ? u.role : 'Student';
+    this.editModalFields = [
+      { name: 'fullName', label: 'الاسم الكامل', type: 'text', value: u.name },
+      { name: 'role', label: 'الدور', type: 'select', options: ['Admin', 'Student'], value: roleValue },
+      { name: 'email', label: 'البريد الإلكتروني', type: 'readonly', value: u.email }
+    ];
+  }
+
+  closeEditModal(): void {
+    this.editModalOpen = false;
+    this.editingUser = null;
+    this.saveError = null;
+  }
+
+  onEditSave(payload: Record<string, unknown>): void {
+    if (!this.editingUser) return;
+    const role = String(payload['role'] ?? '').trim();
+    const fullName = String(payload['fullName'] ?? '').trim();
     if (role !== 'Admin' && role !== 'Student') {
-      alert('الدور يجب أن يكون Admin أو Student');
+      this.saveError = 'الدور يجب أن يكون Admin أو Student.';
       return;
     }
-    this.usersService.updateUser(u.id, { fullName: name.trim(), role }).subscribe({
-      next: () => this.load(),
-      error: () => alert('فشل التحديث')
+    this.saveError = null;
+    this.usersService.updateUser(this.editingUser.id, { fullName, role }).subscribe({
+      next: () => {
+        this.closeEditModal();
+        this.load();
+      },
+      error: (err) => {
+        this.saveError = err?.error?.message || 'فشل التحديث.';
+      }
     });
   }
 
-  deleteUser(u: UserListItem): void {
+  requestDelete(u: UserListItem): void {
     if (!this.canDelete(u)) return;
-    if (!confirm('تأكيد حذف هذا المستخدم؟')) return;
+    this.deleteConfirmUser = u;
+    this.deleteError = null;
+  }
+
+  cancelDelete(): void {
+    this.deleteConfirmUser = null;
+    this.deleteError = null;
+  }
+
+  confirmDelete(): void {
+    const u = this.deleteConfirmUser;
+    if (!u) return;
+    this.deleteLoading = true;
+    this.deleteError = null;
     this.usersService.deleteUser(u.id).subscribe({
-      next: () => this.load(),
+      next: () => {
+        this.deleteLoading = false;
+        this.deleteConfirmUser = null;
+        this.load();
+      },
       error: (err) => {
-        const msg = err?.error?.message || 'فشل الحذف';
-        alert(msg);
+        this.deleteLoading = false;
+        this.deleteError = err?.error?.message || 'فشل الحذف.';
       }
     });
   }

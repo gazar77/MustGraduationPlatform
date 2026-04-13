@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit {
     private authService: AuthService
   ) {
     this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [loginIdentifierValidator]],
       password: ['']
     });
   }
@@ -52,7 +52,8 @@ export class LoginComponent implements OnInit {
     this.error = '';
 
     if (this.step === 'Identify') {
-      this.authService.identify(this.f['email'].value).subscribe({
+      const emailRaw = String(this.f['email'].value ?? '').trim();
+      this.authService.identify(emailRaw).subscribe({
         next: (res) => {
           this.userType = (res.userType as LoginComponent['userType']) ?? null;
           if (res.exists) {
@@ -76,7 +77,8 @@ export class LoginComponent implements OnInit {
         }
       });
     } else if (this.step === 'AdminLogin') {
-      this.authService.adminLogin(this.f['email'].value, this.f['password'].value).subscribe({
+      const emailRaw = String(this.f['email'].value ?? '').trim();
+      this.authService.adminLogin(emailRaw, this.f['password'].value).subscribe({
         next: () => this.router.navigateByUrl('/admin'),
         error: (err) => {
           this.error = this.httpErrorMessage(err, 'كلمة المرور غير صحيحة أو رفض الخادم الطلب.');
@@ -84,7 +86,8 @@ export class LoginComponent implements OnInit {
         }
       });
     } else if (this.step === 'StudentLogin') {
-      this.authService.studentLogin(this.f['email'].value, this.f['password'].value).subscribe({
+      const emailRaw = String(this.f['email'].value ?? '').trim();
+      this.authService.studentLogin(emailRaw, this.f['password'].value).subscribe({
         next: () => this.router.navigateByUrl('/dashboard'),
         error: (err) => {
           this.error = this.httpErrorMessage(err, 'كلمة المرور غير صحيحة أو رفض الخادم الطلب.');
@@ -106,4 +109,16 @@ export class LoginComponent implements OnInit {
     }
     return fallback;
   }
+}
+
+/** Full MUST email or local part only (matches backend MustEmailRules). */
+function loginIdentifierValidator(control: AbstractControl): ValidationErrors | null {
+  const v = String(control.value ?? '').trim();
+  if (!v) {
+    return { required: true };
+  }
+  if (v.includes('@')) {
+    return /^[A-Za-z0-9._%+-]+@must\.edu\.eg$/i.test(v) ? null : { loginIdentifier: true };
+  }
+  return /^[A-Za-z0-9._%+-]+$/.test(v) ? null : { loginIdentifier: true };
 }

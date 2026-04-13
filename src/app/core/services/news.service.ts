@@ -57,6 +57,6 @@ export class NewsService {
   }
 
   toggleVisibility(id: number): Observable<News> {
-    return this.http.patch<News>(`${this.apiUrl}/${id}/toggle-visibility`, {});
+    return this.http.post<News>(`${this.apiUrl}/${id}/toggle-visibility`, {});
   }
 }

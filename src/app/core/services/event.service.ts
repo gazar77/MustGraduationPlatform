@@ -56,6 +56,6 @@ export class EventService {
   }
 
   toggleVisibility(id: number): Observable<Event> {
-    return this.http.patch<Event>(`${this.apiUrl}/${id}/toggle-visibility`, {});
+    return this.http.post<Event>(`${this.apiUrl}/${id}/toggle-visibility`, {});
   }
 }

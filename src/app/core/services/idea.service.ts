@@ -72,6 +72,6 @@ export class IdeaService {
   }
 
   toggleVisibility(id: number): Observable<Idea> {
-    return this.http.patch<Idea>(`${this.apiUrl}/${id}/toggle-visibility`, {});
+    return this.http.post<Idea>(`${this.apiUrl}/${id}/toggle-visibility`, {});
   }
 }
