@@ -34,56 +34,66 @@
     </table>
   </div>
 
-  <h3 class="mb-3">تصنيفات أفكار المشاريع</h3>
-  <p class="text-muted small">تُستخدم في صفحة إدارة الأفكار وفلتر صفحة أفكار المشاريع.</p>
+  <section class="admin-settings__categories" aria-labelledby="categories-heading">
+    <div class="categories-section-header">
+      <h3 id="categories-heading" class="categories-section-header__title">تصنيفات أفكار المشاريع</h3>
+      <p class="categories-section-header__subtitle">تُستخدم في صفحة إدارة الأفكار وفلتر صفحة أفكار المشاريع.</p>
+    </div>
 
-  <div *ngIf="loadingCategories" class="text-center py-3">
-    <div class="spinner-border spinner-border-sm text-primary"></div>
-  </div>
+    <div *ngIf="loadingCategories" class="categories-panel categories-panel--loading">
+      <div class="spinner-border spinner-border-sm text-primary" role="status" aria-label="جاري التحميل"></div>
+      <span class="categories-panel--loading__text">جاري تحميل التصنيفات...</span>
+    </div>
 
-  <div *ngIf="!loadingCategories" class="card mb-4">
-    <div class="card-body">
-      <div class="row g-2 align-items-end mb-3">
-        <div class="col-md-6">
-          <label class="form-label">اسم التصنيف</label>
-          <input type="text" class="form-control" [(ngModel)]="newCategoryName" placeholder="مثال: تطوير ويب">
+    <div *ngIf="!loadingCategories" class="categories-panel">
+      <div class="categories-panel__add">
+        <div class="categories-panel__field">
+          <label class="categories-panel__label" for="new-category-name">اسم التصنيف</label>
+          <input id="new-category-name" type="text" class="form-control categories-panel__input" [(ngModel)]="newCategoryName" placeholder="مثال: تطوير ويب">
         </div>
-        <div class="col-md-3">
-          <label class="form-label">الترتيب</label>
-          <input type="number" class="form-control" [(ngModel)]="newCategoryOrder">
+        <div class="categories-panel__field categories-panel__field--narrow">
+          <label class="categories-panel__label" for="new-category-order">الترتيب</label>
+          <input id="new-category-order" type="number" class="form-control categories-panel__input" [(ngModel)]="newCategoryOrder">
         </div>
-        <div class="col-md-3">
-          <button type="button" class="btn btn-primary w-100" (click)="addCategory()" [disabled]="savingCategory || !newCategoryName.trim()">
-            إضافة تصنيف
+        <div class="categories-panel__field categories-panel__field--action">
+          <button type="button" class="btn btn-primary categories-panel__add-btn w-100" (click)="addCategory()" [disabled]="savingCategory || !newCategoryName.trim()">
+            <i class="fas fa-plus" aria-hidden="true"></i>
+            <span>{{ savingCategory ? '...' : 'إضافة تصنيف' }}</span>
           </button>
         </div>
       </div>
 
-      <div class="table-responsive">
-        <table class="table table-sm table-bordered align-middle">
-          <thead class="table-light">
+      <div class="table-responsive categories-panel__table-wrap">
+        <table class="table categories-table align-middle">
+          <thead>
             <tr>
-              <th>الاسم</th>
-              <th style="width: 120px">الترتيب</th>
-              <th style="width: 140px"></th>
+              <th scope="col">الاسم</th>
+              <th scope="col" class="categories-table__col-order">الترتيب</th>
+              <th scope="col" class="categories-table__col-actions">إجراءات</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let cat of categories">
               <td>
-                <input type="text" class="form-control form-control-sm" [(ngModel)]="cat.name">
+                <input type="text" class="form-control form-control-sm categories-panel__input" [(ngModel)]="cat.name">
               </td>
               <td>
-                <input type="number" class="form-control form-control-sm" [(ngModel)]="cat.sortOrder">
+                <input type="number" class="form-control form-control-sm categories-panel__input categories-panel__input--order" [(ngModel)]="cat.sortOrder">
               </td>
-              <td class="text-nowrap">
-                <button type="button" class="btn btn-sm btn-outline-primary me-1" (click)="updateCategory(cat)">حفظ</button>
-                <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeCategory(cat)">حذف</button>
+              <td class="categories-table__actions">
+                <button type="button" class="btn btn-sm btn-outline-primary categories-panel__action-btn" (click)="updateCategory(cat)">
+                  <i class="fas fa-save" aria-hidden="true"></i>
+                  <span>حفظ</span>
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-danger categories-panel__action-btn" (click)="removeCategory(cat)">
+                  <i class="fas fa-trash-alt" aria-hidden="true"></i>
+                  <span>حذف</span>
+                </button>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
-  </div>
+  </section>
 </div>
