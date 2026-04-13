@@ -3,7 +3,7 @@
   Run against your application database AFTER EF migrations have created the schema.
 
   What this script does (idempotent where possible):
-  - Inserts departments CS / IS / AI if missing
+  - Inserts departments CS / IS if missing; removes legacy AI department if present
   - Inserts AspNetUsers: admin@must.edu.eg (Admin) and student@must.edu.eg (Student) if missing
   - Inserts site settings, sample idea, news, event, template, dashboard activity if tables are empty
 
@@ -33,11 +33,16 @@ BEGIN TRY
         INSERT INTO [dbo].[Departments] ([Code], [NameAr], [NameEn], [DisplayOrder])
         VALUES (N'IS', N'نظم المعلومات', N'Information Systems', 2);
 
-    IF NOT EXISTS (SELECT 1 FROM [dbo].[Departments] WHERE [Code] = N'AI')
-        INSERT INTO [dbo].[Departments] ([Code], [NameAr], [NameEn], [DisplayOrder])
-        VALUES (N'AI', N'الذكاء الاصطناعي', N'Artificial Intelligence', 3);
-
     DECLARE @CsId INT = (SELECT TOP (1) [Id] FROM [dbo].[Departments] WHERE [Code] = N'CS');
+
+    IF EXISTS (SELECT 1 FROM [dbo].[Departments] WHERE [Code] = N'AI')
+    BEGIN
+        UPDATE [dbo].[AspNetUsers]
+        SET [DepartmentId] = @CsId
+        WHERE [DepartmentId] IN (SELECT [Id] FROM [dbo].[Departments] WHERE [Code] = N'AI');
+
+        DELETE FROM [dbo].[Departments] WHERE [Code] = N'AI';
+    END
 
     /* ---- Test users (AspNetUsers) ---- */
     DECLARE @AdminId UNIQUEIDENTIFIER = '11111111-1111-1111-1111-111111111101';

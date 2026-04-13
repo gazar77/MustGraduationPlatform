@@ -140,32 +140,37 @@ export class IdeaRegisterComponent implements OnInit {
         if (!el) return;
         this.exportBusy = true;
         try {
+            await document.fonts.ready;
             const html2canvas = (await import('html2canvas')).default;
             const { jsPDF } = await import('jspdf');
             const canvas = await html2canvas(el, {
                 scale: 2,
                 useCORS: true,
+                allowTaint: false,
                 logging: false,
-                onclone: (_doc, clone) => {
-                    clone.querySelectorAll('.no-print, .idea-export-actions').forEach(n => n.remove());
+                backgroundColor: '#ffffff',
+                onclone: (cloned) => {
+                    cloned.querySelector('#idea-register-document')?.classList.add('pdf-one-page');
+                    cloned.querySelectorAll('.no-print, .idea-export-actions').forEach((n) => n.remove());
                 }
             });
             const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
             const pageWidth = pdf.internal.pageSize.getWidth();
             const pageHeight = pdf.internal.pageSize.getHeight();
-            const imgWidth = pageWidth;
-            const imgHeight = (canvas.height * pageWidth) / canvas.width;
-            let heightLeft = imgHeight;
-            let position = 0;
-            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
-            while (heightLeft > 0) {
-                position = heightLeft - imgHeight;
-                pdf.addPage();
-                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
+            const margin = 2;
+            const maxW = pageWidth - margin * 2;
+            const maxH = pageHeight - margin * 2;
+            const canvasRatio = canvas.width / canvas.height;
+            let imgW = maxW;
+            let imgH = imgW / canvasRatio;
+            if (imgH > maxH) {
+                imgH = maxH;
+                imgW = imgH * canvasRatio;
             }
+            const x = (pageWidth - imgW) / 2;
+            const y = margin;
+            pdf.addImage(imgData, 'PNG', x, y, imgW, imgH, undefined, 'FAST');
             pdf.save('graduation-project-registration.pdf');
         } catch (e) {
             console.error(e);

@@ -10,151 +10,164 @@
 
     <div class="document-wrapper container py-5">
         <div id="idea-register-document"
-             class="official-document"
+             class="official-document official-document--template"
              [class.official-document--rtl]="(langService.currentLang$ | async) === 'ar'">
 
-            <header class="doc-header doc-header--bilingual">
-                <div class="doc-header__brand">
-                    <img class="doc-header__logo" src="assets/must-logo.png" alt="MUST" width="72" height="72" />
+            <div class="doc-watermark" aria-hidden="true">
+                <img src="assets/must-colored-logo.png" alt="" />
+            </div>
+
+            <!-- Official header: EN | Logo | AR (matches MUST template) -->
+            <header class="doc-header doc-header--official-grid">
+                <div class="doc-header__en">
+                    <p class="doc-header__en-line">{{ langService.translate('ideas.form.facultyEnLine1') }}</p>
+                    <p class="doc-header__en-line">{{ langService.translate('ideas.form.facultyEnLine2') }}</p>
+                    <p class="doc-header__en-line doc-header__en-line--muted">{{ langService.translate('ideas.form.facultyCollegesEn') }}</p>
                 </div>
-                <div class="doc-header__lines">
-                    <p class="doc-header__line doc-header__line--en">{{ langService.translate('ideas.form.facultyEn') }}</p>
-                    <p class="doc-header__line doc-header__line--en muted">{{ langService.translate('ideas.form.facultyCollegesEn') }}</p>
-                    <p class="doc-header__line doc-header__line--ar">{{ langService.translate('ideas.form.facultyAr') }}</p>
-                    <p class="doc-header__line doc-header__line--ar muted">{{ langService.translate('ideas.form.facultyCollegesAr') }}</p>
+                <div class="doc-header__logo-center">
+                    <img class="doc-header__logo" src="assets/must-colored-logo.png" alt="MUST" width="100" height="100" />
                 </div>
-                <h1 class="doc-main-title">{{ langService.translate('ideas.form.docTitle') }}</h1>
-                <p class="doc-sub-line">{{ langService.translate('ideas.form.academicYearLine') }}</p>
-                <p class="doc-sub-line doc-sub-line--dept">{{ langService.translate('ideas.form.departmentsLine') }}</p>
-                <div class="header-divider"></div>
+                <div class="doc-header__ar">
+                    <p class="doc-header__ar-line" dir="rtl" lang="ar">{{ langService.translate('ideas.form.facultyAr') }}</p>
+                    <p class="doc-header__ar-line doc-header__ar-line--muted" dir="rtl" lang="ar">{{ langService.translate('ideas.form.facultyCollegesAr') }}</p>
+                </div>
             </header>
 
-            <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+            <div class="doc-solid-divider" role="presentation"></div>
 
-                <section class="form-section">
-                    <h2 class="section-title">{{ langService.translate('ideas.form.section1') }}</h2>
-                    <div class="row g-4">
+            <div class="doc-title-block">
+                <h1 class="doc-main-title">{{ langService.translate('ideas.form.docTitle') }}</h1>
+                <p class="doc-sub-line doc-sub-line--year" *ngIf="(langService.currentLang$ | async) === 'ar'">
+                    {{ langService.translate('ideas.form.academicYearPrefix') }}
+                    <span class="doc-year-value">{{ registrationForm.get('academicYear')?.value || '........' }}</span>م
+                    {{ langService.translate('ideas.form.academicYearSeasons') }}
+                </p>
+                <p class="doc-sub-line doc-sub-line--year" *ngIf="(langService.currentLang$ | async) === 'en'">
+                    {{ langService.translate('ideas.form.academicYearPrefix') }}
+                    <span class="doc-year-value">{{ registrationForm.get('academicYear')?.value || '........' }}</span>
+                    {{ langService.translate('ideas.form.academicYearSeasons') }}
+                </p>
+                <p class="doc-sub-line doc-sub-line--dept">{{ langService.translate('ideas.form.departmentsLine') }}</p>
+            </div>
+
+            <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="tpl-form" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
+
+                <section class="form-section tpl-section">
+                    <h2 class="section-title tpl-section__title">{{ langService.translate('ideas.form.section1') }}</h2>
+                    <div class="row g-3 tpl-row">
                         <div class="col-md-4">
                             <label class="form-label">{{ langService.translate('ideas.form.academicYear') }} <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control official-input" formControlName="academicYear"
-                                [placeholder]="'2025/2026'">
-                            <div class="error-msg" *ngIf="registrationForm.get('academicYear')?.invalid && registrationForm.get('academicYear')?.touched">
-                                {{ langService.translate('ideas.form.required') }}
+                            <div class="tpl-field-line">
+                                <input type="text" class="form-control tpl-input" formControlName="academicYear" placeholder="2025/2026">
                             </div>
+                            <div class="error-msg" *ngIf="registrationForm.get('academicYear')?.invalid && registrationForm.get('academicYear')?.touched">{{ langService.translate('ideas.form.required') }}</div>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">{{ langService.translate('ideas.form.semester') }} <span class="text-danger">*</span></label>
-                            <select class="form-select official-input" formControlName="semester">
-                                <option value="" disabled>{{ langService.translate('ideas.register.selectCategory') }}</option>
-                                <option value="Fall">{{ langService.translate('ideas.form.semesterFall') }}</option>
-                                <option value="Spring">{{ langService.translate('ideas.form.semesterSpring') }}</option>
-                            </select>
-                            <div class="error-msg" *ngIf="registrationForm.get('semester')?.invalid && registrationForm.get('semester')?.touched">
-                                {{ langService.translate('ideas.form.required') }}
+                            <div class="tpl-field-line tpl-field-line--select">
+                                <select class="form-select tpl-input" formControlName="semester">
+                                    <option value="" disabled>{{ langService.translate('ideas.form.selectSemester') }}</option>
+                                    <option value="Fall">{{ langService.translate('ideas.form.semesterFall') }}</option>
+                                    <option value="Spring">{{ langService.translate('ideas.form.semesterSpring') }}</option>
+                                </select>
                             </div>
+                            <div class="error-msg" *ngIf="registrationForm.get('semester')?.invalid && registrationForm.get('semester')?.touched">{{ langService.translate('ideas.form.required') }}</div>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">{{ langService.translate('ideas.form.department') }} <span class="text-danger">*</span></label>
-                            <select class="form-select official-input" formControlName="department">
-                                <option value="" disabled>{{ langService.translate('ideas.register.selectCategory') }}</option>
-                                <option value="Information Systems">{{ langService.translate('ideas.form.deptIS') }}</option>
-                                <option value="Computer Science">{{ langService.translate('ideas.form.deptCS') }}</option>
-                                <option value="Artificial Intelligence">{{ langService.translate('ideas.form.deptAI') }}</option>
-                            </select>
-                            <div class="error-msg" *ngIf="registrationForm.get('department')?.invalid && registrationForm.get('department')?.touched">
-                                {{ langService.translate('ideas.form.required') }}
+                            <div class="tpl-field-line tpl-field-line--select">
+                                <select class="form-select tpl-input" formControlName="department">
+                                    <option value="" disabled>{{ langService.translate('ideas.form.selectDepartment') }}</option>
+                                    <option value="Information Systems">{{ langService.translate('ideas.form.deptIS') }}</option>
+                                    <option value="Computer Science">{{ langService.translate('ideas.form.deptCS') }}</option>
+                                </select>
                             </div>
+                            <div class="error-msg" *ngIf="registrationForm.get('department')?.invalid && registrationForm.get('department')?.touched">{{ langService.translate('ideas.form.required') }}</div>
                         </div>
                     </div>
                 </section>
 
-                <section class="form-section">
-                    <h2 class="section-title">{{ langService.translate('ideas.form.section2') }}</h2>
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <label class="form-label">{{ langService.translate('ideas.form.titleAr') }} <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control official-input text-end" formControlName="titleAr" dir="rtl">
-                            <div class="error-msg text-end" *ngIf="registrationForm.get('titleAr')?.invalid && registrationForm.get('titleAr')?.touched">
-                                {{ langService.translate('ideas.form.required') }}
-                            </div>
+                <section class="form-section tpl-section">
+                    <h2 class="section-title tpl-section__title">{{ langService.translate('ideas.form.section2') }}</h2>
+                    <div class="tpl-field-block mb-3">
+                        <label class="tpl-label">{{ langService.translate('ideas.form.titleAr') }} <span class="text-danger">*</span></label>
+                        <div class="tpl-field-line tpl-field-line--multi">
+                            <input type="text" class="form-control tpl-input" formControlName="titleAr" dir="rtl">
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label">{{ langService.translate('ideas.form.titleEn') }} <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control official-input" formControlName="titleEn">
-                            <div class="error-msg" *ngIf="registrationForm.get('titleEn')?.invalid && registrationForm.get('titleEn')?.touched">
-                                {{ langService.translate('ideas.form.required') }}
-                            </div>
+                        <div class="error-msg" *ngIf="registrationForm.get('titleAr')?.invalid && registrationForm.get('titleAr')?.touched">{{ langService.translate('ideas.form.required') }}</div>
+                    </div>
+                    <div class="tpl-field-block mb-3">
+                        <label class="tpl-label">{{ langService.translate('ideas.form.titleEn') }} <span class="text-danger">*</span></label>
+                        <div class="tpl-field-line tpl-field-line--multi">
+                            <input type="text" class="form-control tpl-input" formControlName="titleEn" dir="ltr">
                         </div>
-                        <div class="col-12">
-                            <label class="form-label">{{ langService.translate('ideas.form.category') }} <span class="text-danger">*</span></label>
-                            <select class="form-select official-input" formControlName="category">
-                                <option value="" disabled>{{ langService.translate('ideas.register.selectCategory') }}</option>
+                        <div class="error-msg" *ngIf="registrationForm.get('titleEn')?.invalid && registrationForm.get('titleEn')?.touched">{{ langService.translate('ideas.form.required') }}</div>
+                    </div>
+                    <div class="tpl-field-block mb-3">
+                        <label class="tpl-label">{{ langService.translate('ideas.form.category') }} <span class="text-danger">*</span></label>
+                        <div class="tpl-field-line tpl-field-line--select">
+                            <select class="form-select tpl-input" formControlName="category">
+                                <option value="" disabled>{{ langService.translate('ideas.form.selectCategory') }}</option>
                                 <option value="AI">{{ langService.translate('ideas.register.categories.AI') }}</option>
                                 <option value="Web">{{ langService.translate('ideas.register.categories.Web') }}</option>
                                 <option value="Mobile">{{ langService.translate('ideas.register.categories.Mobile') }}</option>
                                 <option value="Cyber">{{ langService.translate('ideas.register.categories.Cyber') }}</option>
                             </select>
-                            <div class="error-msg" *ngIf="registrationForm.get('category')?.invalid && registrationForm.get('category')?.touched">
-                                {{ langService.translate('ideas.form.required') }}
+                        </div>
+                        <div class="error-msg" *ngIf="registrationForm.get('category')?.invalid && registrationForm.get('category')?.touched">{{ langService.translate('ideas.form.required') }}</div>
+                    </div>
+                    <div class="row g-3 tpl-row">
+                        <div class="col-md-4">
+                            <label class="tpl-label">{{ langService.translate('ideas.form.supervisorName') }} <span class="text-danger">*</span></label>
+                            <div class="tpl-field-line">
+                                <input type="text" class="form-control tpl-input" formControlName="supervisorName">
                             </div>
+                            <div class="error-msg" *ngIf="registrationForm.get('supervisorName')?.invalid && registrationForm.get('supervisorName')?.touched">{{ langService.translate('ideas.form.required') }}</div>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">{{ langService.translate('ideas.form.supervisorName') }} <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control official-input" formControlName="supervisorName">
-                            <div class="error-msg" *ngIf="registrationForm.get('supervisorName')?.invalid && registrationForm.get('supervisorName')?.touched">
-                                {{ langService.translate('ideas.form.required') }}
+                            <label class="tpl-label">{{ langService.translate('ideas.form.assistantSupervisorName') }} <span class="text-danger">*</span></label>
+                            <div class="tpl-field-line">
+                                <input type="text" class="form-control tpl-input" formControlName="assistantSupervisorName">
                             </div>
+                            <div class="error-msg" *ngIf="registrationForm.get('assistantSupervisorName')?.invalid && registrationForm.get('assistantSupervisorName')?.touched">{{ langService.translate('ideas.form.required') }}</div>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">{{ langService.translate('ideas.form.assistantSupervisorName') }} <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control official-input" formControlName="assistantSupervisorName">
-                            <div class="error-msg" *ngIf="registrationForm.get('assistantSupervisorName')?.invalid && registrationForm.get('assistantSupervisorName')?.touched">
-                                {{ langService.translate('ideas.form.required') }}
+                            <label class="tpl-label">{{ langService.translate('ideas.form.externalOrg') }}</label>
+                            <div class="tpl-field-line">
+                                <input type="text" class="form-control tpl-input" formControlName="externalOrg">
                             </div>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">{{ langService.translate('ideas.form.externalOrg') }}</label>
-                            <input type="text" class="form-control official-input" formControlName="externalOrg">
                         </div>
                     </div>
                 </section>
 
-                <section class="form-section">
-                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                        <h2 class="section-title mb-0">{{ langService.translate('ideas.form.section3') }}</h2>
-                        <button type="button" class="btn add-student-btn" (click)="addStudent()" [disabled]="students.length >= 7">
+                <section class="form-section tpl-section">
+                    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                        <h2 class="section-title tpl-section__title mb-0">{{ langService.translate('ideas.form.section3') }}</h2>
+                        <button type="button" class="btn add-student-btn no-print" (click)="addStudent()" [disabled]="students.length >= 7">
                             <i class="fas fa-plus"></i> {{ langService.translate('ideas.form.addStudent') }}
                         </button>
                     </div>
 
-                    <div class="important-note">
-                        <i class="fas fa-info-circle"></i> {{ langService.translate('ideas.form.teamStudentNote') }}
-                    </div>
+                    <p class="tpl-student-names-heading">{{ langService.translate('ideas.form.studentNamesHeading') }}</p>
 
-                    <div class="table-responsive">
-                        <table class="table official-table">
+                    <div class="table-responsive tpl-table-wrap">
+                        <table class="table official-table tpl-table" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
                             <thead>
                                 <tr>
-                                    <th width="5%">{{ langService.translate('ideas.form.colIndex') }}</th>
-                                    <th width="34%">{{ langService.translate('ideas.form.colStudentName') }} <span class="text-danger">*</span></th>
-                                    <th width="23%">{{ langService.translate('ideas.form.colUniversityId') }} <span class="text-danger">*</span></th>
-                                    <th width="20%">{{ langService.translate('ideas.form.colMobile') }} <span class="text-danger">*</span></th>
-                                    <th width="8%">{{ langService.translate('ideas.form.colAction') }}</th>
+                                    <th class="text-center">{{ langService.translate('ideas.form.colIndex') }}</th>
+                                    <th>{{ langService.translate('ideas.form.colStudentName') }} <span class="text-danger">*</span></th>
+                                    <th>{{ langService.translate('ideas.form.colUniversityId') }} <span class="text-danger">*</span></th>
+                                    <th>{{ langService.translate('ideas.form.colMobile') }} <span class="text-danger">*</span></th>
+                                    <th class="col-action no-print">{{ langService.translate('ideas.form.colAction') }}</th>
                                 </tr>
                             </thead>
                             <tbody formArrayName="students">
                                 <tr *ngFor="let student of students.controls; let i = index" [formGroupName]="i">
                                     <td class="text-center fw-bold align-middle">{{ i + 1 }}</td>
-                                    <td>
-                                        <input type="text" class="form-control official-input" formControlName="studentName">
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control official-input" formControlName="universityId">
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control official-input" formControlName="mobileNumber">
-                                    </td>
-                                    <td class="text-center align-middle">
+                                    <td><input type="text" class="form-control official-input tpl-table-input" formControlName="studentName"></td>
+                                    <td><input type="text" class="form-control official-input tpl-table-input" formControlName="universityId"></td>
+                                    <td><input type="text" class="form-control official-input tpl-table-input" formControlName="mobileNumber"></td>
+                                    <td class="text-center align-middle col-action no-print">
                                         <button type="button" class="btn btn-sm action-delete-btn" (click)="removeStudent(i)" [disabled]="students.length <= 5">
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
@@ -167,22 +180,26 @@
                     </div>
                 </section>
 
-                <section class="form-section signature-section">
-                    <h2 class="section-title">{{ langService.translate('ideas.form.section4') }}</h2>
-                    <div class="row align-items-end mt-4 g-3 signature-grid">
-                        <div class="col-6 col-md-3 text-center">
+                <section class="tpl-notes">
+                    <p class="tpl-notes__title">{{ langService.translate('ideas.form.notesTitle') }}</p>
+                    <p class="tpl-notes__item">{{ langService.translate('ideas.form.notesItem1') }}</p>
+                </section>
+
+                <section class="form-section signature-section tpl-section tpl-signatures">
+                    <div class="signature-grid tpl-signature-grid">
+                        <div class="text-center tpl-sig-cell">
                             <div class="signature-line"></div>
                             <p class="signature-title">{{ langService.translate('ideas.form.sigSupervisor') }}</p>
                         </div>
-                        <div class="col-6 col-md-3 text-center">
+                        <div class="text-center tpl-sig-cell">
                             <div class="signature-line"></div>
                             <p class="signature-title">{{ langService.translate('ideas.form.sigHeads') }}</p>
                         </div>
-                        <div class="col-6 col-md-3 text-center">
+                        <div class="text-center tpl-sig-cell">
                             <div class="signature-line"></div>
                             <p class="signature-title">{{ langService.translate('ideas.form.sigViceDean') }}</p>
                         </div>
-                        <div class="col-6 col-md-3 text-center">
+                        <div class="text-center tpl-sig-cell">
                             <div class="signature-line"></div>
                             <p class="signature-title">{{ langService.translate('ideas.form.sigDean') }}</p>
                         </div>

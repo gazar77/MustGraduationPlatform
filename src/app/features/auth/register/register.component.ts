@@ -39,8 +39,7 @@ export class RegisterComponent implements OnInit {
   loadDepartments(): void {
     this.authService.getDepartments().subscribe({
       next: (data) => {
-        this.departments = (data || []).filter((d: { code?: string }) =>
-          String(d?.code || '').toUpperCase() !== 'AI');
+        this.departments = data || [];
       },
       error: () => this.error = 'فشل تحميل الأقسام'
     });

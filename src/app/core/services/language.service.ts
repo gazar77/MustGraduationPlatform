@@ -163,13 +163,21 @@ export class LanguageService {
         form: {
           breadcrumb: 'Registration',
           facultyEn: 'MISR UNIVERSITY FOR SCIENCE & TECHNOLOGY',
+          facultyEnLine1: 'MISR UNIVERSITY',
+          facultyEnLine2: 'FOR SCIENCE & TECHNOLOGY',
           facultyCollegesEn: 'College of Information Technology',
           facultyAr: 'جامعة مصر للعلوم والتكنولوجيا',
           facultyCollegesAr: 'كلية تكنولوجيا المعلومات',
           docTitle: 'Graduation Project Registration Form (1 – 2)',
           academicYearLine: 'For the academic year (Fall – Spring)',
+          academicYearPrefix: 'For the academic year',
+          academicYearSeasons: '(Fall – Spring)',
           departmentsLine:
-            'Departments: Information Systems – Computer Science – Artificial Intelligence',
+            'Departments: Information Systems – Computer Science',
+          studentNamesHeading: 'Project team students:',
+          notesTitle: 'Important notes:',
+          notesItem1:
+            '1- The number of students per project must be no less than 5 and no more than 7.',
           section1: '1. Academic information',
           section2: '2. Project details',
           section3: '3. Project team students',
@@ -181,7 +189,6 @@ export class LanguageService {
           semesterSpring: 'Spring',
           deptIS: 'Information Systems',
           deptCS: 'Computer Science',
-          deptAI: 'Artificial Intelligence',
           titleAr: 'Project title (Arabic)',
           titleEn: 'Project title (English)',
           category: 'Project domain / category',
@@ -203,6 +210,9 @@ export class LanguageService {
           reset: 'Reset',
           submit: 'Submit registration',
           required: 'Required',
+          selectSemester: 'Select semester',
+          selectDepartment: 'Select department',
+          selectCategory: 'Select domain',
           minStudents: 'Minimum 5 students are required.',
           maxStudents: 'Maximum 7 students are allowed.'
         },
@@ -236,7 +246,6 @@ export class LanguageService {
           departments: {
             CS: 'Computer Science',
             IS: 'Information Systems',
-            AI: 'Artificial Intelligence',
             IT: 'Information Technology'
           },
           proposedSupervisor: 'Proposed Supervisor',
@@ -542,12 +551,20 @@ export class LanguageService {
         form: {
           breadcrumb: 'التسجيل',
           facultyEn: 'MISR UNIVERSITY FOR SCIENCE & TECHNOLOGY',
+          facultyEnLine1: 'MISR UNIVERSITY',
+          facultyEnLine2: 'FOR SCIENCE & TECHNOLOGY',
           facultyCollegesEn: 'College of Information Technology',
           facultyAr: 'جامعة مصر للعلوم والتكنولوجيا',
           facultyCollegesAr: 'كلية تكنولوجيا المعلومات',
           docTitle: 'استمارة تسجيل مشروع التخرج (1 – 2)',
           academicYearLine: 'للعام الجامعي (خريف – ربيع)',
-          departmentsLine: 'قسم (نظم معلومات – علوم الحاسب – ذكاء اصطناعي)',
+          academicYearPrefix: 'للعام الجامعي',
+          academicYearSeasons: '(خريف – ربيع)',
+          departmentsLine: 'قسم (نظم معلومات – علوم الحاسب)',
+          studentNamesHeading: 'أسماء طلاب المشروع:',
+          notesTitle: 'ملاحظات هامة:',
+          notesItem1:
+            '1- لا يقل عدد طلاب المشروع الواحد عن 5 طلاب ولا يزيد عن 7 طلاب',
           section1: '1. المعلومات الأكاديمية',
           section2: '2. تفاصيل المشروع',
           section3: '3. طلاب فريق المشروع',
@@ -559,7 +576,6 @@ export class LanguageService {
           semesterSpring: 'ربيع',
           deptIS: 'نظم معلومات',
           deptCS: 'علوم الحاسب',
-          deptAI: 'ذكاء اصطناعي',
           titleAr: 'عنوان المشروع باللغة العربية',
           titleEn: 'عنوان المشروع باللغة الإنجليزية',
           category: 'مجال المشروع',
@@ -580,6 +596,9 @@ export class LanguageService {
           reset: 'مسح',
           submit: 'إرسال الاستمارة',
           required: 'مطلوب',
+          selectSemester: 'اختر الفصل الدراسي',
+          selectDepartment: 'اختر القسم',
+          selectCategory: 'اختر المجال',
           minStudents: 'يجب ألا يقل عدد الطلاب عن 5.',
           maxStudents: 'يجب ألا يزيد عدد الطلاب عن 7.'
         },
@@ -613,7 +632,6 @@ export class LanguageService {
           departments: {
             CS: 'علوم الحاسب',
             IS: 'نظم المعلومات',
-            AI: 'الذكاء الاصطناعي',
             IT: 'تكنولوجيا المعلومات'
           },
           proposedSupervisor: 'المشرف المقترح',

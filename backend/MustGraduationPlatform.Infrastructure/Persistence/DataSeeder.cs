@@ -22,8 +22,7 @@ public static class DataSeeder
         {
             db.Departments.AddRange(
                 new Department { Code = "CS", NameAr = "علوم الحاسب", NameEn = "Computer Science", DisplayOrder = 1 },
-                new Department { Code = "IS", NameAr = "نظم المعلومات", NameEn = "Information Systems", DisplayOrder = 2 },
-                new Department { Code = "AI", NameAr = "الذكاء الاصطناعي", NameEn = "Artificial Intelligence", DisplayOrder = 3 });
+                new Department { Code = "IS", NameAr = "نظم المعلومات", NameEn = "Information Systems", DisplayOrder = 2 });
             await db.SaveChangesAsync(ct);
         }
 
