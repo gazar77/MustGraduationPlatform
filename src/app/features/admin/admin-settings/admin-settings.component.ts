@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SiteSettingsService } from '../../../core/services/site-settings.service';
 import { IdeaCategoryService, IdeaCategory } from '../../../core/services/idea-category.service';
+import { DEFAULT_HERO_BANNER_IMAGES, HERO_BANNER_BG_IMAGES_KEY } from '../../../core/constants/hero-banner-settings';
 
 interface SettingRow {
   key: string;
@@ -27,6 +28,9 @@ export class AdminSettingsComponent implements OnInit {
   newCategoryOrder = 0;
   savingCategory = false;
 
+  heroImageUrls: string[] = [];
+  savingHero = false;
+
   constructor(
     private siteSettingsService: SiteSettingsService,
     private ideaCategoryService: IdeaCategoryService
@@ -42,12 +46,35 @@ export class AdminSettingsComponent implements OnInit {
     this.error = null;
     this.siteSettingsService.getAll().subscribe({
       next: (list) => {
-        this.rows = list.map((s) => ({
-          key: s.key,
-          value: s.value,
-          editValue: this.siteSettingsService.parseStoredValue(s.value),
-          saving: false
-        }));
+        const hero = list.find((s) => s.key === HERO_BANNER_BG_IMAGES_KEY);
+        if (hero) {
+          const raw = this.siteSettingsService.parseStoredValue(hero.value);
+          try {
+            const parsed = JSON.parse(raw) as unknown;
+            if (
+              Array.isArray(parsed) &&
+              parsed.length > 0 &&
+              parsed.every((x: unknown) => typeof x === 'string')
+            ) {
+              this.heroImageUrls = [...(parsed as string[])];
+            } else {
+              this.heroImageUrls = [...DEFAULT_HERO_BANNER_IMAGES];
+            }
+          } catch {
+            this.heroImageUrls = [...DEFAULT_HERO_BANNER_IMAGES];
+          }
+        } else {
+          this.heroImageUrls = [...DEFAULT_HERO_BANNER_IMAGES];
+        }
+
+        this.rows = list
+          .filter((s) => s.key !== HERO_BANNER_BG_IMAGES_KEY)
+          .map((s) => ({
+            key: s.key,
+            value: s.value,
+            editValue: this.siteSettingsService.parseStoredValue(s.value),
+            saving: false
+          }));
         this.loading = false;
       },
       error: (err: unknown) => {
@@ -138,4 +165,60 @@ export class AdminSettingsComponent implements OnInit {
       error: () => (this.message = 'فشل الحذف')
     });
   }
+
+  addHeroImageRow(): void {
+    this.heroImageUrls = [...this.heroImageUrls, '/assets/'];
+  }
+
+  removeHeroImageAt(index: number): void {
+    this.heroImageUrls = this.heroImageUrls.filter((_, i) => i !== index);
+  }
+
+  moveHeroUp(index: number): void {
+    if (index <= 0) return;
+    const next = [...this.heroImageUrls];
+    [next[index - 1], next[index]] = [next[index], next[index - 1]];
+    this.heroImageUrls = next;
+  }
+
+  moveHeroDown(index: number): void {
+    if (index >= this.heroImageUrls.length - 1) return;
+    const next = [...this.heroImageUrls];
+    [next[index], next[index + 1]] = [next[index + 1], next[index]];
+    this.heroImageUrls = next;
+  }
+
+  saveHeroImages(): void {
+    const urls = this.heroImageUrls.map((s) => s.trim()).filter(Boolean);
+    if (urls.length === 0) {
+      this.message = 'أضف مساراً واحداً على الأقل للصور.';
+      return;
+    }
+    this.message = null;
+    this.savingHero = true;
+    const payload = JSON.stringify(urls);
+    this.siteSettingsService.upsert(HERO_BANNER_BG_IMAGES_KEY, payload).subscribe({
+      next: (res) => {
+        this.savingHero = false;
+        this.message = 'تم حفظ صور الهيرو';
+        try {
+          const parsed = JSON.parse(res.value) as unknown;
+          if (Array.isArray(parsed) && parsed.every((x: unknown) => typeof x === 'string')) {
+            this.heroImageUrls = [...(parsed as string[])];
+          }
+        } catch {
+          /* keep current list */
+        }
+      },
+      error: (err: unknown) => {
+        this.savingHero = false;
+        const msg =
+          err instanceof HttpErrorResponse && err.error?.message
+            ? err.error.message
+            : 'فشل حفظ صور الهيرو';
+        this.message = msg;
+      }
+    });
+  }
 }
+

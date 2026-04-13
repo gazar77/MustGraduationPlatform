@@ -7,6 +7,52 @@ $row-hover: #fafafa;
   max-width: 1100px;
 }
 
+.admin-settings__hero {
+  margin-bottom: 2rem;
+}
+
+.hero-urls-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-bottom: 1.25rem;
+}
+
+.hero-url-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+
+  &__index {
+    flex: 0 0 1.75rem;
+    font-weight: 700;
+    color: #888;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  &__input {
+    flex: 1 1 200px;
+    min-width: 0;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.35rem;
+    flex-shrink: 0;
+  }
+}
+
+.hero-urls-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  padding-top: 0.5rem;
+  border-top: 1px solid #eee;
+}
+
 .admin-settings__categories {
   margin-top: 2rem;
 }

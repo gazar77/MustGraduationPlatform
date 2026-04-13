@@ -34,6 +34,45 @@
     </table>
   </div>
 
+  <section *ngIf="!loading && !error" class="admin-settings__hero" aria-labelledby="hero-slider-heading">
+    <div class="categories-section-header">
+      <h3 id="hero-slider-heading" class="categories-section-header__title">صور خلفية الهيرو</h3>
+      <p class="categories-section-header__subtitle">مسارات الصور التي تظهر كخلفية دوّارة في أعلى الصفحات. يجب أن تبدأ بـ /assets/ أو /uploads/ (من 1 إلى 20 صورة).</p>
+    </div>
+
+    <div class="categories-panel">
+      <div class="hero-urls-list">
+        <div class="hero-url-row" *ngFor="let url of heroImageUrls; let i = index">
+          <span class="hero-url-row__index">{{ i + 1 }}</span>
+          <input type="text" class="form-control categories-panel__input hero-url-row__input" [(ngModel)]="heroImageUrls[i]" [name]="'heroUrl' + i" placeholder="/assets/example.jpeg" [attr.aria-label]="'مسار الصورة رقم ' + (i + 1)">
+          <div class="hero-url-row__actions">
+            <button type="button" class="btn btn-sm btn-outline-secondary" (click)="moveHeroUp(i)" [disabled]="i === 0" title="أعلى">
+              <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" (click)="moveHeroDown(i)" [disabled]="i === heroImageUrls.length - 1" title="أسفل">
+              <i class="fas fa-arrow-down" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeHeroImageAt(i)" title="حذف">
+              <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+        <p *ngIf="heroImageUrls.length === 0" class="text-muted small mb-2">لا توجد صور. أضف صفاً جديداً.</p>
+      </div>
+
+      <div class="hero-urls-toolbar">
+        <button type="button" class="btn btn-outline-primary" (click)="addHeroImageRow()">
+          <i class="fas fa-plus" aria-hidden="true"></i>
+          إضافة مسار
+        </button>
+        <button type="button" class="btn btn-primary" (click)="saveHeroImages()" [disabled]="savingHero">
+          <i class="fas fa-save" aria-hidden="true"></i>
+          {{ savingHero ? '...' : 'حفظ صور الهيرو' }}
+        </button>
+      </div>
+    </div>
+  </section>
+
   <section class="admin-settings__categories" aria-labelledby="categories-heading">
     <div class="categories-section-header">
       <h3 id="categories-heading" class="categories-section-header__title">تصنيفات أفكار المشاريع</h3>

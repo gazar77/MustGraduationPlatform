@@ -2,6 +2,7 @@ using System.Linq;
 using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MustGraduationPlatform.Application.Common;
 using MustGraduationPlatform.Domain.Entities;
 using MustGraduationPlatform.Domain.Enums;
 using MustGraduationPlatform.Infrastructure.Identity;
@@ -209,6 +210,21 @@ public static class DataSeeder
             {
                 Key = "IdeaReservationsOpen",
                 Value = "true"
+            });
+            await db.SaveChangesAsync(ct);
+        }
+
+        if (!await db.SiteSettings.AnyAsync(s => s.Key == SiteSettingKeys.HeroBannerBgImages, ct))
+        {
+            var heroPaths = new[]
+            {
+                "/assets/h1.jpeg", "/assets/h2.jpeg", "/assets/h3.jpeg", "/assets/h4.jpeg",
+                "/assets/h5.jpeg", "/assets/h6.jpeg", "/assets/h7.jpeg", "/assets/h8.jpeg"
+            };
+            db.SiteSettings.Add(new SiteSetting
+            {
+                Key = SiteSettingKeys.HeroBannerBgImages,
+                Value = JsonSerializer.Serialize(heroPaths)
             });
             await db.SaveChangesAsync(ct);
         }

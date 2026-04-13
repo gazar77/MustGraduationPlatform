@@ -79,7 +79,7 @@ export class LanguageService {
         copyright: 'Copyright All Right Reserved @ MUST UNIVERSITY 2025'
       },
       dashboard: {
-        heroTitle: 'Graduation Project Platform',
+        heroTitle: 'Graduation Projects Platform',
         stats: {
           ideas: 'Available Project Ideas',
           reserved: 'Reserved Projects',
