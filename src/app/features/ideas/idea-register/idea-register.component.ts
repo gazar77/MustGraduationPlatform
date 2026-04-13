@@ -14,6 +14,8 @@ import { SiteSettingsService } from '../../../core/services/site-settings.servic
 })
 export class IdeaRegisterComponent implements OnInit {
     registrationForm!: FormGroup;
+    /** Filled from site settings for API payload only (no longer shown on the form). */
+    private academicYearForPayload = '';
 
     constructor(
         private fb: FormBuilder,
@@ -35,15 +37,12 @@ export class IdeaRegisterComponent implements OnInit {
 
     loadSettings(): void {
         this.siteSettingsService.getSetting('academicYearLabel').subscribe(res => {
-            this.registrationForm.get('academicYear')?.setValue(this.siteSettingsService.parseStoredValue(res.value));
+            this.academicYearForPayload = this.siteSettingsService.parseStoredValue(res.value) ?? '';
         });
     }
 
     initForm(): void {
         this.registrationForm = this.fb.group({
-            academicYear: ['', [Validators.required]],
-            semester: ['', [Validators.required]],
-            department: ['', [Validators.required]],
             titleAr: ['', [Validators.required]],
             titleEn: ['', [Validators.required]],
             category: ['', [Validators.required]],
@@ -105,9 +104,9 @@ export class IdeaRegisterComponent implements OnInit {
         }
 
         this.projectSubmissionService.submitIdeaRegistration({
-            academicYear: formValue.academicYear,
-            semester: formValue.semester,
-            department: formValue.department,
+            academicYear: this.academicYearForPayload,
+            semester: '',
+            department: '',
             titleEn: formValue.titleEn,
             titleAr: formValue.titleAr,
             category: formValue.category,

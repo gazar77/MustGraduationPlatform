@@ -40,35 +40,6 @@
 
             <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
 
-                <div class="section-heading">{{ langService.translate('ideas.form.section1') }}</div>
-                <section class="fields-section">
-                    <div class="field-row">
-                        <label>{{ langService.translate('ideas.form.academicYear') }} <span class="text-danger">*</span></label>
-                        <input type="text" formControlName="academicYear" placeholder="2025/2026" />
-                    </div>
-                    <div class="error-msg" *ngIf="registrationForm.get('academicYear')?.invalid && registrationForm.get('academicYear')?.touched">{{ langService.translate('ideas.form.required') }}</div>
-
-                    <div class="field-row">
-                        <label>{{ langService.translate('ideas.form.semester') }} <span class="text-danger">*</span></label>
-                        <select formControlName="semester">
-                            <option value="" disabled>{{ langService.translate('ideas.form.selectSemester') }}</option>
-                            <option value="Fall">{{ langService.translate('ideas.form.semesterFall') }}</option>
-                            <option value="Spring">{{ langService.translate('ideas.form.semesterSpring') }}</option>
-                        </select>
-                    </div>
-                    <div class="error-msg" *ngIf="registrationForm.get('semester')?.invalid && registrationForm.get('semester')?.touched">{{ langService.translate('ideas.form.required') }}</div>
-
-                    <div class="field-row">
-                        <label>{{ langService.translate('ideas.form.department') }} <span class="text-danger">*</span></label>
-                        <select formControlName="department">
-                            <option value="" disabled>{{ langService.translate('ideas.form.selectDepartment') }}</option>
-                            <option value="Information Systems">{{ langService.translate('ideas.form.deptIS') }}</option>
-                            <option value="Computer Science">{{ langService.translate('ideas.form.deptCS') }}</option>
-                        </select>
-                    </div>
-                    <div class="error-msg" *ngIf="registrationForm.get('department')?.invalid && registrationForm.get('department')?.touched">{{ langService.translate('ideas.form.required') }}</div>
-                </section>
-
                 <div class="section-heading">{{ langService.translate('ideas.form.section2') }}</div>
                 <section class="fields-section">
                     <div class="field-row">
@@ -145,12 +116,6 @@
                     </table>
                     <div class="error-msg text-center" *ngIf="students.hasError('minStudents') && registrationForm.touched">{{ langService.translate('ideas.form.minStudents') }}</div>
                     <div class="error-msg text-center" *ngIf="students.hasError('maxStudents') && registrationForm.touched">{{ langService.translate('ideas.form.maxStudents') }}</div>
-                </section>
-
-                <section class="notes-section">
-                    <div class="notes-title">{{ langService.translate('ideas.form.notesTitle') }}</div>
-                    <p class="notes-item">{{ langService.translate('ideas.form.notesItem1') }}</p>
-                    <div class="important-note no-print">{{ langService.translate('ideas.form.teamStudentNote') }}</div>
                 </section>
 
                 <section class="signatures">

@@ -175,8 +175,8 @@ export class LanguageService {
           notesItem1:
             '1- The number of students per project must be no less than 5 and no more than 7.',
           section1: '1. Academic information',
-          section2: '2. Project details',
-          section3: '3. Project team students',
+          section2: '1. Project details',
+          section3: '2. Project team students',
           section4: '4. Approvals and signatures',
           academicYear: 'Academic year',
           semester: 'Semester',
@@ -563,8 +563,8 @@ export class LanguageService {
           notesItem1:
             '1- لا يقل عدد طلاب المشروع الواحد عن 5 طلاب ولا يزيد عن 7 طلاب',
           section1: '1. المعلومات الأكاديمية',
-          section2: '2. تفاصيل المشروع',
-          section3: '3. طلاب فريق المشروع',
+          section2: '1. تفاصيل المشروع',
+          section3: '2. طلاب فريق المشروع',
           section4: '4. الاعتمادات والتوقيعات',
           academicYear: 'العام الجامعي',
           semester: 'الفصل الدراسي',
