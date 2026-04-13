@@ -16,7 +16,8 @@ export class ContactPageComponent {
 
     constructor(private fb: FormBuilder, public langService: LanguageService, private contactService: ContactService) {
         this.contactForm = this.fb.group({
-            name: ['', Validators.required],
+            firstName: ['', Validators.required],
+            lastName: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
             subject: ['', Validators.required],
             message: ['', Validators.required]
@@ -26,7 +27,16 @@ export class ContactPageComponent {
     onSubmit() {
         this.submitted = true;
         if (this.contactForm.valid) {
-            this.contactService.addMessage(this.contactForm.value).subscribe(() => {
+            const v = this.contactForm.value;
+            const name = `${String(v.firstName ?? '').trim()} ${String(v.lastName ?? '').trim()}`.trim();
+            this.contactService
+                .addMessage({
+                    name,
+                    email: v.email,
+                    subject: v.subject,
+                    message: v.message
+                })
+                .subscribe(() => {
                 this.successMessage = this.langService.translate('contact.successMsg');
                 this.contactForm.reset();
                 this.submitted = false;

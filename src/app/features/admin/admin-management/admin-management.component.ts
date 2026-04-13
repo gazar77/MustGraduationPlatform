@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { NewsService } from '../../../core/services/news.service';
 import { EventService } from '../../../core/services/event.service';
 import { TemplateService } from '../../../core/services/template.service';
+import { TutorialDocumentService } from '../../../core/services/tutorial-document.service';
 import { IdeaService } from '../../../core/services/idea.service';
 import { ContactService } from '../../../core/services/contact.service';
 import { ProjectSubmissionService } from '../../../core/services/project-submission.service';
@@ -39,6 +40,7 @@ export class AdminManagementComponent implements OnInit {
     private newsService: NewsService,
     private eventService: EventService,
     private templateService: TemplateService,
+    private tutorialDocumentService: TutorialDocumentService,
     private ideaService: IdeaService,
     private contactService: ContactService,
     private projectSubmissionService: ProjectSubmissionService,
@@ -125,6 +127,15 @@ export class AdminManagementComponent implements OnInit {
         ];
         this.templateService.getAllForManage().subscribe(res => this.items = res);
         break;
+      case 'tutorialDocs':
+        this.title = 'إدارة الدروس التعليمية';
+        this.columns = [
+          { key: 'title', label: 'العنوان' },
+          { key: 'fileSize', label: 'الحجم' },
+          { key: 'lastUpdate', label: 'تحديث' }
+        ];
+        this.tutorialDocumentService.getAllForManage().subscribe(res => this.items = res);
+        break;
       case 'ideas':
         this.title = 'إدارة أفكار المشاريع';
         this.columns = [
@@ -139,7 +150,7 @@ export class AdminManagementComponent implements OnInit {
         this.ideaService.getAllForManage().subscribe(res => this.items = res);
         break;
     }
-    this.showTableStatus = ['news', 'event', 'template', 'ideas'].includes(this.type);
+    this.showTableStatus = ['news', 'event', 'template', 'tutorialDocs', 'ideas'].includes(this.type);
     this.showAddButton = !['proposals', 'contact', 'project1', 'project2'].includes(this.type);
     if (this.type === 'news' || this.type === 'event') {
       this.showAddButton = false;
@@ -202,6 +213,34 @@ export class AdminManagementComponent implements OnInit {
             { name: 'title', label: 'الاسم', type: 'text', value: item?.title },
             { name: 'description', label: 'الوصف', type: 'textarea', value: item?.description },
             { name: 'wordFile', label: 'ملف Word (.doc أو .docx)', type: 'word', value: null }
+          ];
+    } else if (this.type === 'tutorialDocs') {
+      const tutorialAccept =
+        '.pdf,.ppt,.pptx,.doc,.docx,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      this.modalConfig.title = isEdit ? 'تعديل درس تعليمي' : 'إضافة درس تعليمي';
+      this.modalConfig.fields = isEdit
+        ? [
+            { name: 'title', label: 'العنوان', type: 'text', value: item?.title },
+            { name: 'description', label: 'الوصف', type: 'textarea', value: item?.description },
+            { name: 'fileSize', label: 'حجم الملف الحالي', type: 'readonly', value: item?.fileSize },
+            {
+              name: 'tutorialFile',
+              label: 'ملف جديد (PDF / PowerPoint / Word) — اختياري',
+              type: 'word',
+              value: null,
+              accept: tutorialAccept
+            }
+          ]
+        : [
+            { name: 'title', label: 'العنوان', type: 'text', value: item?.title },
+            { name: 'description', label: 'الوصف', type: 'textarea', value: item?.description },
+            {
+              name: 'tutorialFile',
+              label: 'ملف (PDF / PowerPoint / Word)',
+              type: 'word',
+              value: null,
+              accept: tutorialAccept
+            }
           ];
     } else if (this.type === 'ideas') {
       this.modalConfig.title = isEdit ? 'تعديل فكرة مشروع' : 'إضافة فكرة مشروع جديدة';
@@ -359,6 +398,27 @@ export class AdminManagementComponent implements OnInit {
         }
         break;
       }
+      case 'tutorialDocs': {
+        const tf = data.tutorialFile;
+        if (tf instanceof File) {
+          obs = this.tutorialDocumentService.addTutorialWithFile(tf, {
+            title: data.title,
+            description: String(data.description ?? ''),
+            isVisible: true,
+            displayOrder: 0
+          });
+        } else {
+          obs = this.tutorialDocumentService.addTutorial({
+            title: data.title,
+            description: String(data.description ?? ''),
+            fileUrl: '#',
+            fileSize: '—',
+            isVisible: true,
+            displayOrder: 0
+          });
+        }
+        break;
+      }
       case 'ideas': {
         obs = this.ideaService.addIdea({
           title: data.title,
@@ -469,6 +529,27 @@ export class AdminManagementComponent implements OnInit {
         }
         break;
       }
+      case 'tutorialDocs': {
+        const f = data.tutorialFile;
+        if (f instanceof File) {
+          obs = this.tutorialDocumentService.updateTutorialWithFile(this.editingItem.id, f, {
+            title: data.title,
+            description: String(data.description ?? ''),
+            isVisible: this.editingItem.isVisible ?? true,
+            displayOrder: this.editingItem.order ?? 0
+          });
+        } else {
+          obs = this.tutorialDocumentService.updateTutorial(this.editingItem.id, {
+            title: data.title,
+            description: data.description,
+            fileUrl: this.editingItem.fileUrl,
+            fileSize: this.editingItem.fileSize,
+            isVisible: this.editingItem.isVisible,
+            displayOrder: this.editingItem.order ?? 0
+          });
+        }
+        break;
+      }
       case 'ideas': {
         const item = this.editingItem;
         obs = this.ideaService.updateIdea(item.id, {
@@ -510,6 +591,7 @@ export class AdminManagementComponent implements OnInit {
         case 'news': obs = this.newsService.deleteNews(item.id); break;
         case 'event': obs = this.eventService.deleteEvent(item.id); break;
         case 'template': obs = this.templateService.deleteTemplate(item.id); break;
+        case 'tutorialDocs': obs = this.tutorialDocumentService.deleteTutorial(item.id); break;
         case 'ideas': obs = this.ideaService.deleteIdea(item.id); break;
         case 'proposals': obs = this.projectSubmissionService.deleteSubmission(item.id); break;
         case 'contact': obs = this.contactService.deleteMessage(item.id); break;
@@ -534,6 +616,7 @@ export class AdminManagementComponent implements OnInit {
       case 'news': obs = this.newsService.toggleVisibility(item.id); break;
       case 'event': obs = this.eventService.toggleVisibility(item.id); break;
       case 'template': obs = this.templateService.toggleVisibility(item.id); break;
+      case 'tutorialDocs': obs = this.tutorialDocumentService.toggleVisibility(item.id); break;
       case 'ideas': obs = this.ideaService.toggleVisibility(item.id); break;
     }
     obs?.subscribe(() => this.initView());
@@ -544,6 +627,7 @@ export class AdminManagementComponent implements OnInit {
       case 'news': return 'News';
       case 'event': return 'Event';
       case 'template': return 'Template';
+      case 'tutorialDocs': return 'Tutorial';
       case 'ideas': return 'Idea';
       case 'proposals': return 'Proposal';
       case 'contact': return 'Contact';
@@ -558,6 +642,7 @@ export class AdminManagementComponent implements OnInit {
       case 'news': return 'خبر';
       case 'event': return 'فعالية';
       case 'template': return 'نموذج';
+      case 'tutorialDocs': return 'درس تعليمي';
       case 'ideas': return 'مشروع';
       case 'proposals': return 'مقترح';
       case 'contact': return 'رسالة';

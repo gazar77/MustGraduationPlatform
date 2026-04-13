@@ -306,7 +306,14 @@ export class LanguageService {
       },
       tutorials: {
         title: 'Tutorials',
-        placeholder: 'Tutorial materials and guides will appear here.'
+        placeholder: 'Tutorial materials and guides will appear here.',
+        list: {
+          heading: 'Tutorial materials',
+          intro: 'Download PDF, PowerPoint, or Word files shared by the graduation projects office.',
+          download: 'Download',
+          lastUpdate: 'Updated',
+          empty: 'No tutorial files are available yet.'
+        }
       },
       contact: {
         title: 'Contact Us',
@@ -317,9 +324,12 @@ export class LanguageService {
         emailLabel: 'University Email',
         formTitle: 'Send us your message',
         successMsg: 'Your message has been sent successfully. We will contact you soon.',
-        fullName: 'Full Name',
-        namePlaceholder: 'Enter your full name',
-        nameReq: 'Please enter your name',
+        firstName: 'First Name',
+        firstNamePlaceholder: 'Enter your first name',
+        firstNameReq: 'Please enter your first name',
+        lastName: 'Last Name',
+        lastNamePlaceholder: 'Enter your last name',
+        lastNameReq: 'Please enter your last name',
         email: 'Email',
         emailPlaceholder: 'example@must.edu.eg',
         emailReq: 'Please enter your email',
@@ -629,7 +639,14 @@ export class LanguageService {
       },
       tutorials: {
         title: 'الدروس التعليمية',
-        placeholder: 'ستُعرض هنا المواد التعليمية والأدلة.'
+        placeholder: 'ستُعرض هنا المواد التعليمية والأدلة.',
+        list: {
+          heading: 'المواد التعليمية',
+          intro: 'حمّل ملفات PDF أو PowerPoint أو Word التي يوفرها قسم مشاريع التخرج.',
+          download: 'تحميل',
+          lastUpdate: 'آخر تحديث',
+          empty: 'لا توجد ملفات تعليمية حالياً.'
+        }
       },
       contact: {
         title: 'اتصل بنا',
@@ -640,9 +657,12 @@ export class LanguageService {
         emailLabel: 'البريد الإلكتروني للجامعة',
         formTitle: 'أرسل لنا رسالتك',
         successMsg: 'تم إرسال رسالتك بنجاح. سنتواصل معك قريباً.',
-        fullName: 'الاسم الكامل',
-        namePlaceholder: 'أدخل اسمك كاملاً',
-        nameReq: 'يرجى إدخال الاسم',
+        firstName: 'الاسم الأول',
+        firstNamePlaceholder: 'أدخل اسمك الأول',
+        firstNameReq: 'يرجى إدخال الاسم الأول',
+        lastName: 'اسم العائلة',
+        lastNamePlaceholder: 'أدخل اسم العائلة',
+        lastNameReq: 'يرجى إدخال اسم العائلة',
         email: 'البريد الإلكتروني',
         emailPlaceholder: 'example@must.edu.eg',
         emailReq: 'يرجى إدخال البريد الإلكتروني',

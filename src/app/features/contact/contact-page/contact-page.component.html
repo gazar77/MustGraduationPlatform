@@ -64,17 +64,27 @@
 
                     <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
                         <div class="row">
-                            <div class="col-md-6 mb-4">
-                                <label class="form-label">{{ langService.translate('contact.fullName') }}</label>
-                                <input type="text" formControlName="name" class="form-control bg-light"
-                                    [placeholder]="langService.translate('contact.namePlaceholder')"
-                                    [class.is-invalid]="submitted && contactForm.get('name')?.errors">
+                            <div class="col-md-4 mb-4">
+                                <label class="form-label">{{ langService.translate('contact.firstName') }}</label>
+                                <input type="text" formControlName="firstName" class="form-control bg-light"
+                                    [placeholder]="langService.translate('contact.firstNamePlaceholder')"
+                                    [class.is-invalid]="submitted && contactForm.get('firstName')?.errors">
                                 <div class="invalid-feedback"
-                                    *ngIf="submitted && contactForm.get('name')?.hasError('required')">{{ langService.translate('contact.nameReq') }}
+                                    *ngIf="submitted && contactForm.get('firstName')?.hasError('required')">{{ langService.translate('contact.firstNameReq') }}
                                 </div>
                             </div>
 
-                            <div class="col-md-6 mb-4">
+                            <div class="col-md-4 mb-4">
+                                <label class="form-label">{{ langService.translate('contact.lastName') }}</label>
+                                <input type="text" formControlName="lastName" class="form-control bg-light"
+                                    [placeholder]="langService.translate('contact.lastNamePlaceholder')"
+                                    [class.is-invalid]="submitted && contactForm.get('lastName')?.errors">
+                                <div class="invalid-feedback"
+                                    *ngIf="submitted && contactForm.get('lastName')?.hasError('required')">{{ langService.translate('contact.lastNameReq') }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 mb-4">
                                 <label class="form-label">{{ langService.translate('contact.email') }}</label>
                                 <input type="email" formControlName="email" class="form-control bg-light"
                                     [placeholder]="langService.translate('contact.emailPlaceholder')"

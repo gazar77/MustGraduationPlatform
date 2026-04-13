@@ -68,6 +68,7 @@ public static class DependencyInjection
         services.AddScoped<INewsService, NewsService>();
         services.AddScoped<IEventService, EventService>();
         services.AddScoped<ITemplateService, TemplateService>();
+        services.AddScoped<ITutorialDocumentService, TutorialDocumentService>();
         services.AddScoped<IProposalService, ProposalService>();
         services.AddScoped<IProjectSubmissionService, ProjectSubmissionService>();
         services.AddScoped<IContactService, ContactService>();

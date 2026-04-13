@@ -59,6 +59,16 @@ internal static class EntityMappers
         e.IsVisible,
         e.DisplayOrder);
 
+    public static TutorialDocumentDto ToTutorialDto(TutorialDocument e) => new(
+        e.Id,
+        e.Title,
+        e.Description,
+        e.FileUrl,
+        e.FileSize,
+        e.LastUpdate,
+        e.IsVisible,
+        e.DisplayOrder);
+
     public static ProposalDto ToDto(Proposal e) => new(
         e.Id,
         e.ProjectName,

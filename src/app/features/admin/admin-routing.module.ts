@@ -18,6 +18,7 @@ const routes: Routes = [
       { path: 'manage/ideas', component: AdminManagementComponent, data: { type: 'ideas' } },
       { path: 'manage/events', component: AdminManagementComponent, data: { type: 'event' } },
       { path: 'manage/templates', component: AdminManagementComponent, data: { type: 'template' } },
+      { path: 'manage/tutorials', component: AdminManagementComponent, data: { type: 'tutorialDocs' } },
       { path: 'manage/proposals', component: AdminManagementComponent, data: { type: 'proposals' } },
       { path: 'manage/contact', component: AdminManagementComponent, data: { type: 'contact' } },
       { path: 'manage/project1', component: AdminManagementComponent, data: { type: 'project1' } },

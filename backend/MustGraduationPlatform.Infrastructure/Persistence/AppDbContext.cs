@@ -18,6 +18,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     public DbSet<NewsArticle> NewsArticles => Set<NewsArticle>();
     public DbSet<CalendarEvent> CalendarEvents => Set<CalendarEvent>();
     public DbSet<DocumentTemplate> DocumentTemplates => Set<DocumentTemplate>();
+    public DbSet<TutorialDocument> TutorialDocuments => Set<TutorialDocument>();
     public DbSet<Proposal> Proposals => Set<Proposal>();
     public DbSet<ProjectSubmission> ProjectSubmissions => Set<ProjectSubmission>();
     public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
