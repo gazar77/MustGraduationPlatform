@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { HeroBannerComponent } from '../../shared/components/hero-banner/hero-banner.component';
 import { LanguageService } from '../../core/services/language.service';
 import { TutorialDocumentService } from '../../core/services/tutorial-document.service';
@@ -9,13 +10,17 @@ import { fileUrlToAbsolute } from '../../core/utils/api-url.util';
 @Component({
   selector: 'app-tutorials-page',
   standalone: true,
-  imports: [CommonModule, HeroBannerComponent],
+  imports: [CommonModule, RouterModule, HeroBannerComponent],
   templateUrl: './tutorials-page.component.html',
   styleUrl: './tutorials-page.component.scss'
 })
 export class TutorialsPageComponent implements OnInit {
+  @Input() viewAll = false;
+
   documents: TutorialDocument[] = [];
   loading = true;
+  carouselStart = 0;
+  readonly pageSize = 3;
 
   constructor(
     public lang: LanguageService,
@@ -33,6 +38,30 @@ export class TutorialsPageComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  get visibleDocs(): TutorialDocument[] {
+    return this.documents.slice(this.carouselStart, this.carouselStart + this.pageSize);
+  }
+
+  get displayDocs(): TutorialDocument[] {
+    return this.viewAll ? this.documents : this.visibleDocs;
+  }
+
+  get canSlidePrev(): boolean {
+    return this.carouselStart > 0;
+  }
+
+  get canSlideNext(): boolean {
+    return this.carouselStart + this.pageSize < this.documents.length;
+  }
+
+  slidePrev(): void {
+    if (this.canSlidePrev) this.carouselStart--;
+  }
+
+  slideNext(): void {
+    if (this.canSlideNext) this.carouselStart++;
   }
 
   canDownload(doc: TutorialDocument): boolean {

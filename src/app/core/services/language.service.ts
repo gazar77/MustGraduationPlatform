@@ -373,7 +373,9 @@ export class LanguageService {
           intro: 'Download PDF, PowerPoint, or Word files shared by the graduation projects office.',
           download: 'Download',
           lastUpdate: 'Updated',
-          empty: 'No tutorial files are available yet.'
+          empty: 'No tutorial files are available yet.',
+          viewAllBtn: 'View All Tutorial Materials',
+          backToCarousel: '← Back'
         }
       },
       contact: {
@@ -766,7 +768,9 @@ export class LanguageService {
           intro: 'حمّل ملفات PDF أو PowerPoint أو Word التي يوفرها قسم مشاريع التخرج.',
           download: 'تحميل',
           lastUpdate: 'آخر تحديث',
-          empty: 'لا توجد ملفات تعليمية حالياً.'
+          empty: 'لا توجد ملفات تعليمية حالياً.',
+          viewAllBtn: 'عرض جميع المواد التعليمية',
+          backToCarousel: '→ رجوع'
         }
       },
       contact: {

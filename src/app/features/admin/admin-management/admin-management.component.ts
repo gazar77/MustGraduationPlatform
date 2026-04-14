@@ -13,7 +13,7 @@ import { environment } from '../../../../environments/environment';
 import { of, Observable } from 'rxjs';
 import { LanguageService } from '../../../core/services/language.service';
 import html2canvas from 'html2canvas';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 
 @Component({
   selector: 'app-admin-management',
@@ -882,7 +882,7 @@ export class AdminManagementComponent implements OnInit {
     if (format === 'pdf') {
       void this.exportApprovedIdeaRegistrationsPdf(approved);
     } else {
-      this.exportApprovedIdeaRegistrationsExcel(approved);
+      void this.exportApprovedIdeaRegistrationsExcel(approved);
     }
   }
 
@@ -926,9 +926,40 @@ export class AdminManagementComponent implements OnInit {
     }
   }
 
-  private exportApprovedIdeaRegistrationsExcel(approved: any[]): void {
-    const summaryRows: Record<string, string | number>[] = [];
-    const detailRows: Record<string, string | number>[] = [];
+  private excelThinBorder(): Partial<ExcelJS.Borders> {
+    const c = { argb: 'FFB0B0B0' };
+    return {
+      top: { style: 'thin', color: c },
+      left: { style: 'thin', color: c },
+      bottom: { style: 'thin', color: c },
+      right: { style: 'thin', color: c }
+    };
+  }
+
+  private excelApplyLabelCell(cell: ExcelJS.Cell): void {
+    cell.font = { bold: true, size: 11, color: { argb: 'FF334155' } };
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFF2F2F2' }
+    };
+    cell.border = this.excelThinBorder();
+    cell.alignment = { vertical: 'middle', wrapText: true };
+  }
+
+  private excelApplyValueCell(cell: ExcelJS.Cell): void {
+    cell.font = { size: 11, color: { argb: 'FF0F172A' } };
+    cell.border = this.excelThinBorder();
+    cell.alignment = { vertical: 'middle', wrapText: true };
+  }
+
+  private async exportApprovedIdeaRegistrationsExcel(approved: any[]): Promise<void> {
+    const blocks: Array<{
+      idx: number;
+      data: Record<string, unknown>;
+      item: any;
+      students: Array<Record<string, string>>;
+    }> = [];
     let idx = 1;
     for (const item of approved) {
       let data: Record<string, unknown>;
@@ -938,57 +969,256 @@ export class AdminManagementComponent implements OnInit {
         continue;
       }
       const students = (data['students'] as Array<Record<string, string>>) || [];
+      blocks.push({ idx, data, item, students });
+      idx++;
+    }
+    if (blocks.length === 0) {
+      alert('لا توجد بيانات صالحة للتصدير.');
+      return;
+    }
+
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'Must Graduation Platform';
+    workbook.created = new Date();
+
+    const wsSummary = workbook.addWorksheet('Summary', {
+      views: [{ showGridLines: true }],
+      properties: { defaultRowHeight: 18 }
+    });
+    wsSummary.columns = [
+      { width: 22 },
+      { width: 42 },
+      { width: 22 },
+      { width: 42 }
+    ];
+
+    let row = 1;
+    const thin = this.excelThinBorder();
+    const headerFill = { type: 'pattern' as const, pattern: 'solid' as const, fgColor: { argb: 'FFD6E4F0' } };
+
+    for (const block of blocks) {
+      const { data, item, students } = block;
       const titleEn = String(data['titleEn'] ?? '');
       const titleAr = String(data['titleAr'] ?? '');
       const subDate = item.submissionDate
         ? new Date(item.submissionDate).toISOString().slice(0, 10)
         : '';
-      summaryRows.push({
-        '#': idx,
-        'Project Title (AR)': titleAr,
-        'Project Title (EN)': titleEn,
-        Category: String(data['category'] ?? ''),
-        Supervisor: String(data['supervisorName'] ?? ''),
-        'Assistant Supervisor': String(data['assistantSupervisorName'] ?? ''),
-        'External Org': String(data['externalOrg'] ?? ''),
-        'Students Count': students.length,
-        Status: String(item.status ?? ''),
-        Date: subDate
+      const statusText = String(item.status ?? '');
+
+      // Section title (merged)
+      wsSummary.mergeCells(row, 1, row, 4);
+      const titleCell = wsSummary.getCell(row, 1);
+      titleCell.value = `Project #${block.idx} — Approved idea registration`;
+      titleCell.font = { bold: true, size: 14, color: { argb: 'FFFFFFFF' } };
+      titleCell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF1F3769' }
+      };
+      titleCell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+      titleCell.border = thin;
+      wsSummary.getRow(row).height = 26;
+      row++;
+
+      // Field pairs (labels bold + gray)
+      const pairs: [string, string | number, string, string | number][] = [
+        ['Project Title (EN)', titleEn, 'Project Title (AR)', titleAr],
+        ['Category', String(data['category'] ?? ''), 'Supervisor', String(data['supervisorName'] ?? '')],
+        [
+          'Assistant Supervisor',
+          String(data['assistantSupervisorName'] ?? ''),
+          'External Org',
+          String(data['externalOrg'] ?? '')
+        ],
+        ['Submission Date', subDate, 'Students Count', students.length]
+      ];
+      for (const [l1, v1, l2, v2] of pairs) {
+        this.excelApplyLabelCell(wsSummary.getCell(row, 1));
+        wsSummary.getCell(row, 1).value = l1;
+        this.excelApplyValueCell(wsSummary.getCell(row, 2));
+        wsSummary.getCell(row, 2).value = v1;
+        this.excelApplyLabelCell(wsSummary.getCell(row, 3));
+        wsSummary.getCell(row, 3).value = l2;
+        this.excelApplyValueCell(wsSummary.getCell(row, 4));
+        const c4 = wsSummary.getCell(row, 4);
+        if (l2 === 'Students Count') {
+          c4.value = typeof v2 === 'number' ? v2 : Number(v2);
+          c4.font = { bold: true, size: 11, color: { argb: 'FF0F172A' } };
+        } else {
+          c4.value = v2;
+        }
+        row++;
+      }
+
+      // Status row (highlight Approved)
+      this.excelApplyLabelCell(wsSummary.getCell(row, 1));
+      wsSummary.getCell(row, 1).value = 'Status';
+      wsSummary.mergeCells(row, 2, row, 4);
+      const statusCell = wsSummary.getCell(row, 2);
+      statusCell.value = statusText;
+      statusCell.font = { bold: true, size: 12, color: { argb: 'FF009639' } };
+      statusCell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFE8F5E9' }
+      };
+      statusCell.border = thin;
+      statusCell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+      row++;
+
+      // Student roster header
+      wsSummary.mergeCells(row, 1, row, 4);
+      const rosterHead = wsSummary.getCell(row, 1);
+      rosterHead.value = 'Student roster';
+      rosterHead.font = { bold: true, size: 12, color: { argb: 'FF1F3769' } };
+      rosterHead.fill = headerFill;
+      rosterHead.border = thin;
+      rosterHead.alignment = { vertical: 'middle', horizontal: 'center' };
+      wsSummary.getRow(row).height = 22;
+      row++;
+
+      const hdrRow = wsSummary.getRow(row);
+      const hdrTexts = ['#', 'Student Name', 'University ID', 'Mobile Number'];
+      hdrTexts.forEach((text, i) => {
+        const c = hdrRow.getCell(i + 1);
+        c.value = text;
+        c.font = { bold: true, size: 11, color: { argb: 'FF0F172A' } };
+        c.fill = headerFill;
+        c.border = thin;
+        c.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
       });
-      students.forEach((s, i) => {
-        detailRows.push({
-          'Project Title (EN)': titleEn,
-          'Student #': i + 1,
-          'Student Name': String(s['studentName'] ?? ''),
-          'University ID': String(s['universityId'] ?? ''),
-          'Mobile Number': String(s['mobileNumber'] ?? '')
+      row++;
+
+      if (students.length === 0) {
+        wsSummary.mergeCells(row, 1, row, 4);
+        const emptyCell = wsSummary.getCell(row, 1);
+        emptyCell.value = 'No students listed';
+        emptyCell.font = { italic: true, size: 11, color: { argb: 'FF64748B' } };
+        emptyCell.border = thin;
+        emptyCell.alignment = { vertical: 'middle', horizontal: 'center' };
+        row++;
+      } else {
+        students.forEach((s, i) => {
+          const zebra = i % 2 === 0 ? { argb: 'FFFFFFFF' } : { argb: 'FFF8FAFC' };
+          const vals = [
+            i + 1,
+            String(s['studentName'] ?? ''),
+            String(s['universityId'] ?? ''),
+            String(s['mobileNumber'] ?? '')
+          ];
+          vals.forEach((val, col) => {
+            const c = wsSummary.getCell(row, col + 1);
+            c.value = val;
+            c.font = { size: 11, color: { argb: 'FF0F172A' } };
+            c.fill = { type: 'pattern', pattern: 'solid', fgColor: zebra };
+            c.border = thin;
+            c.alignment =
+              col === 0
+                ? { vertical: 'middle', horizontal: 'center' }
+                : { vertical: 'middle', horizontal: 'left', wrapText: true };
+          });
+          row++;
         });
-      });
-      idx++;
+      }
+
+      // Blank separator between projects
+      row++;
     }
-    if (summaryRows.length === 0) {
-      alert('لا توجد بيانات صالحة للتصدير.');
-      return;
-    }
-    const wb = XLSX.utils.book_new();
-    const wsSummary = XLSX.utils.json_to_sheet(summaryRows);
-    wsSummary['!cols'] = [
-      { wch: 4 },
-      { wch: 28 },
-      { wch: 28 },
-      { wch: 18 },
-      { wch: 22 },
-      { wch: 22 },
-      { wch: 18 },
-      { wch: 10 },
-      { wch: 12 },
-      { wch: 12 }
+
+    // Student Details — grouped blocks with same visual language
+    const wsDetail = workbook.addWorksheet('Student Details', {
+      views: [{ showGridLines: true }],
+      properties: { defaultRowHeight: 18 }
+    });
+    wsDetail.columns = [
+      { width: 8 },
+      { width: 36 },
+      { width: 18 },
+      { width: 18 },
+      { width: 42 }
     ];
-    XLSX.utils.book_append_sheet(wb, wsSummary, 'Summary');
-    const wsDetail = XLSX.utils.json_to_sheet(detailRows);
-    wsDetail['!cols'] = [{ wch: 32 }, { wch: 10 }, { wch: 28 }, { wch: 18 }, { wch: 16 }];
-    XLSX.utils.book_append_sheet(wb, wsDetail, 'Student Details');
-    XLSX.writeFile(wb, 'approved-idea-registrations.xlsx');
+    let dr = 1;
+    for (const block of blocks) {
+      const titleEn = String(block.data['titleEn'] ?? '');
+      wsDetail.mergeCells(dr, 1, dr, 5);
+      const phead = wsDetail.getCell(dr, 1);
+      phead.value = `Project #${block.idx}: ${titleEn}`;
+      phead.font = { bold: true, size: 13, color: { argb: 'FFFFFFFF' } };
+      phead.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF1F3769' }
+      };
+      phead.border = thin;
+      phead.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+      wsDetail.getRow(dr).height = 24;
+      dr++;
+
+      const dHdr = wsDetail.getRow(dr);
+      ['#', 'Student Name', 'University ID', 'Mobile Number', 'Project Title (EN)'].forEach((text, i) => {
+        const c = dHdr.getCell(i + 1);
+        c.value = text;
+        c.font = { bold: true, size: 11, color: { argb: 'FF0F172A' } };
+        c.fill = headerFill;
+        c.border = thin;
+        c.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+      });
+      dr++;
+
+      const studs = block.students;
+      if (studs.length === 0) {
+        wsDetail.mergeCells(dr, 1, dr, 5);
+        const ec = wsDetail.getCell(dr, 1);
+        ec.value = 'No students listed';
+        ec.font = { italic: true, color: { argb: 'FF64748B' } };
+        ec.border = thin;
+        ec.alignment = { horizontal: 'center' };
+        dr++;
+      } else {
+        studs.forEach((s, i) => {
+          const zebra = i % 2 === 0 ? { argb: 'FFFFFFFF' } : { argb: 'FFF8FAFC' };
+          const rowVals = [
+            i + 1,
+            String(s['studentName'] ?? ''),
+            String(s['universityId'] ?? ''),
+            String(s['mobileNumber'] ?? ''),
+            titleEn
+          ];
+          rowVals.forEach((val, col) => {
+            const c = wsDetail.getCell(dr, col + 1);
+            c.value = val;
+            c.font =
+              col === 4
+                ? { bold: true, size: 11, color: { argb: 'FF1F3769' } }
+                : { size: 11, color: { argb: 'FF0F172A' } };
+            c.fill = { type: 'pattern', pattern: 'solid', fgColor: zebra };
+            c.border = thin;
+            c.alignment =
+              col === 0
+                ? { vertical: 'middle', horizontal: 'center' }
+                : { vertical: 'middle', horizontal: 'left', wrapText: true };
+          });
+          dr++;
+        });
+      }
+      dr++;
+    }
+
+    try {
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'approved-idea-registrations.xlsx';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error(e);
+      alert('تعذر إنشاء ملف Excel. حاول مرة أخرى.');
+    }
   }
 
   private escapeAttr(s: string): string {
