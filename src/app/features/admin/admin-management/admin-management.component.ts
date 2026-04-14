@@ -241,18 +241,32 @@ export class AdminManagementComponent implements OnInit {
         { name: 'coverImage', label: isEdit ? 'صورة الفعالية (اختياري)' : 'صورة الفعالية', type: 'image', value: null }
       ];
     } else if (this.type === 'template') {
+      const templateAccept =
+        '.ppt,.pptx,.doc,.docx,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
       this.modalConfig.title = isEdit ? 'تعديل نموذج' : 'إضافة نموذج جديد';
       this.modalConfig.fields = isEdit
         ? [
             { name: 'title', label: 'الاسم', type: 'text', value: item?.title },
             { name: 'description', label: 'الوصف', type: 'textarea', value: item?.description },
             { name: 'fileSize', label: 'حجم الملف الحالي', type: 'readonly', value: item?.fileSize },
-            { name: 'wordFile', label: 'ملف Word جديد (اختياري)', type: 'word', value: null }
+            {
+              name: 'wordFile',
+              label: 'ملف جديد (Word أو PowerPoint — اختياري)',
+              type: 'word',
+              value: null,
+              accept: templateAccept
+            }
           ]
         : [
             { name: 'title', label: 'الاسم', type: 'text', value: item?.title },
             { name: 'description', label: 'الوصف', type: 'textarea', value: item?.description },
-            { name: 'wordFile', label: 'ملف Word (.doc أو .docx)', type: 'word', value: null }
+            {
+              name: 'wordFile',
+              label: 'ملف Word أو PowerPoint (.doc، .docx، .ppt، .pptx)',
+              type: 'word',
+              value: null,
+              accept: templateAccept
+            }
           ];
     } else if (this.type === 'tutorialDocs') {
       const tutorialAccept =

@@ -2,7 +2,7 @@ using MustGraduationPlatform.Application.Exceptions;
 
 namespace MustGraduationPlatform.Infrastructure.Storage;
 
-/// <summary>Validates template document uploads (Word).</summary>
+/// <summary>Validates template document uploads (Word or PowerPoint).</summary>
 internal static class PdfUploadValidation
 {
     private const long MaxBytes = 25L * 1024 * 1024;
@@ -10,7 +10,9 @@ internal static class PdfUploadValidation
     private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
         ".doc",
-        ".docx"
+        ".docx",
+        ".ppt",
+        ".pptx"
     };
 
     public static void ValidateOrThrow(string fileName, long length)
@@ -20,6 +22,6 @@ internal static class PdfUploadValidation
 
         var ext = Path.GetExtension(fileName);
         if (string.IsNullOrEmpty(ext) || !AllowedExtensions.Contains(ext))
-            throw new AppException("FILE_TYPE_NOT_ALLOWED", "Template file must be Word (.doc or .docx).");
+            throw new AppException("FILE_TYPE_NOT_ALLOWED", "Template file must be Word (.doc, .docx) or PowerPoint (.ppt, .pptx).");
     }
 }
