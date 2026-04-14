@@ -21,16 +21,18 @@
   position: relative;
   box-sizing: border-box;
 
-  /* Letterhead accent bars — navy ~70%, brand green ~30% */
+  /* Letterhead accent bars — thick band (~16px fill + 1px border), sharp navy/green split */
   .header-bar--top,
   .header-line {
-    height: 3px;
+    box-sizing: border-box;
+    height: 18px; /* 16px colored strip + 1px border top + bottom */
+    border: 1px solid #4a4a4a;
     background: linear-gradient(
       to right,
       #00205b 0%,
-      #00205b 70%,
-      #009639 70%,
-      #009639 100%
+      #00205b 85%,
+      #00a651 85%,
+      #00a651 100%
     );
   }
 
@@ -140,7 +142,7 @@
   }
 
   .header-line {
-    margin-top: 8px;
+    margin-top: 10px;
   }
 
   .title-section {
