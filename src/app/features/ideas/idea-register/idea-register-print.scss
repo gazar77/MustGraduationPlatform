@@ -21,11 +21,11 @@
   position: relative;
   box-sizing: border-box;
 
-  /* Letterhead accent bars — thick band (~16px fill + 1px border), sharp navy/green split */
-  .header-bar--top,
-  .header-line {
+  /* Top: thick band (~16px fill + border); bottom: thin rule only — same navy/green split */
+  .header-bar--top {
     box-sizing: border-box;
-    height: 18px; /* 16px colored strip + 1px border top + bottom */
+    height: 18px; /* 16px colored + 1px border top + bottom */
+    margin-bottom: 10px;
     border: 1px solid #4a4a4a;
     background: linear-gradient(
       to right,
@@ -36,8 +36,17 @@
     );
   }
 
-  .header-bar--top {
-    margin-bottom: 10px;
+  .header-line {
+    height: 3px;
+    margin-top: 8px;
+    border: none;
+    background: linear-gradient(
+      to right,
+      #00205b 0%,
+      #00205b 85%,
+      #00a651 85%,
+      #00a651 100%
+    );
   }
 
   .header {
@@ -139,10 +148,6 @@
     margin-top: 5px;
     font-weight: 600;
     color: #009639;
-  }
-
-  .header-line {
-    margin-top: 10px;
   }
 
   .title-section {
