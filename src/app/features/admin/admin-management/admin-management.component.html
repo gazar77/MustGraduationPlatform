@@ -5,11 +5,14 @@
         [columns]="columns"
         [showStatus]="showTableStatus"
         [showAddButton]="showAddButton"
+        [showReportButtons]="showReportButtons"
         [ideaOpenClosedToggle]="ideaOpenClosedToggle"
         (add)="onAdd()"
         (edit)="onEdit($event)"
         (toggleStatus)="onStatusToggle($event)"
-        (delete)="onDelete($event)">
+        (delete)="onDelete($event)"
+        (exportPdf)="exportApprovedReport('pdf')"
+        (exportExcel)="exportApprovedReport('excel')">
     </app-management-table>
 
     <!-- Management Modal -->

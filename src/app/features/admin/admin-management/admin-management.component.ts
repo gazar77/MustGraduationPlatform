@@ -13,6 +13,7 @@ import { environment } from '../../../../environments/environment';
 import { of, Observable } from 'rxjs';
 import { LanguageService } from '../../../core/services/language.service';
 import html2canvas from 'html2canvas';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-admin-management',
@@ -35,6 +36,8 @@ export class AdminManagementComponent implements OnInit {
   /** Show visibility / idea open toggle column */
   showTableStatus = true;
   showAddButton = true;
+  /** Bulk approved report (PDF/Excel) on idea registrations list */
+  showReportButtons = false;
   ideaCategoryOptions: string[] = [];
 
   constructor(
@@ -180,6 +183,7 @@ export class AdminManagementComponent implements OnInit {
     }
     this.showTableStatus = ['news', 'event', 'template', 'tutorialDocs', 'ideas'].includes(this.type);
     this.showAddButton = !['proposals', 'ideaRegistrations', 'contact', 'project1', 'project2'].includes(this.type);
+    this.showReportButtons = this.type === 'ideaRegistrations';
   }
 
   get ideaOpenClosedToggle(): boolean {
@@ -715,16 +719,8 @@ export class AdminManagementComponent implements OnInit {
     }
   }
 
-  async downloadIdeaRegistrationPdf(): Promise<void> {
-    const raw = this.editingItem?.registrationPayloadJson as string | undefined;
-    if (!raw) return;
-    let data: Record<string, unknown>;
-    try {
-      data = JSON.parse(raw) as Record<string, unknown>;
-    } catch {
-      return;
-    }
-
+  /** HTML for one idea-registration PDF page (uses global styles from idea-register-print). */
+  private buildIdeaRegistrationExportHtml(data: Record<string, unknown>): string {
     const t = (key: string) => this.langService.translate(key);
     const host = typeof window !== 'undefined' ? window.location.origin : '';
     const logoSrc = `${host}/assets/must-colored-logo.png`;
@@ -744,7 +740,7 @@ export class AdminManagementComponent implements OnInit {
       )
       .join('');
 
-    const html = `
+    return `
 <div class="document-wrapper page-wrapper" style="min-height:auto;padding:0;margin:0;background:#fff;">
   <div class="paper must-pdf-paper" dir="${dir}" lang="${lang}">
     <div class="header-bar header-bar--top" role="presentation"></div>
@@ -807,14 +803,15 @@ export class AdminManagementComponent implements OnInit {
     </section>
   </div>
 </div>`;
+  }
 
+  private async captureMustPdfPaperFromHtml(html: string): Promise<{ imgData: string; cw: number; ch: number } | null> {
     const wrapper = document.createElement('div');
     wrapper.id = 'admin-idea-pdf-export-temp';
     wrapper.style.cssText =
       'position:fixed;left:-9999px;top:0;z-index:-9999;width:794px;pointer-events:none;background:#fff;';
     wrapper.innerHTML = html;
     document.body.appendChild(wrapper);
-
     try {
       const logo = wrapper.querySelector('img');
       if (logo) {
@@ -823,25 +820,41 @@ export class AdminManagementComponent implements OnInit {
       if (document.fonts?.ready) {
         await document.fonts.ready;
       }
-
       const paper = wrapper.querySelector('.must-pdf-paper') as HTMLElement | null;
-      if (!paper) return;
-
+      if (!paper) return null;
       const canvas = await html2canvas(paper, {
         scale: 2,
         useCORS: true,
         logging: false,
         backgroundColor: '#ffffff'
       });
+      return { imgData: canvas.toDataURL('image/png'), cw: canvas.width, ch: canvas.height };
+    } finally {
+      wrapper.remove();
+    }
+  }
 
+  async downloadIdeaRegistrationPdf(): Promise<void> {
+    const raw = this.editingItem?.registrationPayloadJson as string | undefined;
+    if (!raw) return;
+    let data: Record<string, unknown>;
+    try {
+      data = JSON.parse(raw) as Record<string, unknown>;
+    } catch {
+      return;
+    }
+    const html = this.buildIdeaRegistrationExportHtml(data);
+    try {
+      const cap = await this.captureMustPdfPaperFromHtml(html);
+      if (!cap) {
+        alert('تعذر إنشاء ملف PDF. حاول مرة أخرى.');
+        return;
+      }
       const { jsPDF } = await import('jspdf');
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-      const imgData = canvas.toDataURL('image/png');
-      const cw = canvas.width;
-      const ch = canvas.height;
-      const aspect = cw / ch;
+      const aspect = cap.cw / cap.ch;
       let imgW = pageWidth;
       let imgH = imgW / aspect;
       if (imgH > pageHeight) {
@@ -849,14 +862,133 @@ export class AdminManagementComponent implements OnInit {
         imgW = imgH * aspect;
       }
       const x = (pageWidth - imgW) / 2;
-      pdf.addImage(imgData, 'PNG', x, 0, imgW, imgH);
+      pdf.addImage(cap.imgData, 'PNG', x, 0, imgW, imgH);
       pdf.save(`idea-registration-${this.editingItem.id}.pdf`);
     } catch (e) {
       console.error(e);
       alert('تعذر إنشاء ملف PDF. حاول مرة أخرى.');
-    } finally {
-      wrapper.remove();
     }
+  }
+
+  exportApprovedReport(format: 'pdf' | 'excel'): void {
+    if (this.type !== 'ideaRegistrations') return;
+    const approved = this.items.filter(
+      (i) => i.status === 'Approved' && i.registrationPayloadJson
+    );
+    if (approved.length === 0) {
+      alert('لا توجد استمارات بحالة معتمد للتصدير.');
+      return;
+    }
+    if (format === 'pdf') {
+      void this.exportApprovedIdeaRegistrationsPdf(approved);
+    } else {
+      this.exportApprovedIdeaRegistrationsExcel(approved);
+    }
+  }
+
+  private async exportApprovedIdeaRegistrationsPdf(approved: any[]): Promise<void> {
+    try {
+      const { jsPDF } = await import('jspdf');
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      let pageIndex = 0;
+      for (const item of approved) {
+        let data: Record<string, unknown>;
+        try {
+          data = JSON.parse(item.registrationPayloadJson as string) as Record<string, unknown>;
+        } catch {
+          continue;
+        }
+        const html = this.buildIdeaRegistrationExportHtml(data);
+        const cap = await this.captureMustPdfPaperFromHtml(html);
+        if (!cap) continue;
+        const aspect = cap.cw / cap.ch;
+        let imgW = pageWidth;
+        let imgH = imgW / aspect;
+        if (imgH > pageHeight) {
+          imgH = pageHeight;
+          imgW = imgH * aspect;
+        }
+        const x = (pageWidth - imgW) / 2;
+        if (pageIndex > 0) pdf.addPage();
+        pdf.addImage(cap.imgData, 'PNG', x, 0, imgW, imgH);
+        pageIndex++;
+      }
+      if (pageIndex === 0) {
+        alert('تعذر إنشاء ملف PDF.');
+        return;
+      }
+      pdf.save('approved-idea-registrations.pdf');
+    } catch (e) {
+      console.error(e);
+      alert('تعذر إنشاء ملف PDF. حاول مرة أخرى.');
+    }
+  }
+
+  private exportApprovedIdeaRegistrationsExcel(approved: any[]): void {
+    const summaryRows: Record<string, string | number>[] = [];
+    const detailRows: Record<string, string | number>[] = [];
+    let idx = 1;
+    for (const item of approved) {
+      let data: Record<string, unknown>;
+      try {
+        data = JSON.parse(item.registrationPayloadJson as string) as Record<string, unknown>;
+      } catch {
+        continue;
+      }
+      const students = (data['students'] as Array<Record<string, string>>) || [];
+      const titleEn = String(data['titleEn'] ?? '');
+      const titleAr = String(data['titleAr'] ?? '');
+      const subDate = item.submissionDate
+        ? new Date(item.submissionDate).toISOString().slice(0, 10)
+        : '';
+      summaryRows.push({
+        '#': idx,
+        'Project Title (AR)': titleAr,
+        'Project Title (EN)': titleEn,
+        Category: String(data['category'] ?? ''),
+        Supervisor: String(data['supervisorName'] ?? ''),
+        'Assistant Supervisor': String(data['assistantSupervisorName'] ?? ''),
+        'External Org': String(data['externalOrg'] ?? ''),
+        'Students Count': students.length,
+        Status: String(item.status ?? ''),
+        Date: subDate
+      });
+      students.forEach((s, i) => {
+        detailRows.push({
+          'Project Title (EN)': titleEn,
+          'Student #': i + 1,
+          'Student Name': String(s['studentName'] ?? ''),
+          'University ID': String(s['universityId'] ?? ''),
+          'Mobile Number': String(s['mobileNumber'] ?? '')
+        });
+      });
+      idx++;
+    }
+    if (summaryRows.length === 0) {
+      alert('لا توجد بيانات صالحة للتصدير.');
+      return;
+    }
+    const wb = XLSX.utils.book_new();
+    const wsSummary = XLSX.utils.json_to_sheet(summaryRows);
+    wsSummary['!cols'] = [
+      { wch: 4 },
+      { wch: 28 },
+      { wch: 28 },
+      { wch: 18 },
+      { wch: 22 },
+      { wch: 22 },
+      { wch: 18 },
+      { wch: 10 },
+      { wch: 12 },
+      { wch: 12 }
+    ];
+    XLSX.utils.book_append_sheet(wb, wsSummary, 'Summary');
+    const wsDetail = XLSX.utils.json_to_sheet(detailRows);
+    wsDetail['!cols'] = [{ wch: 32 }, { wch: 10 }, { wch: 28 }, { wch: 18 }, { wch: 16 }];
+    XLSX.utils.book_append_sheet(wb, wsDetail, 'Student Details');
+    XLSX.writeFile(wb, 'approved-idea-registrations.xlsx');
   }
 
   private escapeAttr(s: string): string {

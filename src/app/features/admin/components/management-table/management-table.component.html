@@ -7,9 +7,17 @@
                 <input type="text" placeholder="بحث باسم العنصر..." #searchInput (keyup)="0">
             </div>
         </div>
-        <button *ngIf="showAddButton" class="btn btn-primary" (click)="onAdd()">
-            <i class="fas fa-plus"></i> إضافة جديد
-        </button>
+        <div class="header-actions">
+            <button *ngIf="showReportButtons" type="button" class="btn btn-report" (click)="exportPdf.emit()">
+                <i class="fas fa-file-pdf"></i> تقرير PDF
+            </button>
+            <button *ngIf="showReportButtons" type="button" class="btn btn-report-excel" (click)="exportExcel.emit()">
+                <i class="fas fa-file-excel"></i> تقرير Excel
+            </button>
+            <button *ngIf="showAddButton" class="btn btn-primary" (click)="onAdd()">
+                <i class="fas fa-plus"></i> إضافة جديد
+            </button>
+        </div>
     </div>
 
     <div class="table-responsive">

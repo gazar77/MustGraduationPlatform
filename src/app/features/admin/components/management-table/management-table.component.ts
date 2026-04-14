@@ -13,11 +13,15 @@ export class ManagementTableComponent {
   @Input() showAddButton: boolean = true;
   /** When true, status switch uses idea `status === 'Open'` instead of `isVisible`. */
   @Input() ideaOpenClosedToggle = false;
-  
+  /** Show bulk PDF/Excel report buttons (idea registrations approved report). */
+  @Input() showReportButtons = false;
+
   @Output() delete = new EventEmitter<any>();
   @Output() edit = new EventEmitter<any>();
   @Output() add = new EventEmitter<void>();
   @Output() toggleStatus = new EventEmitter<any>();
+  @Output() exportPdf = new EventEmitter<void>();
+  @Output() exportExcel = new EventEmitter<void>();
 
   onDelete(item: any) {
     this.delete.emit(item);
