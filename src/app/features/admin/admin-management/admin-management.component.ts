@@ -747,22 +747,26 @@ export class AdminManagementComponent implements OnInit {
     const html = `
 <div class="document-wrapper page-wrapper" style="min-height:auto;padding:0;margin:0;background:#fff;">
   <div class="paper must-pdf-paper" dir="${dir}" lang="${lang}">
+    <div class="header-bar header-bar--top" role="presentation"></div>
     <header class="header">
+      <div class="header-block left-block" dir="ltr" lang="en">
+        <div class="en-main">${this.escapeHtml(t('ideas.form.facultyEnLine1'))}</div>
+        <div class="en-sub">${this.escapeHtml(t('ideas.form.facultyEnLine2'))}</div>
+        <div class="en-faculty">
+          <div class="en-faculty-line">${this.escapeHtml(t('ideas.form.facultyCollegesEnLine1'))}</div>
+          <div class="en-faculty-line">${this.escapeHtml(t('ideas.form.facultyCollegesEnLine2'))}</div>
+        </div>
+      </div>
+      <div class="logo-block">
+        <img crossorigin="anonymous" src="${logoSrc}" alt="MUST" />
+      </div>
       <div class="header-block right-block">
         <div class="ar-main" dir="rtl" lang="ar">${this.escapeHtml(t('ideas.form.facultyArLine1'))}</div>
         <div class="ar-sub" dir="rtl" lang="ar">${this.escapeHtml(t('ideas.form.facultyArLine2'))}</div>
         <div class="ar-faculty" dir="rtl" lang="ar">${this.escapeHtml(t('ideas.form.facultyCollegesAr'))}</div>
       </div>
-      <div class="logo-block">
-        <img crossorigin="anonymous" src="${logoSrc}" alt="MUST" />
-      </div>
-      <div class="header-block left-block" dir="ltr">
-        <div class="en-main">${this.escapeHtml(t('ideas.form.facultyEnLine1'))}</div>
-        <div class="en-sub">${this.escapeHtml(t('ideas.form.facultyEnLine2'))}</div>
-        <div class="en-faculty">${this.escapeHtml(t('ideas.form.facultyCollegesEn'))}</div>
-      </div>
     </header>
-    <div class="header-line" role="presentation"></div>
+    <div class="header-line header-bar--bottom" role="presentation"></div>
     <section class="title-section">
       <h1 class="main-title" dir="rtl" lang="ar">${this.escapeHtml(t('ideas.form.docTitle'))}</h1>
     </section>

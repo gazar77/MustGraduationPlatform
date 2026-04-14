@@ -21,16 +21,16 @@
   position: relative;
   box-sizing: border-box;
 
-  /* Top / bottom accent: blue ~70% (left), green ~30% (right) — matches official letterhead */
+  /* Letterhead accent bars — navy ~70%, brand green ~30% */
   .header-bar--top,
   .header-line {
     height: 3px;
     background: linear-gradient(
       to right,
-      #546f97 0%,
-      #546f97 70%,
-      #73b58d 70%,
-      #73b58d 100%
+      #00205b 0%,
+      #00205b 70%,
+      #009639 70%,
+      #009639 100%
     );
   }
 
@@ -71,29 +71,72 @@
     }
   }
 
-  .en-main,
-  .ar-main {
+  /* English university lines — Times / Georgia serif, navy, uppercase */
+  .en-main {
+    font-family: 'Times New Roman', Times, Georgia, 'DejaVu Serif', serif;
     font-size: 19px;
-    font-weight: bold;
+    font-weight: 700;
     line-height: 1.2;
-    color: #546f97;
+    color: #00205b;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
   }
 
-  .en-sub,
-  .ar-sub {
+  .en-sub {
+    font-family: 'Times New Roman', Times, Georgia, 'DejaVu Serif', serif;
     font-size: 13px;
+    font-weight: 400;
     line-height: 1.3;
     margin-top: 2px;
-    color: #546f97;
+    color: #00205b;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
   }
 
-  .en-faculty,
+  /* English college — Arial/Helvetica sans, title-case lines, brand green */
+  .en-faculty {
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+  }
+
+  .en-faculty-line {
+    font-family: Arial, Helvetica, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #009639;
+  }
+
+  /* Arabic — traditional headline fonts, navy + green */
+  .ar-main {
+    font-family: 'Traditional Arabic', 'Sakkal Majalla', 'Arabic Typesetting', 'Segoe UI Arabic',
+      'Geeza Pro', 'Simplified Arabic', 'Arabic UI Text', Tahoma, serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: #00205b;
+  }
+
+  .ar-sub {
+    font-family: 'Traditional Arabic', 'Sakkal Majalla', 'Arabic Typesetting', 'Segoe UI Arabic',
+      'Geeza Pro', 'Simplified Arabic', Tahoma, serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.3;
+    margin-top: 2px;
+    color: #00205b;
+  }
+
   .ar-faculty {
+    font-family: 'Traditional Arabic', 'Sakkal Majalla', 'Arabic Typesetting', 'Segoe UI Arabic',
+      'Geeza Pro', 'Simplified Arabic', Tahoma, serif;
     font-size: 16px;
     margin-top: 5px;
-    color: #6da57d;
     font-weight: 600;
-    font-family: Arial, Helvetica, sans-serif;
+    color: #009639;
   }
 
   .header-line {
