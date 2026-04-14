@@ -1,0 +1,7 @@
+<div
+  class="news-events-full-page"
+  [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
+  <app-hero-banner></app-hero-banner>
+  <app-news-list *ngIf="section === 'news'" [viewAll]="true"></app-news-list>
+  <app-event-list *ngIf="section === 'events'" [viewAll]="true"></app-event-list>
+</div>

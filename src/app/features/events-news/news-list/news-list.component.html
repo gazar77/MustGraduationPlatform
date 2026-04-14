@@ -1,9 +1,21 @@
 <div class="news-list-page" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
-    <app-hero-banner></app-hero-banner>
+    <app-hero-banner *ngIf="!viewAll"></app-hero-banner>
 
     <div class="news-list-container">
+        <div class="news-toolbar" *ngIf="!viewAll && newsItems.length > 0">
+            <a routerLink="/news/all" class="btn btn-view-all-primary">
+                {{ langService.translate('news.list.viewAllBtn') }}
+            </a>
+        </div>
+        <div class="news-toolbar" *ngIf="viewAll">
+            <a routerLink="/news/list" class="btn btn-link-back">
+                {{ langService.translate('news.list.backToCarousel') }}
+            </a>
+        </div>
+
         <div class="news-carousel-shell" *ngIf="newsItems.length > 0">
             <button type="button"
+                    *ngIf="!viewAll"
                     class="carousel-nav carousel-nav--prev"
                     (click)="slidePrev()"
                     [disabled]="!canSlidePrev"
@@ -11,8 +23,8 @@
                 <i class="fas fa-chevron-left"></i>
             </button>
 
-            <div class="news-grid news-grid--carousel">
-                <div class="news-card" *ngFor="let item of visibleNews">
+            <div class="news-grid" [ngClass]="viewAll ? 'news-grid--all' : 'news-grid--carousel'">
+                <div class="news-card" *ngFor="let item of displayNews">
                     <div class="news-card-image" *ngIf="item.imagePath">
                         <img [src]="newsImageUrl(item)" [alt]="item.title" loading="lazy">
                     </div>
@@ -45,6 +57,7 @@
             </div>
 
             <button type="button"
+                    *ngIf="!viewAll"
                     class="carousel-nav carousel-nav--next"
                     (click)="slideNext()"
                     [disabled]="!canSlideNext"

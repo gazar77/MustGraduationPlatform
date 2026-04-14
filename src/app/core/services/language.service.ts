@@ -299,6 +299,8 @@ export class LanguageService {
           addNewsBtn: 'Add New Announcement',
           authorPrefix: 'By:',
           detailsBtn: 'View Details',
+          viewAllBtn: 'View all news',
+          backToCarousel: 'Back to news carousel',
           emptyTitle: 'No announcements currently',
           emptyText: 'Please check back later for the latest updates.',
           prompts: {
@@ -317,6 +319,8 @@ export class LanguageService {
           title: 'Graduation Projects Events',
           subtitle: 'Follow the latest conferences, workshops, and graduation project discussions in the Faculty of Computers and Information.',
           detailsBtn: 'Details',
+          viewAllBtn: 'View all events',
+          backToCarousel: 'Back to events carousel',
           addEventBtn: 'Add event',
           category: {
             academic: 'Academic',
@@ -686,6 +690,8 @@ export class LanguageService {
           addNewsBtn: 'إضافة إعلان جديد',
           authorPrefix: 'بواسطة:',
           detailsBtn: 'عرض التفاصيل',
+          viewAllBtn: 'عرض جميع الأخبار',
+          backToCarousel: 'العودة إلى عرض الأخبار',
           emptyTitle: 'لا توجد إعلانات حالياً',
           emptyText: 'يرجى مراجعة الصفحة لاحقاً لمتابعة آخر التحديثات.',
           prompts: {
@@ -704,6 +710,8 @@ export class LanguageService {
           title: 'فعاليات مشاريع التخرج',
           subtitle: 'تابع أحدث المؤتمرات، ورش العمل، ومناقشات مشاريع التخرج في كلية الحاسبات والمعلومات.',
           detailsBtn: 'التفاصيل',
+          viewAllBtn: 'عرض جميع الفعاليات',
+          backToCarousel: 'العودة إلى عرض الفعاليات',
           addEventBtn: 'إضافة فعالية',
           category: {
             academic: 'أكاديمي',

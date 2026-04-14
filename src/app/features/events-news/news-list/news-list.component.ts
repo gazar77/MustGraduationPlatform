@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { News } from '../../../core/models/news.model';
 import { LanguageService } from '../../../core/services/language.service';
 import { NewsService } from '../../../core/services/news.service';
@@ -10,6 +10,9 @@ import { fileUrlToAbsolute } from '../../../core/utils/api-url.util';
   styleUrls: ['./news-list.component.scss']
 })
 export class NewsListComponent implements OnInit {
+  /** When true, show all items in a grid and hide hero (used on `/news/all`). */
+  @Input() viewAll = false;
+
   newsItems: News[] = [];
   carouselStart = 0;
   readonly pageSize = 3;
@@ -28,6 +31,10 @@ export class NewsListComponent implements OnInit {
 
   get visibleNews(): News[] {
     return this.newsItems.slice(this.carouselStart, this.carouselStart + this.pageSize);
+  }
+
+  get displayNews(): News[] {
+    return this.viewAll ? this.newsItems : this.visibleNews;
   }
 
   get canSlidePrev(): boolean {

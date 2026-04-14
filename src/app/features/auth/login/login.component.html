@@ -8,7 +8,7 @@
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
             <div class="form-group">
-                <label for="email">البريد الإلكتروني الجامعي</label>
+                <label for="email">Username</label>
                 <input type="text" id="email" formControlName="email" placeholder="example@must.edu.eg أو الرقم الجامعي" autocomplete="username" [readonly]="step !== 'Identify'">
                 <p class="text-muted small mb-0 mt-1" *ngIf="step === 'Identify'">يمكنك إدخال البريد كاملاً أو الجزء قبل must.edu.eg فقط (مثل الرقم الجامعي أو اسم المستخدم).</p>
                 <div *ngIf="f['email'].touched && f['email'].errors" class="error-msg">

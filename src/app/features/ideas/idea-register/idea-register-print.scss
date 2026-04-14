@@ -200,9 +200,9 @@
       flex: 1 1 0;
       min-width: 0;
       text-align: center;
-      white-space: nowrap;
-      font-size: 0.62rem;
-      line-height: 1.2;
+      white-space: normal;
+      font-size: 0.85rem;
+      line-height: 1.25;
     }
   }
 
@@ -292,8 +292,8 @@
   }
 
   .must-pdf-paper .signatures > div {
-    font-size: 6.5pt !important;
-    letter-spacing: -0.02em;
+    font-size: 8.5pt !important;
+    letter-spacing: -0.015em;
   }
 
   @page {

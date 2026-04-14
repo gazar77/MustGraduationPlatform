@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Event } from '../../../core/models/event.model';
 import { LanguageService } from '../../../core/services/language.service';
 import { EventService } from '../../../core/services/event.service';
@@ -10,6 +10,9 @@ import { fileUrlToAbsolute } from '../../../core/utils/api-url.util';
   styleUrl: './event-list.component.scss'
 })
 export class EventListComponent implements OnInit {
+  /** When true, show all items in a grid and hide hero (used on `/events/all`). */
+  @Input() viewAll = false;
+
   events: Event[] = [];
   carouselStart = 0;
   readonly pageSize = 3;
@@ -28,6 +31,10 @@ export class EventListComponent implements OnInit {
 
   get visibleEvents(): Event[] {
     return this.events.slice(this.carouselStart, this.carouselStart + this.pageSize);
+  }
+
+  get displayEvents(): Event[] {
+    return this.viewAll ? this.events : this.visibleEvents;
   }
 
   get canSlidePrev(): boolean {

@@ -35,6 +35,44 @@
     padding-bottom: 5rem;
   }
 
+  .events-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1.25rem;
+  }
+
+  .btn-view-all-primary {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.55rem 1.25rem;
+    font-weight: 600;
+    border-radius: 8px;
+    background: var(--primary-color, #1e40af);
+    color: #fff;
+    text-decoration: none;
+    border: none;
+    transition: opacity 0.2s, transform 0.2s;
+
+    &:hover {
+      opacity: 0.92;
+      color: #fff;
+      transform: translateY(-1px);
+    }
+  }
+
+  .btn-link-back {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0;
+    font-weight: 600;
+    color: var(--primary-color);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
   .events-carousel-shell {
     display: flex;
     align-items: stretch;
@@ -67,6 +105,10 @@
 
   .events-grid--carousel {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .events-grid--all {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
 
   .event-card {
@@ -197,6 +239,9 @@
 
 @media (max-width: 992px) {
   .events-grid--carousel {
+    grid-template-columns: 1fr;
+  }
+  .events-grid--all {
     grid-template-columns: 1fr;
   }
   .carousel-nav {

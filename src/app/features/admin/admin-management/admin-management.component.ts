@@ -180,9 +180,6 @@ export class AdminManagementComponent implements OnInit {
     }
     this.showTableStatus = ['news', 'event', 'template', 'tutorialDocs', 'ideas'].includes(this.type);
     this.showAddButton = !['proposals', 'ideaRegistrations', 'contact', 'project1', 'project2'].includes(this.type);
-    if (this.type === 'news' || this.type === 'event') {
-      this.showAddButton = false;
-    }
   }
 
   get ideaOpenClosedToggle(): boolean {
