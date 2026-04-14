@@ -10,10 +10,10 @@
             <div class="form-group">
                 <label for="email">Username</label>
                 <input type="text" id="email" formControlName="email" placeholder="example@must.edu.eg أو الرقم الجامعي" autocomplete="username" [readonly]="step !== 'Identify'">
-                <p class="text-muted small mb-0 mt-1" *ngIf="step === 'Identify'">يمكنك إدخال البريد كاملاً أو الجزء قبل must.edu.eg فقط (مثل الرقم الجامعي أو اسم المستخدم).</p>
+                <p class="text-muted small mb-0 mt-1" *ngIf="step === 'Identify'">يمكنك إدخال البريد الإلكتروني الجامعي أو الرقم الجامعي</p>
                 <div *ngIf="f['email'].touched && f['email'].errors" class="error-msg">
                     <small *ngIf="f['email'].errors['required']">البريد الإلكتروني مطلوب</small>
-                    <small *ngIf="f['email'].errors['loginIdentifier']">برجاء إدخال بريد جامعي صحيح (must.edu.eg) أو المعرف قبل النطاق بشكل صحيح</small>
+                    <small *ngIf="f['email'].errors['loginIdentifier']">برجاء إدخال البريد الإلكتروني الجامعي أو الرقم الجامعي بشكل صحيح</small>
                 </div>
             </div>
 

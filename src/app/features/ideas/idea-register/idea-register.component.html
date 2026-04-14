@@ -14,25 +14,27 @@
              class="paper must-pdf-paper"
              [attr.lang]="(langService.currentLang$ | async) === 'ar' ? 'ar' : 'en'">
 
+            <div class="header-bar header-bar--top" role="presentation"></div>
+
             <header class="header">
-                <div class="header-block right-block">
-                    <div class="ar-main" dir="rtl" lang="ar">{{ langService.translate('ideas.form.facultyArLine1') }}</div>
-                    <div class="ar-sub" dir="rtl" lang="ar">{{ langService.translate('ideas.form.facultyArLine2') }}</div>
-                    <div class="ar-faculty" dir="rtl" lang="ar">{{ langService.translate('ideas.form.facultyCollegesAr') }}</div>
+                <div class="header-block left-block" dir="ltr">
+                    <div class="en-main">{{ langService.translate('ideas.form.facultyEnLine1') }}</div>
+                    <div class="en-sub">{{ langService.translate('ideas.form.facultyEnLine2') }}</div>
+                    <div class="en-faculty">{{ langService.translate('ideas.form.facultyCollegesEn') }}</div>
                 </div>
 
                 <div class="logo-block">
                     <img src="assets/must-colored-logo.png" alt="MUST" />
                 </div>
 
-                <div class="header-block left-block" dir="ltr">
-                    <div class="en-main">{{ langService.translate('ideas.form.facultyEnLine1') }}</div>
-                    <div class="en-sub">{{ langService.translate('ideas.form.facultyEnLine2') }}</div>
-                    <div class="en-faculty">{{ langService.translate('ideas.form.facultyCollegesEn') }}</div>
+                <div class="header-block right-block">
+                    <div class="ar-main" dir="rtl" lang="ar">{{ langService.translate('ideas.form.facultyArLine1') }}</div>
+                    <div class="ar-sub" dir="rtl" lang="ar">{{ langService.translate('ideas.form.facultyArLine2') }}</div>
+                    <div class="ar-faculty" dir="rtl" lang="ar">{{ langService.translate('ideas.form.facultyCollegesAr') }}</div>
                 </div>
             </header>
 
-            <div class="header-line" role="presentation"></div>
+            <div class="header-line header-bar--bottom" role="presentation"></div>
 
             <section class="title-section">
                 <h1 class="main-title" dir="rtl" lang="ar">{{ langService.translate('ideas.form.docTitle') }}</h1>
