@@ -733,116 +733,173 @@ export class AdminManagementComponent implements OnInit {
     }
   }
 
-  /** HTML for one idea-registration PDF page (uses global styles from idea-register-print). */
-  private buildIdeaRegistrationExportHtml(data: Record<string, unknown>): string {
-    const t = (key: string) => this.langService.translate(key);
-    const host = typeof window !== 'undefined' ? window.location.origin : '';
-    const logoSrc = `${host}/assets/must-colored-logo.png`;
-    const dir = document.documentElement.dir === 'rtl' ? 'rtl' : 'ltr';
-    const lang = document.documentElement.lang || 'ar';
+  private parseProjectBlocks(approved: any[]): Array<{ idx: number; data: Record<string, unknown>; students: Array<Record<string, string>> }> {
+    const blocks: Array<{ idx: number; data: Record<string, unknown>; students: Array<Record<string, string>> }> = [];
+    let idx = 1;
+    for (const item of approved) {
+      let data: Record<string, unknown>;
+      try {
+        data = JSON.parse(item.registrationPayloadJson as string) as Record<string, unknown>;
+      } catch {
+        continue;
+      }
+      const students = (data['students'] as Array<Record<string, string>>) || [];
+      blocks.push({ idx, data, students });
+      idx++;
+    }
+    return blocks;
+  }
 
-    const students = (data['students'] as Array<Record<string, string>>) || [];
-    const studentRows = students
-      .map(
-        (s, i) => `
-      <tr>
-        <td>${i + 1}</td>
-        <td><input type="text" readonly value="${this.escapeAttr(String(s['studentName'] ?? ''))}" /></td>
-        <td><input type="text" readonly value="${this.escapeAttr(String(s['universityId'] ?? ''))}" /></td>
-        <td><input type="text" readonly value="${this.escapeAttr(String(s['mobileNumber'] ?? ''))}" /></td>
-      </tr>`
-      )
-      .join('');
+  private buildGraduationProjectsReportHtml(
+    projects: Array<{ idx: number; data: Record<string, unknown>; students: Array<Record<string, string>> }>,
+    year: number | null
+  ): string {
+    const esc = (s: string) => this.escapeHtml(s);
+    const yearLabel = year != null ? String(year) : 'All Years';
+
+    let bodyRows = '';
+    projects.forEach((project, index) => {
+      const { data, students } = project;
+      const rowCount = students.length || 1;
+      const supervisor = esc(String(data['supervisorName'] ?? ''));
+      const coSupervisor = esc(String(data['assistantSupervisorName'] ?? ''));
+      const projectName = esc(String(data['titleEn'] ?? data['titleAr'] ?? ''));
+
+      for (let i = 0; i < rowCount; i++) {
+        const s = students[i];
+        const isFirst = i === 0;
+        const rs = ` rowspan="${rowCount}"`;
+        let row = '<tr>';
+        if (isFirst) {
+          row += `<td${rowCount > 1 ? rs : ''} class="c-merged">${project.idx}</td>`;
+          row += `<td${rowCount > 1 ? rs : ''} class="c-merged">${supervisor}</td>`;
+          row += `<td${rowCount > 1 ? rs : ''} class="c-merged c-cosup">${coSupervisor}</td>`;
+          row += `<td${rowCount > 1 ? rs : ''} class="c-merged">${projectName}</td>`;
+        }
+        row += `<td>${s ? esc(String(s['universityId'] ?? '')) : ''}</td>`;
+        row += `<td>${s ? esc(String(s['studentName'] ?? '')) : ''}</td>`;
+        if (isFirst) {
+          row += `<td${rowCount > 1 ? rs : ''} class="c-merged">${students.length}</td>`;
+        }
+        row += '</tr>';
+        bodyRows += row;
+      }
+
+      if (index !== projects.length - 1) {
+        bodyRows += '<tr class="spacer-row"><td colspan="7"></td></tr>';
+      }
+    });
 
     return `
-<div class="document-wrapper page-wrapper" style="min-height:auto;padding:0;margin:0;background:#fff;">
-  <div class="paper must-pdf-paper" dir="${dir}" lang="${lang}">
-    <div class="header-bar header-bar--top" role="presentation"></div>
-    <header class="header">
-      <div class="header-block left-block" dir="ltr" lang="en">
-        <div class="en-main">${this.escapeHtml(t('ideas.form.facultyEnLine1'))}</div>
-        <div class="en-sub">${this.escapeHtml(t('ideas.form.facultyEnLine2'))}</div>
-        <div class="en-faculty">
-          <div class="en-faculty-line">${this.escapeHtml(t('ideas.form.facultyCollegesEnLine1'))}</div>
-          <div class="en-faculty-line">${this.escapeHtml(t('ideas.form.facultyCollegesEnLine2'))}</div>
-        </div>
-      </div>
-      <div class="logo-block">
-        <img crossorigin="anonymous" src="${logoSrc}" alt="MUST" />
-      </div>
-      <div class="header-block right-block">
-        <div class="ar-main" dir="rtl" lang="ar">${this.escapeHtml(t('ideas.form.facultyArLine1'))}</div>
-        <div class="ar-sub" dir="rtl" lang="ar">${this.escapeHtml(t('ideas.form.facultyArLine2'))}</div>
-        <div class="ar-faculty" dir="rtl" lang="ar">${this.escapeHtml(t('ideas.form.facultyCollegesAr'))}</div>
-      </div>
-    </header>
-    <div class="header-line header-bar--bottom" role="presentation"></div>
-    <section class="title-section">
-      <h1 class="main-title" dir="rtl" lang="ar">${this.escapeHtml(t('ideas.form.docTitle'))}</h1>
-    </section>
-
-    <div class="section-heading">${this.escapeHtml(t('ideas.form.section2'))}</div>
-    <section class="fields-section">
-      ${this.fieldRowHtml(t('ideas.form.titleAr'), String(data['titleAr'] ?? ''), 'rtl')}
-      ${this.fieldRowHtml(t('ideas.form.titleEn'), String(data['titleEn'] ?? ''), 'ltr')}
-      ${this.fieldRowHtml(t('ideas.form.category'), String(data['category'] ?? ''))}
-      ${this.fieldRowHtml(t('ideas.form.supervisorName'), String(data['supervisorName'] ?? ''))}
-      ${this.fieldRowHtml(t('ideas.form.assistantSupervisorName'), String(data['assistantSupervisorName'] ?? ''))}
-      ${this.fieldRowHtml(t('ideas.form.externalOrg'), String(data['externalOrg'] ?? ''))}
-    </section>
-
-    <div class="section-heading">${this.escapeHtml(t('ideas.form.section3'))}</div>
-    <div class="field-row only-label">
-      <label>${this.escapeHtml(t('ideas.form.studentNamesHeading'))}</label>
-    </div>
-    <section class="table-section">
-      <table class="idea-pdf-table" dir="${dir}">
-        <thead>
-          <tr>
-            <th class="col-no">${this.escapeHtml(t('ideas.form.colIndex'))}</th>
-            <th class="col-name">${this.escapeHtml(t('ideas.form.colStudentName'))}</th>
-            <th class="col-id">${this.escapeHtml(t('ideas.form.colUniversityId'))}</th>
-            <th class="col-phone">${this.escapeHtml(t('ideas.form.colMobile'))}</th>
-          </tr>
-        </thead>
-        <tbody>${studentRows}</tbody>
-      </table>
-    </section>
-
-    <section class="signatures">
-      <div>${this.escapeHtml(t('ideas.form.sigSupervisor'))}</div>
-      <div>${this.escapeHtml(t('ideas.form.sigHeads'))}</div>
-      <div>${this.escapeHtml(t('ideas.form.sigViceDean'))}</div>
-      <div>${this.escapeHtml(t('ideas.form.sigDean'))}</div>
-    </section>
-  </div>
+<div class="admin-graduation-report">
+  <style>
+    .admin-graduation-report {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #fff;
+      color: #000;
+      padding: 0;
+      margin: 0;
+    }
+    .admin-graduation-report .report-title {
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 8px 0;
+      border: 1px solid #000;
+    }
+    .admin-graduation-report .report-subtitle {
+      text-align: center;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 6px 0;
+      border: 1px solid #000;
+      border-top: none;
+    }
+    .admin-graduation-report .spacer { height: 6px; }
+    .admin-graduation-report table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+    .admin-graduation-report th,
+    .admin-graduation-report td {
+      border: 1px solid #000;
+      text-align: center;
+      vertical-align: middle;
+      font-size: 10px;
+      font-weight: bold;
+      padding: 4px 3px;
+      word-wrap: break-word;
+    }
+    .admin-graduation-report th {
+      background: #f2f2f2;
+      font-size: 11px;
+      padding: 6px 3px;
+    }
+    .admin-graduation-report .c-cosup {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      line-height: 1.4;
+      min-height: 30px;
+    }
+    .admin-graduation-report col.c-pno    { width: 5.3%; }
+    .admin-graduation-report col.c-sup    { width: 16%; }
+    .admin-graduation-report col.c-cosup-col { width: 16%; }
+    .admin-graduation-report col.c-proj   { width: 25.3%; }
+    .admin-graduation-report col.c-id     { width: 10%; }
+    .admin-graduation-report col.c-name   { width: 18.7%; }
+    .admin-graduation-report col.c-cnt    { width: 8.7%; }
+    .admin-graduation-report .spacer-row td {
+      border: none;
+      height: 6px;
+      padding: 0;
+    }
+  </style>
+  <div class="report-title">Graduation Projects Report &mdash; ${esc(yearLabel)}</div>
+  <div class="report-subtitle">CS/IS/AI 498</div>
+  <div class="spacer"></div>
+  <table>
+    <colgroup>
+      <col class="c-pno"><col class="c-sup"><col class="c-cosup-col"><col class="c-proj">
+      <col class="c-id"><col class="c-name"><col class="c-cnt">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>P. No.</th>
+        <th>Supervisor Name</th>
+        <th>Co. Supervisor<br>Name</th>
+        <th>Project Name</th>
+        <th>ID</th>
+        <th>Student Name</th>
+        <th>Students<br>Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${bodyRows}
+    </tbody>
+  </table>
 </div>`;
   }
 
-  private async captureMustPdfPaperFromHtml(html: string): Promise<{ imgData: string; cw: number; ch: number } | null> {
+  private async captureReportHtml(html: string, wrapperWidth: number): Promise<HTMLCanvasElement | null> {
     const wrapper = document.createElement('div');
-    wrapper.id = 'admin-idea-pdf-export-temp';
+    wrapper.id = 'admin-report-pdf-temp';
     wrapper.style.cssText =
-      'position:fixed;left:-9999px;top:0;z-index:-9999;width:794px;pointer-events:none;background:#fff;';
+      `position:fixed;left:-9999px;top:0;z-index:-9999;width:${wrapperWidth}px;pointer-events:none;background:#fff;`;
     wrapper.innerHTML = html;
     document.body.appendChild(wrapper);
     try {
-      const logo = wrapper.querySelector('img');
-      if (logo) {
-        await logo.decode().catch(() => undefined);
-      }
       if (document.fonts?.ready) {
         await document.fonts.ready;
       }
-      const paper = wrapper.querySelector('.must-pdf-paper') as HTMLElement | null;
-      if (!paper) return null;
-      const canvas = await html2canvas(paper, {
+      const target = wrapper.querySelector('.admin-graduation-report') as HTMLElement | null;
+      if (!target) return null;
+      return await html2canvas(target, {
         scale: 2,
         useCORS: true,
         logging: false,
         backgroundColor: '#ffffff'
       });
-      return { imgData: canvas.toDataURL('image/png'), cw: canvas.width, ch: canvas.height };
     } finally {
       wrapper.remove();
     }
@@ -857,27 +914,16 @@ export class AdminManagementComponent implements OnInit {
     } catch {
       return;
     }
-    const html = this.buildIdeaRegistrationExportHtml(data);
+    const students = (data['students'] as Array<Record<string, string>>) || [];
+    const projects = [{ idx: 1, data, students }];
+    const html = this.buildGraduationProjectsReportHtml(projects, null);
     try {
-      const cap = await this.captureMustPdfPaperFromHtml(html);
-      if (!cap) {
+      const canvas = await this.captureReportHtml(html, 1123);
+      if (!canvas) {
         alert('تعذر إنشاء ملف PDF. حاول مرة أخرى.');
         return;
       }
-      const { jsPDF } = await import('jspdf');
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const aspect = cap.cw / cap.ch;
-      let imgW = pageWidth;
-      let imgH = imgW / aspect;
-      if (imgH > pageHeight) {
-        imgH = pageHeight;
-        imgW = imgH * aspect;
-      }
-      const x = (pageWidth - imgW) / 2;
-      pdf.addImage(cap.imgData, 'PNG', x, 0, imgW, imgH);
-      pdf.save(`idea-registration-${this.editingItem.id}.pdf`);
+      await this.canvasToPdfPages(canvas, `idea-registration-${this.editingItem.id}.pdf`);
     } catch (e) {
       console.error(e);
       alert('تعذر إنشاء ملف PDF. حاول مرة أخرى.');
@@ -905,7 +951,6 @@ export class AdminManagementComponent implements OnInit {
     }
   }
 
-  /** When `year` is set, only items with `submissionDate` in that calendar year are included. */
   private filterApprovedBySubmissionYear(items: any[], year: number | null): any[] {
     if (year == null) return items;
     return items.filter((i) => {
@@ -919,40 +964,54 @@ export class AdminManagementComponent implements OnInit {
     return year == null ? 'all' : String(year);
   }
 
-  private async exportApprovedIdeaRegistrationsPdf(approved: any[], year: number | null): Promise<void> {
-    try {
-      const { jsPDF } = await import('jspdf');
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      let pageIndex = 0;
-      for (const item of approved) {
-        let data: Record<string, unknown>;
-        try {
-          data = JSON.parse(item.registrationPayloadJson as string) as Record<string, unknown>;
-        } catch {
-          continue;
-        }
-        const html = this.buildIdeaRegistrationExportHtml(data);
-        const cap = await this.captureMustPdfPaperFromHtml(html);
-        if (!cap) continue;
-        const aspect = cap.cw / cap.ch;
-        let imgW = pageWidth;
-        let imgH = imgW / aspect;
-        if (imgH > pageHeight) {
-          imgH = pageHeight;
-          imgW = imgH * aspect;
-        }
-        const x = (pageWidth - imgW) / 2;
-        if (pageIndex > 0) pdf.addPage();
-        pdf.addImage(cap.imgData, 'PNG', x, 0, imgW, imgH);
-        pageIndex++;
+  private async canvasToPdfPages(canvas: HTMLCanvasElement, fileName: string): Promise<void> {
+    const { jsPDF } = await import('jspdf');
+    const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+
+    const imgW = pageW;
+    const scale = imgW / canvas.width;
+    const totalImgH = canvas.height * scale;
+
+    if (totalImgH <= pageH) {
+      const imgData = canvas.toDataURL('image/png');
+      pdf.addImage(imgData, 'PNG', 0, 0, imgW, totalImgH);
+    } else {
+      const pageHeightPx = pageH / scale;
+      const totalPages = Math.ceil(canvas.height / pageHeightPx);
+      for (let p = 0; p < totalPages; p++) {
+        if (p > 0) pdf.addPage();
+        const srcY = p * pageHeightPx;
+        const srcH = Math.min(pageHeightPx, canvas.height - srcY);
+        const sliceCanvas = document.createElement('canvas');
+        sliceCanvas.width = canvas.width;
+        sliceCanvas.height = srcH;
+        const ctx = sliceCanvas.getContext('2d')!;
+        ctx.drawImage(canvas, 0, srcY, canvas.width, srcH, 0, 0, canvas.width, srcH);
+        const sliceData = sliceCanvas.toDataURL('image/png');
+        const sliceH = srcH * scale;
+        pdf.addImage(sliceData, 'PNG', 0, 0, imgW, sliceH);
       }
-      if (pageIndex === 0) {
+    }
+
+    pdf.save(fileName);
+  }
+
+  private async exportApprovedIdeaRegistrationsPdf(approved: any[], year: number | null): Promise<void> {
+    const projects = this.parseProjectBlocks(approved);
+    if (projects.length === 0) {
+      alert('تعذر إنشاء ملف PDF.');
+      return;
+    }
+    const html = this.buildGraduationProjectsReportHtml(projects, year);
+    try {
+      const canvas = await this.captureReportHtml(html, 1123);
+      if (!canvas) {
         alert('تعذر إنشاء ملف PDF.');
         return;
       }
-      pdf.save(`approved-idea-registrations-${this.reportFileSuffix(year)}.pdf`);
+      await this.canvasToPdfPages(canvas, `approved-idea-registrations-${this.reportFileSuffix(year)}.pdf`);
     } catch (e) {
       console.error(e);
       alert('تعذر إنشاء ملف PDF. حاول مرة أخرى.');
@@ -977,23 +1036,7 @@ export class AdminManagementComponent implements OnInit {
   }
 
   private async exportApprovedIdeaRegistrationsExcel(approved: any[], year: number | null): Promise<void> {
-    const projects: Array<{
-      idx: number;
-      data: Record<string, unknown>;
-      students: Array<Record<string, string>>;
-    }> = [];
-    let idx = 1;
-    for (const item of approved) {
-      let data: Record<string, unknown>;
-      try {
-        data = JSON.parse(item.registrationPayloadJson as string) as Record<string, unknown>;
-      } catch {
-        continue;
-      }
-      const students = (data['students'] as Array<Record<string, string>>) || [];
-      projects.push({ idx, data, students });
-      idx++;
-    }
+    const projects = this.parseProjectBlocks(approved);
     if (projects.length === 0) {
       alert('لا توجد بيانات صالحة للتصدير.');
       return;
@@ -1067,6 +1110,9 @@ export class AdminManagementComponent implements OnInit {
     });
     ws.getRow(headerRowIndex).height = 32;
 
+    const CHARS_PER_LINE = 20;
+    const LINE_HEIGHT_PT = 15;
+
     let currentRow = 5;
 
     projects.forEach((project, index) => {
@@ -1078,6 +1124,7 @@ export class AdminManagementComponent implements OnInit {
       if (startRow !== endRow) {
         ws.mergeCells(`A${startRow}:A${endRow}`);
         ws.mergeCells(`B${startRow}:B${endRow}`);
+        ws.mergeCells(`C${startRow}:C${endRow}`);
         ws.mergeCells(`D${startRow}:D${endRow}`);
         ws.mergeCells(`G${startRow}:G${endRow}`);
       }
@@ -1087,18 +1134,12 @@ export class AdminManagementComponent implements OnInit {
       this.excelSetStyledCell(ws.getCell(`D${startRow}`), String(data['titleEn'] ?? data['titleAr'] ?? ''), true);
       this.excelSetStyledCell(ws.getCell(`G${startRow}`), students.length, true);
 
-      for (let r = startRow; r <= endRow; r++) {
-        const cCell = ws.getCell(`C${r}`);
-        cCell.value = r === startRow ? String(data['assistantSupervisorName'] ?? '') : '';
-        cCell.font = { name: 'Arial', size: 10, bold: true };
-        cCell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
-        cCell.border = border();
-      }
+      const coSupText = String(data['assistantSupervisorName'] ?? '');
+      this.excelSetStyledCell(ws.getCell(`C${startRow}`), coSupText, true);
 
       if (students.length === 0) {
         ws.getCell(`E${startRow}`).border = border();
         ws.getCell(`F${startRow}`).border = border();
-        ws.getRow(startRow).height = 24;
       } else {
         students.forEach((s, i) => {
           const rowNum = startRow + i;
@@ -1113,13 +1154,20 @@ export class AdminManagementComponent implements OnInit {
           nameCell.font = { name: 'Arial', size: 10, bold: true };
           nameCell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
           nameCell.border = border();
-
-          ws.getRow(rowNum).height = 24;
         });
       }
 
+      const estimatedLines = Math.min(3, Math.max(2, Math.ceil(coSupText.length / CHARS_PER_LINE)));
+      const minBlockHeight = estimatedLines * LINE_HEIGHT_PT;
+      const defaultRowH = 24;
+      const totalDefaultH = studentCount * defaultRowH;
+
       for (let r = startRow; r <= endRow; r++) {
-        ['A', 'B', 'D', 'G'].forEach((col) => {
+        const rowH = totalDefaultH < minBlockHeight
+          ? Math.max(defaultRowH, Math.ceil(minBlockHeight / studentCount))
+          : defaultRowH;
+        ws.getRow(r).height = rowH;
+        ['A', 'B', 'C', 'D', 'G'].forEach((col) => {
           const cell = ws.getCell(`${col}${r}`);
           cell.border = border();
           cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
@@ -1159,26 +1207,11 @@ export class AdminManagementComponent implements OnInit {
     }
   }
 
-  private escapeAttr(s: string): string {
-    return String(s ?? '')
-      .replace(/&/g, '&amp;')
-      .replace(/"/g, '&quot;')
-      .replace(/</g, '&lt;');
-  }
-
   private escapeHtml(s: string): string {
     return String(s ?? '')
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
-  }
-
-  private fieldRowHtml(label: string, value: string, inputDir?: 'rtl' | 'ltr'): string {
-    const dirAttr = inputDir ? ` dir="${inputDir}"` : '';
-    return `<div class="field-row">
-      <label>${this.escapeHtml(label)}</label>
-      <input type="text" readonly value="${this.escapeAttr(value)}"${dirAttr} />
-    </div>`;
   }
 
   openUploadedProjectFile(): void {
