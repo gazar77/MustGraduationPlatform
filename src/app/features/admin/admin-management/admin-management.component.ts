@@ -884,23 +884,42 @@ export class AdminManagementComponent implements OnInit {
     }
   }
 
-  exportApprovedReport(format: 'pdf' | 'excel'): void {
+  exportApprovedReport(format: 'pdf' | 'excel', year: number | null = null): void {
     if (this.type !== 'ideaRegistrations') return;
     const approved = this.items.filter(
       (i) => i.status === 'Approved' && i.registrationPayloadJson
     );
-    if (approved.length === 0) {
-      alert('لا توجد استمارات بحالة معتمد للتصدير.');
+    const filtered = this.filterApprovedBySubmissionYear(approved, year);
+    if (filtered.length === 0) {
+      alert(
+        year == null
+          ? 'لا توجد استمارات بحالة معتمد للتصدير.'
+          : 'لا توجد استمارات معتمدة في السنة المحددة للتصدير.'
+      );
       return;
     }
     if (format === 'pdf') {
-      void this.exportApprovedIdeaRegistrationsPdf(approved);
+      void this.exportApprovedIdeaRegistrationsPdf(filtered, year);
     } else {
-      void this.exportApprovedIdeaRegistrationsExcel(approved);
+      void this.exportApprovedIdeaRegistrationsExcel(filtered, year);
     }
   }
 
-  private async exportApprovedIdeaRegistrationsPdf(approved: any[]): Promise<void> {
+  /** When `year` is set, only items with `submissionDate` in that calendar year are included. */
+  private filterApprovedBySubmissionYear(items: any[], year: number | null): any[] {
+    if (year == null) return items;
+    return items.filter((i) => {
+      const d = i?.submissionDate;
+      if (!d) return false;
+      return new Date(d).getFullYear() === year;
+    });
+  }
+
+  private reportFileSuffix(year: number | null): string {
+    return year == null ? 'all' : String(year);
+  }
+
+  private async exportApprovedIdeaRegistrationsPdf(approved: any[], year: number | null): Promise<void> {
     try {
       const { jsPDF } = await import('jspdf');
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -933,7 +952,7 @@ export class AdminManagementComponent implements OnInit {
         alert('تعذر إنشاء ملف PDF.');
         return;
       }
-      pdf.save('approved-idea-registrations.pdf');
+      pdf.save(`approved-idea-registrations-${this.reportFileSuffix(year)}.pdf`);
     } catch (e) {
       console.error(e);
       alert('تعذر إنشاء ملف PDF. حاول مرة أخرى.');
@@ -967,7 +986,7 @@ export class AdminManagementComponent implements OnInit {
     cell.alignment = { vertical: 'middle', wrapText: true };
   }
 
-  private async exportApprovedIdeaRegistrationsExcel(approved: any[]): Promise<void> {
+  private async exportApprovedIdeaRegistrationsExcel(approved: any[], year: number | null): Promise<void> {
     const blocks: Array<{
       idx: number;
       data: Record<string, unknown>;
@@ -1009,6 +1028,22 @@ export class AdminManagementComponent implements OnInit {
     let row = 1;
     const thin = this.excelThinBorder();
     const headerFill = { type: 'pattern' as const, pattern: 'solid' as const, fgColor: { argb: 'FFD6E4F0' } };
+
+    if (year != null) {
+      wsSummary.mergeCells(row, 1, row, 4);
+      const filterBanner = wsSummary.getCell(row, 1);
+      filterBanner.value = `Approved registrations — calendar year ${year}`;
+      filterBanner.font = { bold: true, size: 12, color: { argb: 'FF1F3769' } };
+      filterBanner.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFE8EEF6' }
+      };
+      filterBanner.border = thin;
+      filterBanner.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+      wsSummary.getRow(row).height = 24;
+      row++;
+    }
 
     for (const block of blocks) {
       const { data, item, students } = block;
@@ -1152,6 +1187,21 @@ export class AdminManagementComponent implements OnInit {
       { width: 42 }
     ];
     let dr = 1;
+    if (year != null) {
+      wsDetail.mergeCells(dr, 1, dr, 5);
+      const detailBanner = wsDetail.getCell(dr, 1);
+      detailBanner.value = `Approved registrations — calendar year ${year}`;
+      detailBanner.font = { bold: true, size: 12, color: { argb: 'FF1F3769' } };
+      detailBanner.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFE8EEF6' }
+      };
+      detailBanner.border = thin;
+      detailBanner.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+      wsDetail.getRow(dr).height = 24;
+      dr++;
+    }
     for (const block of blocks) {
       const titleEn = String(block.data['titleEn'] ?? '');
       wsDetail.mergeCells(dr, 1, dr, 5);
@@ -1226,7 +1276,7 @@ export class AdminManagementComponent implements OnInit {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'approved-idea-registrations.xlsx';
+      a.download = `approved-idea-registrations-${this.reportFileSuffix(year)}.xlsx`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (e) {

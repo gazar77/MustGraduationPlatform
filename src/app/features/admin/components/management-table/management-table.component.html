@@ -8,10 +8,21 @@
             </div>
         </div>
         <div class="header-actions">
-            <button *ngIf="showReportButtons" type="button" class="btn btn-report" (click)="exportPdf.emit()">
+            <div class="report-year-filter" *ngIf="showReportButtons">
+                <label class="report-year-label" for="report-year-select">سنة التقرير</label>
+                <select
+                    id="report-year-select"
+                    name="reportYear"
+                    class="report-year-select"
+                    [(ngModel)]="selectedReportYear">
+                    <option [ngValue]="null">جميع السنوات</option>
+                    <option *ngFor="let y of reportYearChoices" [ngValue]="y">{{ y }}</option>
+                </select>
+            </div>
+            <button *ngIf="showReportButtons" type="button" class="btn btn-report" (click)="exportPdf.emit(selectedReportYear)">
                 <i class="fas fa-file-pdf"></i> تقرير PDF
             </button>
-            <button *ngIf="showReportButtons" type="button" class="btn btn-report-excel" (click)="exportExcel.emit()">
+            <button *ngIf="showReportButtons" type="button" class="btn btn-report-excel" (click)="exportExcel.emit(selectedReportYear)">
                 <i class="fas fa-file-excel"></i> تقرير Excel
             </button>
             <button *ngIf="showAddButton" class="btn btn-primary" (click)="onAdd()">

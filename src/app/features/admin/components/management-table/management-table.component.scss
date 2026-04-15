@@ -8,6 +8,45 @@
     align-items: center;
     gap: 10px;
     flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.report-year-filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.report-year-label {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #555;
+    white-space: nowrap;
+}
+
+.report-year-select {
+    min-width: 140px;
+    padding: 10px 14px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background: #f9f9f9;
+    color: #333;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+
+    &:hover {
+        background: #fff;
+    }
+
+    &:focus {
+        border-color: #1f3769;
+        background: #fff;
+        box-shadow: 0 4px 10px rgba(31, 55, 105, 0.12);
+    }
 }
 
 .btn-report {

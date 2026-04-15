@@ -16,12 +16,32 @@ export class ManagementTableComponent {
   /** Show bulk PDF/Excel report buttons (idea registrations approved report). */
   @Input() showReportButtons = false;
 
+  /** When report buttons are shown: limit exports to submissions in this calendar year, or all if null. */
+  selectedReportYear: number | null = null;
+
   @Output() delete = new EventEmitter<any>();
   @Output() edit = new EventEmitter<any>();
   @Output() add = new EventEmitter<void>();
   @Output() toggleStatus = new EventEmitter<any>();
-  @Output() exportPdf = new EventEmitter<void>();
-  @Output() exportExcel = new EventEmitter<void>();
+  /** Emits selected year filter (null = all years). */
+  @Output() exportPdf = new EventEmitter<number | null>();
+  /** Emits selected year filter (null = all years). */
+  @Output() exportExcel = new EventEmitter<number | null>();
+
+  /** Years for the report filter dropdown (includes years present in data + recent range). */
+  get reportYearChoices(): number[] {
+    const current = new Date().getFullYear();
+    const set = new Set<number>();
+    for (let y = current; y >= current - 15; y--) set.add(y);
+    (this.items || []).forEach((i) => {
+      const d = i?.submissionDate;
+      if (d) {
+        const y = new Date(d).getFullYear();
+        if (!isNaN(y)) set.add(y);
+      }
+    });
+    return Array.from(set).sort((a, b) => b - a);
+  }
 
   onDelete(item: any) {
     this.delete.emit(item);

@@ -11,8 +11,8 @@
         (edit)="onEdit($event)"
         (toggleStatus)="onStatusToggle($event)"
         (delete)="onDelete($event)"
-        (exportPdf)="exportApprovedReport('pdf')"
-        (exportExcel)="exportApprovedReport('excel')">
+        (exportPdf)="exportApprovedReport('pdf', $event)"
+        (exportExcel)="exportApprovedReport('excel', $event)">
     </app-management-table>
 
     <!-- Management Modal -->
