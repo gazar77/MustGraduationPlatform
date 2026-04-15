@@ -39,6 +39,16 @@
     display: flex;
     justify-content: flex-end;
     margin-bottom: 1.25rem;
+
+    &--below {
+      justify-content: center;
+      margin-top: 1.5rem;
+      margin-bottom: 0;
+    }
+
+    &--back {
+      justify-content: flex-start;
+    }
   }
 
   .btn-view-all-primary {

@@ -133,6 +133,10 @@ export class IdeaRegisterComponent implements OnInit {
         }
     }
 
+    translateAr(key: string): string {
+        return this.langService.translateForLang(key, 'ar');
+    }
+
     /** Opens the browser print dialog; user can print or save as PDF (same as reference Pdf.html). */
     printPdf(): void {
         window.print();

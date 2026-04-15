@@ -833,4 +833,13 @@ export class LanguageService {
     }
     return result || key;
   }
+
+  translateForLang(key: string, lang: 'en' | 'ar'): string {
+    const keys = key.split('.');
+    let result = this.translations[lang];
+    for (const k of keys) {
+      if (result) result = result[k];
+    }
+    return result || key;
+  }
 }

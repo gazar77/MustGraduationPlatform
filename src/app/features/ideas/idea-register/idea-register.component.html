@@ -1,4 +1,4 @@
-<div class="registration-container" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
+<div class="registration-container" dir="rtl">
 
     <app-hero-banner class="no-print"
         [breadcrumbs]="[
@@ -12,17 +12,17 @@
 
         <div id="idea-register-document"
              class="paper must-pdf-paper"
-             [attr.lang]="(langService.currentLang$ | async) === 'ar' ? 'ar' : 'en'">
+             lang="ar" dir="rtl">
 
             <div class="header-bar header-bar--top" role="presentation"></div>
 
             <header class="header">
                 <div class="header-block left-block" dir="ltr" lang="en">
-                    <div class="en-main">{{ langService.translate('ideas.form.facultyEnLine1') }}</div>
-                    <div class="en-sub">{{ langService.translate('ideas.form.facultyEnLine2') }}</div>
+                    <div class="en-main">{{ translateAr('ideas.form.facultyEnLine1') }}</div>
+                    <div class="en-sub">{{ translateAr('ideas.form.facultyEnLine2') }}</div>
                     <div class="en-faculty">
-                        <div class="en-faculty-line">{{ langService.translate('ideas.form.facultyCollegesEnLine1') }}</div>
-                        <div class="en-faculty-line">{{ langService.translate('ideas.form.facultyCollegesEnLine2') }}</div>
+                        <div class="en-faculty-line">{{ translateAr('ideas.form.facultyCollegesEnLine1') }}</div>
+                        <div class="en-faculty-line">{{ translateAr('ideas.form.facultyCollegesEnLine2') }}</div>
                     </div>
                 </div>
 
@@ -31,78 +31,78 @@
                 </div>
 
                 <div class="header-block right-block">
-                    <div class="ar-main" dir="rtl" lang="ar">{{ langService.translate('ideas.form.facultyArLine1') }}</div>
-                    <div class="ar-sub" dir="rtl" lang="ar">{{ langService.translate('ideas.form.facultyArLine2') }}</div>
-                    <div class="ar-faculty" dir="rtl" lang="ar">{{ langService.translate('ideas.form.facultyCollegesAr') }}</div>
+                    <div class="ar-main" dir="rtl" lang="ar">{{ translateAr('ideas.form.facultyArLine1') }}</div>
+                    <div class="ar-sub" dir="rtl" lang="ar">{{ translateAr('ideas.form.facultyArLine2') }}</div>
+                    <div class="ar-faculty" dir="rtl" lang="ar">{{ translateAr('ideas.form.facultyCollegesAr') }}</div>
                 </div>
             </header>
 
             <div class="header-line header-bar--bottom" role="presentation"></div>
 
             <section class="title-section">
-                <h1 class="main-title" dir="rtl" lang="ar">{{ langService.translate('ideas.form.docTitle') }}</h1>
+                <h1 class="main-title" dir="rtl" lang="ar">{{ translateAr('ideas.form.docTitle') }}</h1>
             </section>
 
-            <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
+            <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" dir="rtl">
 
-                <div class="section-heading">{{ langService.translate('ideas.form.section2') }}</div>
+                <div class="section-heading">{{ translateAr('ideas.form.section2') }}</div>
                 <section class="fields-section">
                     <div class="field-row">
-                        <label>{{ langService.translate('ideas.form.titleAr') }} <span class="text-danger">*</span></label>
+                        <label>{{ translateAr('ideas.form.titleAr') }} <span class="text-danger">*</span></label>
                         <input type="text" formControlName="titleAr" dir="rtl" />
                     </div>
-                    <div class="error-msg" *ngIf="registrationForm.get('titleAr')?.invalid && registrationForm.get('titleAr')?.touched">{{ langService.translate('ideas.form.required') }}</div>
+                    <div class="error-msg" *ngIf="registrationForm.get('titleAr')?.invalid && registrationForm.get('titleAr')?.touched">{{ translateAr('ideas.form.required') }}</div>
 
                     <div class="field-row">
-                        <label>{{ langService.translate('ideas.form.titleEn') }} <span class="text-danger">*</span></label>
+                        <label>{{ translateAr('ideas.form.titleEn') }} <span class="text-danger">*</span></label>
                         <input type="text" formControlName="titleEn" dir="ltr" />
                     </div>
-                    <div class="error-msg" *ngIf="registrationForm.get('titleEn')?.invalid && registrationForm.get('titleEn')?.touched">{{ langService.translate('ideas.form.required') }}</div>
+                    <div class="error-msg" *ngIf="registrationForm.get('titleEn')?.invalid && registrationForm.get('titleEn')?.touched">{{ translateAr('ideas.form.required') }}</div>
 
                     <div class="field-row">
-                        <label>{{ langService.translate('ideas.form.category') }} <span class="text-danger">*</span></label>
-                        <input type="text" formControlName="category" [placeholder]="langService.translate('ideas.form.categoryPlaceholder')" />
+                        <label>{{ translateAr('ideas.form.category') }} <span class="text-danger">*</span></label>
+                        <input type="text" formControlName="category" [placeholder]="translateAr('ideas.form.categoryPlaceholder')" />
                     </div>
-                    <div class="error-msg" *ngIf="registrationForm.get('category')?.invalid && registrationForm.get('category')?.touched">{{ langService.translate('ideas.form.required') }}</div>
+                    <div class="error-msg" *ngIf="registrationForm.get('category')?.invalid && registrationForm.get('category')?.touched">{{ translateAr('ideas.form.required') }}</div>
 
                     <div class="field-row">
-                        <label>{{ langService.translate('ideas.form.supervisorName') }} <span class="text-danger">*</span></label>
+                        <label>{{ translateAr('ideas.form.supervisorName') }} <span class="text-danger">*</span></label>
                         <input type="text" formControlName="supervisorName" />
                     </div>
-                    <div class="error-msg" *ngIf="registrationForm.get('supervisorName')?.invalid && registrationForm.get('supervisorName')?.touched">{{ langService.translate('ideas.form.required') }}</div>
+                    <div class="error-msg" *ngIf="registrationForm.get('supervisorName')?.invalid && registrationForm.get('supervisorName')?.touched">{{ translateAr('ideas.form.required') }}</div>
 
                     <div class="field-row">
-                        <label>{{ langService.translate('ideas.form.assistantSupervisorName') }} <span class="text-danger">*</span></label>
+                        <label>{{ translateAr('ideas.form.assistantSupervisorName') }} <span class="text-danger">*</span></label>
                         <input type="text" formControlName="assistantSupervisorName" />
                     </div>
-                    <div class="error-msg" *ngIf="registrationForm.get('assistantSupervisorName')?.invalid && registrationForm.get('assistantSupervisorName')?.touched">{{ langService.translate('ideas.form.required') }}</div>
+                    <div class="error-msg" *ngIf="registrationForm.get('assistantSupervisorName')?.invalid && registrationForm.get('assistantSupervisorName')?.touched">{{ translateAr('ideas.form.required') }}</div>
 
                     <div class="field-row">
-                        <label>{{ langService.translate('ideas.form.externalOrg') }}</label>
+                        <label>{{ translateAr('ideas.form.externalOrg') }}</label>
                         <input type="text" formControlName="externalOrg" />
                     </div>
                 </section>
 
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 no-print mb-2">
-                    <div class="section-heading mb-0">{{ langService.translate('ideas.form.section3') }}</div>
+                    <div class="section-heading mb-0">{{ translateAr('ideas.form.section3') }}</div>
                     <button type="button" class="btn btn-sm btn-outline-secondary" (click)="addStudent()" [disabled]="students.length >= 7">
-                        <i class="fas fa-plus"></i> {{ langService.translate('ideas.form.addStudent') }}
+                        <i class="fas fa-plus"></i> {{ translateAr('ideas.form.addStudent') }}
                     </button>
                 </div>
 
                 <div class="field-row only-label">
-                    <label>{{ langService.translate('ideas.form.studentNamesHeading') }}</label>
+                    <label>{{ translateAr('ideas.form.studentNamesHeading') }}</label>
                 </div>
 
                 <section class="table-section">
-                    <table class="idea-pdf-table" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
+                    <table class="idea-pdf-table" dir="rtl">
                         <thead>
                             <tr>
-                                <th class="col-no">{{ langService.translate('ideas.form.colIndex') }}</th>
-                                <th class="col-name">{{ langService.translate('ideas.form.colStudentName') }} <span class="text-danger">*</span></th>
-                                <th class="col-id">{{ langService.translate('ideas.form.colUniversityId') }} <span class="text-danger">*</span></th>
-                                <th class="col-phone">{{ langService.translate('ideas.form.colMobile') }} <span class="text-danger">*</span></th>
-                                <th class="col-action no-print">{{ langService.translate('ideas.form.colAction') }}</th>
+                                <th class="col-no">{{ translateAr('ideas.form.colIndex') }}</th>
+                                <th class="col-name">{{ translateAr('ideas.form.colStudentName') }} <span class="text-danger">*</span></th>
+                                <th class="col-id">{{ translateAr('ideas.form.colUniversityId') }} <span class="text-danger">*</span></th>
+                                <th class="col-phone">{{ translateAr('ideas.form.colMobile') }} <span class="text-danger">*</span></th>
+                                <th class="col-action no-print">{{ translateAr('ideas.form.colAction') }}</th>
                             </tr>
                         </thead>
                         <tbody formArrayName="students">
@@ -119,28 +119,28 @@
                             </tr>
                         </tbody>
                     </table>
-                    <div class="error-msg text-center" *ngIf="students.hasError('minStudents') && registrationForm.touched">{{ langService.translate('ideas.form.minStudents') }}</div>
-                    <div class="error-msg text-center" *ngIf="students.hasError('maxStudents') && registrationForm.touched">{{ langService.translate('ideas.form.maxStudents') }}</div>
+                    <div class="error-msg text-center" *ngIf="students.hasError('minStudents') && registrationForm.touched">{{ translateAr('ideas.form.minStudents') }}</div>
+                    <div class="error-msg text-center" *ngIf="students.hasError('maxStudents') && registrationForm.touched">{{ translateAr('ideas.form.maxStudents') }}</div>
                 </section>
 
                 <section class="signatures">
-                    <div>{{ langService.translate('ideas.form.sigSupervisor') }}</div>
-                    <div>{{ langService.translate('ideas.form.sigHeads') }}</div>
-                    <div>{{ langService.translate('ideas.form.sigViceDean') }}</div>
-                    <div>{{ langService.translate('ideas.form.sigDean') }}</div>
+                    <div>{{ translateAr('ideas.form.sigSupervisor') }}</div>
+                    <div>{{ translateAr('ideas.form.sigHeads') }}</div>
+                    <div>{{ translateAr('ideas.form.sigViceDean') }}</div>
+                    <div>{{ translateAr('ideas.form.sigDean') }}</div>
                 </section>
 
                 <div class="doc-actions text-center mt-4 no-print">
                     <button type="button" class="btn btn-outline-secondary me-3 px-4 py-2" (click)="resetForm()">
-                        {{ langService.translate('ideas.form.reset') }}
+                        {{ translateAr('ideas.form.reset') }}
                     </button>
                     <button type="submit" class="btn btn-primary px-4 py-2" [disabled]="registrationForm.invalid">
-                        {{ langService.translate('ideas.form.submit') }}
+                        {{ translateAr('ideas.form.submit') }}
                     </button>
                     <div class="idea-export-actions mt-3">
                         <button type="button" class="btn btn-secondary px-4 py-2" (click)="printPdf()">
                             <i class="fas fa-print me-2" aria-hidden="true"></i>
-                            {{ langService.translate('ideas.register.exportPdf') }}
+                            {{ translateAr('ideas.register.exportPdf') }}
                         </button>
                     </div>
                 </div>

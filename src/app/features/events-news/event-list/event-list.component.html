@@ -3,12 +3,7 @@
 
   <section class="events-section">
     <div class="container">
-      <div class="events-toolbar" *ngIf="!viewAll && events.length > 0">
-        <a routerLink="/events/all" class="btn btn-view-all-primary">
-          {{ langService.translate('events.list.viewAllBtn') }}
-        </a>
-      </div>
-      <div class="events-toolbar" *ngIf="viewAll">
+      <div class="events-toolbar events-toolbar--back" *ngIf="viewAll">
         <a routerLink="/events/calendar" class="btn btn-link-back">
           {{ langService.translate('events.list.backToCarousel') }}
         </a>
@@ -52,6 +47,12 @@
                 aria-label="Next">
           <i class="fas fa-chevron-right"></i>
         </button>
+      </div>
+
+      <div class="events-toolbar events-toolbar--below" *ngIf="!viewAll && events.length > 0">
+        <a routerLink="/events/all" class="btn btn-view-all-primary">
+          {{ langService.translate('events.list.viewAllBtn') }}
+        </a>
       </div>
 
       <div *ngIf="events.length === 0" class="no-results container py-5 text-center">

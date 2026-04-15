@@ -2,12 +2,7 @@
     <app-hero-banner *ngIf="!viewAll"></app-hero-banner>
 
     <div class="news-list-container">
-        <div class="news-toolbar" *ngIf="!viewAll && newsItems.length > 0">
-            <a routerLink="/news/all" class="btn btn-view-all-primary">
-                {{ langService.translate('news.list.viewAllBtn') }}
-            </a>
-        </div>
-        <div class="news-toolbar" *ngIf="viewAll">
+        <div class="news-toolbar news-toolbar--back" *ngIf="viewAll">
             <a routerLink="/news/list" class="btn btn-link-back">
                 {{ langService.translate('news.list.backToCarousel') }}
             </a>
@@ -64,6 +59,12 @@
                     aria-label="Next">
                 <i class="fas fa-chevron-right"></i>
             </button>
+        </div>
+
+        <div class="news-toolbar news-toolbar--below" *ngIf="!viewAll && newsItems.length > 0">
+            <a routerLink="/news/all" class="btn btn-view-all-primary">
+                {{ langService.translate('news.list.viewAllBtn') }}
+            </a>
         </div>
 
         <div class="empty-state" *ngIf="newsItems.length === 0">

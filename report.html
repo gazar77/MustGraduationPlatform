@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Export Graduation Projects Excel</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="container">
+    <h1>Graduation Projects</h1>
+    <button id="downloadBtn">Download Excel</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver/dist/FileSaver.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
+const projects = [
+  {
+    projectNo: 1,
+    supervisorName: "Dr. Alaa Eldeen Yassin",
+    coSupervisorName: "Asst. Lect./ Ayman S. Abdelaziz",
+    projectName: "A Smart System for the Care & Monitoring of Autism Patients",
+    students: [
+      { id: "200024290", studentName: "Nada Moustafa Mohamed Ahmed" },
+      { id: "200024279", studentName: "Menna Allah Ali Hamad" },
+      { id: "200030799", studentName: "Mariam Ahmed Mohamed" }
+    ]
+  },
+  {
+    projectNo: 2,
+    supervisorName: "Prof. Eman Karam",
+    coSupervisorName: "T.A/ Toka Abdelhamed",
+    projectName: "AI-Tajweed Correction App",
+    students: [
+      { id: "200033960", studentName: "Mariam Ahmed Abelfatth El-bahnasy" },
+      { id: "200025371", studentName: "Ahmed Moustafa Sameh" }
+    ]
+  }
+];
+
+document.getElementById("downloadBtn").addEventListener("click", () => {
+  exportProjectsExcel(projects);
+});
+
+async function exportProjectsExcel(projectsData) {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet("Graduation Projects", {
+    views: [{ showGridLines: true }]
+  });
+
+  worksheet.pageSetup = {
+    paperSize: 9,
+    orientation: "landscape",
+    fitToPage: true,
+    fitToWidth: 1,
+    fitToHeight: 0
+  };
+
+  // أعمدة أقرب للصورة
+  worksheet.columns = [
+    { key: "pno", width: 8 },   // A
+    { key: "supervisor", width: 24 }, // B
+    { key: "coSupervisor", width: 24 }, // C
+    { key: "project", width: 38 }, // D
+    { key: "id", width: 15 }, // E
+    { key: "student", width: 28 }, // F
+    { key: "count", width: 13 } // G
+  ];
+
+  // عنوان 1
+  worksheet.mergeCells("A1:G1");
+  const title1 = worksheet.getCell("A1");
+  title1.value = "FALL/2025-2026 Graduation Project (1)";
+  title1.font = {
+    name: "Arial",
+    size: 16,
+    bold: true
+  };
+  title1.alignment = {
+    horizontal: "center",
+    vertical: "middle"
+  };
+  title1.border = borderAll();
+
+  // عنوان 2
+  worksheet.mergeCells("A2:G2");
+  const title2 = worksheet.getCell("A2");
+  title2.value = "CS/IS/AI 498";
+  title2.font = {
+    name: "Arial",
+    size: 14,
+    bold: true
+  };
+  title2.alignment = {
+    horizontal: "center",
+    vertical: "middle"
+  };
+  title2.border = borderAll();
+
+  worksheet.getRow(1).height = 28;
+  worksheet.getRow(2).height = 24;
+  worksheet.getRow(3).height = 10;
+
+  // الهيدر
+  const headerRowIndex = 4;
+  const headers = [
+    "P. No.",
+    "Supervisor Name",
+    "Co. Supervisor\nName",
+    "Project Name",
+    "ID",
+    "Student Name",
+    "Students\nCount"
+  ];
+
+  headers.forEach((text, i) => {
+    const cell = worksheet.getCell(headerRowIndex, i + 1);
+    cell.value = text;
+    cell.font = {
+      name: "Arial",
+      size: 11,
+      bold: true
+    };
+    cell.alignment = {
+      horizontal: "center",
+      vertical: "middle",
+      wrapText: true
+    };
+    cell.border = borderAll();
+    cell.fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFF2F2F2" }
+    };
+  });
+
+  worksheet.getRow(headerRowIndex).height = 32;
+
+  let currentRow = 5;
+
+  projectsData.forEach((project, index) => {
+    const studentCount = project.students.length;
+    const startRow = currentRow;
+    const endRow = currentRow + studentCount - 1;
+
+    // دمج الخلايا الأساسية
+    if (startRow !== endRow) {
+      worksheet.mergeCells(`A${startRow}:A${endRow}`);
+      worksheet.mergeCells(`B${startRow}:B${endRow}`);
+      worksheet.mergeCells(`D${startRow}:D${endRow}`);
+      worksheet.mergeCells(`G${startRow}:G${endRow}`);
+    }
+
+    // بيانات الأعمدة المدموجة
+    setStyledCell(worksheet.getCell(`A${startRow}`), project.projectNo, true);
+    setStyledCell(worksheet.getCell(`B${startRow}`), project.supervisorName, true);
+    setStyledCell(worksheet.getCell(`D${startRow}`), project.projectName, true);
+    setStyledCell(worksheet.getCell(`G${startRow}`), studentCount, true);
+
+    // عمود المشرف المساعد
+    // لو عدد الطلبة أكبر من 1 نخلي الاسم في أول سطر والباقي فاضي لكن بنفس الحدود
+    for (let r = startRow; r <= endRow; r++) {
+      const cCell = worksheet.getCell(`C${r}`);
+      cCell.value = r === startRow ? project.coSupervisorName || "" : "";
+      cCell.font = {
+        name: "Arial",
+        size: 10,
+        bold: true
+      };
+      cCell.alignment = {
+        horizontal: "center",
+        vertical: "middle",
+        wrapText: true
+      };
+      cCell.border = borderAll();
+    }
+
+    // بيانات الطلبة
+    project.students.forEach((student, i) => {
+      const rowNumber = startRow + i;
+
+      const idCell = worksheet.getCell(`E${rowNumber}`);
+      idCell.value = student.id;
+      idCell.font = { name: "Arial", size: 10, bold: true };
+      idCell.alignment = { horizontal: "center", vertical: "middle" };
+      idCell.border = borderAll();
+
+      const studentCell = worksheet.getCell(`F${rowNumber}`);
+      studentCell.value = student.studentName;
+      studentCell.font = { name: "Arial", size: 10, bold: true };
+      studentCell.alignment = {
+        horizontal: "center",
+        vertical: "middle",
+        wrapText: true
+      };
+      studentCell.border = borderAll();
+
+      worksheet.getRow(rowNumber).height = 24;
+    });
+
+    // ظبط حدود الخلايا المدموجة على كل صف
+    for (let r = startRow; r <= endRow; r++) {
+      ["A", "B", "D", "G"].forEach((col) => {
+        const cell = worksheet.getCell(`${col}${r}`);
+        cell.border = borderAll();
+        cell.alignment = {
+          horizontal: "center",
+          vertical: "middle",
+          wrapText: true
+        };
+      });
+    }
+
+    currentRow = endRow + 1;
+
+    // صف فاضي بين المشاريع
+    if (index !== projectsData.length - 1) {
+      worksheet.getRow(currentRow).height = 10;
+      currentRow += 1;
+    }
+  });
+
+  // تنسيق شامل للورقة المستخدمة
+  worksheet.eachRow((row) => {
+    row.eachCell((cell) => {
+      if (!cell.font) {
+        cell.font = { name: "Arial", size: 10 };
+      }
+    });
+  });
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob(
+    [buffer],
+    {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    }
+  );
+
+  saveAs(blob, "Graduation_Projects_Report.xlsx");
+}
+
+function setStyledCell(cell, value, bold = false) {
+  cell.value = value;
+  cell.font = {
+    name: "Arial",
+    size: 10,
+    bold: bold
+  };
+  cell.alignment = {
+    horizontal: "center",
+    vertical: "middle",
+    wrapText: true
+  };
+  cell.border = borderAll();
+}
+
+function borderAll() {
+  return {
+    top: { style: "thin", color: { argb: "FF000000" } },
+    left: { style: "thin", color: { argb: "FF000000" } },
+    bottom: { style: "thin", color: { argb: "FF000000" } },
+    right: { style: "thin", color: { argb: "FF000000" } }
+  };
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f7fb;
+}
+
+.container {
+  width: 90%;
+  max-width: 1000px;
+  margin: 60px auto;
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 20px;
+  color: #1f2d3d;
+}
+
+button {
+  background: #2a4b8d;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1f3a70;
+}

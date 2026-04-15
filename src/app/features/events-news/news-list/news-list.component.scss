@@ -8,6 +8,16 @@
     display: flex;
     justify-content: flex-end;
     margin-bottom: 20px;
+
+    &--below {
+        justify-content: center;
+        margin-top: 24px;
+        margin-bottom: 0;
+    }
+
+    &--back {
+        justify-content: flex-start;
+    }
 }
 
 .btn-view-all-primary {
