@@ -1,6 +1,19 @@
 <div class="hero-banner" [class.compact]="compact" [style.backgroundImage]="compact ? 'none' : (currentBgImage ? 'url(\'' + currentBgImage + '\')' : 'none')" [attr.dir]="(langService.currentLang$ | async) === 'ar' ? 'rtl' : 'ltr'">
   <div class="overlay"></div>
 
+  <button *ngIf="displayImages.length > 1 && !compact"
+          class="slider-nav-btn prev-btn" 
+          (click)="prevSlide()"
+          aria-label="Previous Slide">
+    <i class="fas fa-chevron-left" aria-hidden="true"></i>
+  </button>
+  <button *ngIf="displayImages.length > 1 && !compact"
+          class="slider-nav-btn next-btn" 
+          (click)="nextSlide()"
+          aria-label="Next Slide">
+    <i class="fas fa-chevron-right" aria-hidden="true"></i>
+  </button>
+
   <div class="hero-content container">
     <h1 class="hero-title">{{ langService.translate('dashboard.heroTitle') }}</h1>
 

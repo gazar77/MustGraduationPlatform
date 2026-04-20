@@ -60,6 +60,18 @@ export class HeroBannerComponent implements OnInit, OnDestroy {
     this.stopSlider();
   }
 
+  prevSlide(): void {
+    if (this.displayImages.length < 2) return;
+    this.currentSlideIndex = (this.currentSlideIndex - 1 + this.displayImages.length) % this.displayImages.length;
+    this.startSlider(); // reset timer
+  }
+
+  nextSlide(): void {
+    if (this.displayImages.length < 2) return;
+    this.currentSlideIndex = (this.currentSlideIndex + 1) % this.displayImages.length;
+    this.startSlider(); // reset timer
+  }
+
   private static normalizeImagePaths(paths: string[]): string[] {
     return paths.map((s) => s.trim()).filter(Boolean);
   }
