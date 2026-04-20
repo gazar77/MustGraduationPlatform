@@ -210,6 +210,17 @@ $dropdown-reserve: 230px;
   transition: opacity 0.2s ease, visibility 0.2s ease;
   z-index: 100;
 
+  // Bridge the gap so hover isn't lost when moving mouse from toggle to panel
+  &::before {
+    content: '';
+    position: absolute;
+    top: -15px;
+    left: 0;
+    width: 100%;
+    height: 15px;
+    background: transparent;
+  }
+
   .quick-nav-root[dir="rtl"] & {
     left: auto;
     right: 50%;
