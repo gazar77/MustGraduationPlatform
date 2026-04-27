@@ -1,5 +1,7 @@
 # Frontend integration — status (Angular ↔ .NET API)
 
+**Full architecture and workflows:** [docs/ARCHITECTURE_AND_WORKFLOWS.md](docs/ARCHITECTURE_AND_WORKFLOWS.md)
+
 **Detailed changelog (features, routes, services):** [docs/FRONTEND_CHANGES.md](docs/FRONTEND_CHANGES.md)
 
 **API base:** `environment.apiUrl` (e.g. `https://…/api/v1`). Backend uses JWT in HttpOnly cookie `access_token`.
