@@ -34,3 +34,5 @@
 
 ---
 تم التطوير بواسطة Antigravity AI.
+
+Open [docs/ARCHITECTURE_AND_WORKFLOWS.md](docs/ARCHITECTURE_AND_WORKFLOWS.md) For more details 
